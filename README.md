@@ -1,16 +1,20 @@
+<p align="center">
+  <b>🇫🇷 Français</b> · <a href="README.en.md">🇬🇧 English</a>
+</p>
+
 <h1 align="center">🍳 Frameo Kitchen Dashboard</h1>
 
 <p align="center">
   <b>Un cadre photo Frameo à 130 €, transformé en tableau de bord de cuisine pour Home Assistant</b><br>
-  <sub>Repas et recettes pas à pas · courses · agenda familial · météo et pollens · maison · voiture · clims · routines des enfants · photos</sub>
+  <sub>Repas et recettes pas à pas · courses · agenda familial · météo et pollens · maison · voiture · clims · routines des enfants · photos</sub><br><br>
+  🙏 Inspiré par <a href="https://github.com/wesbos/photo-frame-dashboard"><b>photo-frame-dashboard</b></a> de <a href="https://github.com/wesbos"><b>Wes Bos</b></a>
 </p>
 
 <p align="center">
   <a href="#demo"><b>Démo</b></a> ·
   <a href="#installer"><b>Installer</b></a> ·
   <a href="#documentation-technique"><b>Documentation</b></a> ·
-  <a href="#avertissement"><b>Avertissement</b></a> ·
-  <a href="#english"><b>English</b></a>
+  <a href="#avertissement"><b>Avertissement</b></a>
 </p>
 
 <p align="center">
@@ -29,6 +33,12 @@
   <img src="docs/captures/accueil.jpg" alt="Écran d'accueil : heure, météo, repas du soir, courses, semaine" width="900">
 </p>
 
+> [!NOTE]
+> **Merci à Wes Bos.** Tout est parti de sa vidéo sur le détournement d'un cadre photo à 50 $ et de son dépôt
+> [**wesbos/photo-frame-dashboard**](https://github.com/wesbos/photo-frame-dashboard) : l'idée, la méthode (ADB, appli
+> kiosque en WebView) et la prudence (sauvegarde vérifiée avant toute écriture). Le code ici a été écrit de zéro pour un
+> autre cadre et une autre maison, mais sans son travail ce projet n'existerait pas. Allez voir le sien !
+
 > [!WARNING]
 > **Projet perso, partagé tel quel, sans aucune garantie.** Il est fait pour MA maison : chez toi, il faudra l'adapter.
 > Il touche à des choses sensibles (ADB et lanceur d'un appareil, Home Assistant, alarme, voiture, clims). **Tu
@@ -40,32 +50,6 @@
 > **Ne jamais exposer ce serveur sur Internet.** Il est conçu pour le réseau local seulement. Toutes les écritures
 > (courses, télécommandes, voiture, clims) sont **désactivées par défaut** : ne les active qu'une par une, en sachant ce
 > que tu fais.
-
-<details>
-<summary><a name="english"></a><b>🇬🇧 In English</b></summary>
-
-<br>
-
-A cheap 15.6" Frameo photo frame (Rockchip RK3326, Android 9), hacked into a kitchen wall dashboard for the family:
-meals and step-by-step recipes with timers, shopping list, family calendar, weather and pollen, house (alarm
-read-only, doorbell, TV remotes), EV, air conditioners, a morning routine board for kids, and an Immich photo slideshow
-when nobody touches it.
-
-A tiny Android **kiosk** app shows a web page served by a small **Node/Fastify backend** in Docker on a home server.
-Only that backend talks to **Home Assistant** (non-admin user, entity allow-list) and **Immich** (read-only key), and
-every write is behind a separate opt-in flag, simulated by default. Try it without any smart home: `npm ci && npm run
-demo`.
-
-The code, comments and docs are in French; the [setup steps](#installer) and [`.env.example`](.env.example)
-are the place to start. Inspired by Wes Bos's [photo-frame-dashboard](https://github.com/wesbos/photo-frame-dashboard).
-
-**Disclaimer.** This is a personal project shared as is, with **no warranty of any kind**. It was built for one
-specific home. It uses ADB on a consumer device, replaces its launcher, and can drive real devices (car, air
-conditioners, TV) through Home Assistant. **Use it at your own risk**: the author is not liable for a bricked frame, a
-voided warranty, a misbehaving device, a poorly secured home, or any other damage. Never expose the server to the
-Internet. MIT licensed.
-
-</details>
 
 ---
 
@@ -732,7 +716,7 @@ démarrage. Ajouter `&theme=soir` (ou `jour`, `nuit`) pour forcer un thème. Var
 ### Tests et vérifications
 
 ```bash
-npm test               # 723 tests, sans réseau ni HA ni Immich ni RTE
+npm test               # 727 tests, sans réseau ni HA ni Immich ni RTE
 npm run verif-ha       # lecture seule : entités de la liste blanche, cibles des actions, VOITURES et CLIMS
 npm run verif-immich   # lecture seule : version d'Immich, un lot et une photo
 ```
@@ -873,8 +857,9 @@ auteurs ne sont responsables d'aucune réclamation ni d'aucun dommage.
 
 Code sous [licence MIT](LICENSE) : réutilisable, modifiable et partageable librement, en gardant la mention de licence.
 
-- Idée de départ et méthode (ADB, kiosque WebView) : [photo-frame-dashboard](https://github.com/wesbos/photo-frame-dashboard)
-  de Wes Bos. Aucun code n'en est repris.
+- **Wes Bos** : l'idée de départ, la méthode (ADB, kiosque WebView) et la démarche prudente viennent de
+  [photo-frame-dashboard](https://github.com/wesbos/photo-frame-dashboard). Aucun code n'en est repris, mais tout lui
+  doit son point de départ.
 - Polices **Fraunces** et **Nunito Sans**, auto-hébergées, sous SIL Open Font License 1.1 ([`web/public/polices/OFL.txt`](web/public/polices/OFL.txt)).
 - Météo, qualité de l'air et pollens : [Open-Meteo](https://open-meteo.com/) (données sous CC BY 4.0, usage non commercial gratuit).
 - Couleurs Tempo : données publiques de RTE, repli [api-couleur-tempo.fr](https://www.api-couleur-tempo.fr/).
