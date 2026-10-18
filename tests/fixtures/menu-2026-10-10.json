@@ -1,0 +1,467 @@
+{
+  "version": 1,
+  "cycle": { "debut": "2026-10-10", "fin": "2026-10-16" },
+  "statut": "commande",
+  "maj_le": "2026-10-09T18:34:00+02:00",
+  "repas": [
+    {
+      "id": "2026-10-10-midi",
+      "date": "2026-10-10",
+      "creneau": "midi",
+      "titre": "Saucisson à cuire",
+      "accompagnement": "Pommes de terre vapeur, carottes, moutarde",
+      "temps_min": 50,
+      "kcal_adulte": 675,
+      "tags": ["frigo_seul"],
+      "gamelles": null,
+      "recette": {
+        "portions": "2 adultes et 2 enfants",
+        "preparation_min": 10,
+        "cuisson_min": 40,
+        "ingredients": [
+          "1 saucisson à cuire (environ 400 g)",
+          "750 g de pommes de terre",
+          "350 g de carottes",
+          "1 oignon",
+          "1 bouquet garni",
+          "20 g de beurre",
+          "Moutarde",
+          "Sel, poivre"
+        ],
+        "etapes": [
+          { "texte": "Mettre le saucisson dans une grande casserole d'eau froide avec l'oignon coupé en deux et le bouquet garni. Le piquer 3 ou 4 fois avec une fourchette." },
+          {
+            "texte": "Chauffer jusqu'à de petits frémissements, sans jamais faire bouillir (le saucisson éclaterait). Compter 35 à 40 min en tout.",
+            "minuteur": { "libelle": "Saucisson", "duree_s": 2100, "duree_max_s": 2400 }
+          },
+          { "texte": "Pendant ce temps, éplucher les pommes de terre et les carottes. Couper les pommes de terre en deux, les carottes en tronçons." },
+          {
+            "texte": "Après 10 min, ajouter les légumes dans la même eau. Ils cuisent 25 à 30 min : la pointe du couteau doit entrer sans résistance.",
+            "minuteur": { "libelle": "Légumes", "duree_s": 1500, "duree_max_s": 1800 }
+          },
+          { "texte": "Égoutter. Couper le saucisson en tranches épaisses et servir avec les légumes, une noisette de beurre et la moutarde." }
+        ],
+        "astuces": [
+          "Garder 150 g de carottes pour le riz cantonais de mercredi.",
+          "Pour les garçons, retirer la peau du saucisson et le couper en petits morceaux."
+        ]
+      }
+    },
+    {
+      "id": "2026-10-10-soir",
+      "date": "2026-10-10",
+      "creneau": "soir",
+      "titre": "Burgers maison",
+      "accompagnement": "Potatoes au four",
+      "temps_min": 55,
+      "kcal_adulte": 660,
+      "tags": ["plaisir"],
+      "gamelles": null,
+      "recette": {
+        "portions": "2 adultes et 2 enfants",
+        "preparation_min": 15,
+        "cuisson_min": 40,
+        "ingredients": [
+          "4 steaks hachés surgelés",
+          "4 pains à burger (sur les 6)",
+          "4 tranches de cheddar",
+          "Quelques feuilles de salade",
+          "Ketchup Heinz allégé",
+          "1 kg de pommes de terre",
+          "2 c. à s. d'huile",
+          "1 c. à c. de paprika doux, sel"
+        ],
+        "etapes": [
+          {
+            "texte": "Préchauffer le four à 210 °C. Laver les pommes de terre sans les éplucher et les couper en quartiers dans la longueur.",
+            "four": { "temperature_c": 210 }
+          },
+          {
+            "texte": "Les mélanger avec l'huile, le paprika et le sel, puis les étaler sur une plaque avec du papier cuisson. Cuire 35 à 40 min en les retournant à mi-cuisson.",
+            "minuteur": { "libelle": "Potatoes", "duree_s": 2100, "duree_max_s": 2400 }
+          },
+          {
+            "texte": "15 min avant la fin, cuire les steaks encore surgelés dans une poêle chaude, 4 à 5 min par face.",
+            "minuteur": { "libelle": "Steaks, par face", "duree_s": 240, "duree_max_s": 300 }
+          },
+          {
+            "texte": "Poser une tranche de cheddar sur chaque steak et couvrir 1 min pour qu'elle fonde.",
+            "minuteur": { "libelle": "Cheddar", "duree_s": 60 }
+          },
+          {
+            "texte": "Passer les pains 2 min au four. Monter : pain, salade, steak au cheddar, ketchup.",
+            "minuteur": { "libelle": "Pains au four", "duree_s": 120 }
+          }
+        ],
+        "astuces": [
+          "Pour le petit de 3 ans, un demi-burger coupé en quatre suffit largement."
+        ]
+      }
+    },
+    {
+      "id": "2026-10-11-midi",
+      "date": "2026-10-11",
+      "creneau": "midi",
+      "titre": "Rôti de porc",
+      "accompagnement": "Pommes de terre fondantes, haricots verts",
+      "temps_min": 75,
+      "kcal_adulte": 395,
+      "tags": [],
+      "gamelles": { "portions": 2, "pour": "2026-10-12", "kcal_adulte": 395 },
+      "recette": {
+        "portions": "2 adultes et 2 enfants, plus 2 gamelles pour lundi",
+        "preparation_min": 15,
+        "cuisson_min": 60,
+        "ingredients": [
+          "1 rôti de porc de 600 g",
+          "1,2 kg de pommes de terre",
+          "2 oignons, 2 gousses d'ail",
+          "1 bouquet garni",
+          "1 cube de bouillon + 25 cl d'eau chaude",
+          "1 c. à s. d'huile, 20 g de beurre",
+          "2 boîtes de haricots verts",
+          "Sel, poivre"
+        ],
+        "etapes": [
+          {
+            "texte": "Préchauffer le four à 180 °C. Saler et poivrer le rôti, le faire dorer 5 min sur toutes les faces dans une poêle avec l'huile.",
+            "four": { "temperature_c": 180 },
+            "minuteur": { "libelle": "Rôti à dorer", "duree_s": 300 }
+          },
+          { "texte": "Éplucher les pommes de terre, les couper en rondelles de 1 cm. Émincer les oignons." },
+          { "texte": "Dans un grand plat, étaler pommes de terre et oignons, ajouter l'ail écrasé, le bouquet garni et le bouillon. Poser le rôti au milieu, parsemer de noisettes de beurre." },
+          {
+            "texte": "Enfourner 55 min à 1 h, en arrosant 1 ou 2 fois avec le jus. Les pommes de terre doivent être tendres et dorées.",
+            "minuteur": { "libelle": "Rôti au four", "duree_s": 3300, "duree_max_s": 3600 }
+          },
+          {
+            "texte": "Laisser reposer le rôti 10 min sous une feuille d'aluminium avant de le trancher.",
+            "minuteur": { "libelle": "Repos du rôti", "duree_s": 600 }
+          },
+          {
+            "texte": "Égoutter les haricots verts et les réchauffer 5 min à la poêle avec une noisette de beurre.",
+            "minuteur": { "libelle": "Haricots verts", "duree_s": 300 }
+          }
+        ],
+        "astuces": [
+          "Gamelles : avant de servir, mettre de côté 2 parts (rôti, pommes de terre, haricots) pour lundi midi."
+        ]
+      }
+    },
+    {
+      "id": "2026-10-11-soir",
+      "date": "2026-10-11",
+      "creneau": "soir",
+      "titre": "Tartines gratinées aux aubergines et à la mozzarella",
+      "accompagnement": "Salade verte",
+      "temps_min": 20,
+      "kcal_adulte": 615,
+      "tags": ["sans_viande"],
+      "gamelles": null,
+      "recette": {
+        "portions": "2 adultes et 2 enfants",
+        "preparation_min": 10,
+        "cuisson_min": 10,
+        "ingredients": [
+          "1 grand pain de campagne (environ 400 g)",
+          "1 boîte d'aubergines à la provençale",
+          "2 mozzarellas (250 g)",
+          "Herbes de Provence",
+          "1 filet d'huile d'olive",
+          "½ laitue et une vinaigrette"
+        ],
+        "etapes": [
+          {
+            "texte": "Préchauffer le four en position gril, 220 °C.",
+            "four": { "temperature_c": 220, "gril": true }
+          },
+          {
+            "texte": "Couper le pain en grandes tranches et les faire griller 3 min.",
+            "minuteur": { "libelle": "Pain grillé", "duree_s": 180 }
+          },
+          { "texte": "Étaler les aubergines à la provençale, ajouter la mozzarella en tranches, les herbes et un filet d'huile." },
+          {
+            "texte": "Gratiner 8 à 10 min, jusqu'à ce que la mozzarella soit fondue et dorée.",
+            "minuteur": { "libelle": "Tartines au gril", "duree_s": 480, "duree_max_s": 600 }
+          },
+          { "texte": "Servir avec la salade." }
+        ],
+        "astuces": [
+          "Pour les garçons : couper en mouillettes. S'ils boudent les aubergines, une tartine avec un peu de purée de tomates et de la mozzarella.",
+          "Salade : la 2e laitue sert vendredi. La garder au bac à légumes, enveloppée dans un torchon humide."
+        ]
+      }
+    },
+    {
+      "id": "2026-10-12-soir",
+      "date": "2026-10-12",
+      "creneau": "soir",
+      "titre": "Colin façon fish & chips",
+      "accompagnement": "Purée de butternut et pommes de terre",
+      "temps_min": 45,
+      "kcal_adulte": 540,
+      "tags": ["poisson"],
+      "gamelles": { "portions": 2, "pour": "2026-10-13", "kcal_adulte": 540 },
+      "recette": {
+        "portions": "4 parts pour le soir et 2 gamelles pour le lendemain midi",
+        "preparation_min": 20,
+        "cuisson_min": 25,
+        "ingredients": [
+          "2 boîtes de colin façon fish & chips (800 g, surgelé)",
+          "½ butternut (environ 600 g)",
+          "750 g de pommes de terre",
+          "30 g de beurre",
+          "15 cl de lait",
+          "Sel, muscade",
+          "1 citron (facultatif)",
+          "Ketchup pour les garçons"
+        ],
+        "etapes": [
+          { "texte": "Éplucher le butternut (retirer les graines) et les pommes de terre. Les couper en gros cubes." },
+          {
+            "texte": "Les cuire 20 min dans une grande casserole d'eau salée.",
+            "minuteur": { "libelle": "Légumes de la purée", "duree_s": 1200 }
+          },
+          {
+            "texte": "Pendant ce temps, cuire le poisson au four, sans le décongeler, comme indiqué sur la boîte (en général 220 °C, 20 à 25 min, en le retournant à mi-cuisson).",
+            "four": { "temperature_c": 220 },
+            "minuteur": { "libelle": "Poisson au four", "duree_s": 1200, "duree_max_s": 1500 }
+          },
+          { "texte": "Égoutter les légumes, les écraser au presse-purée avec le beurre et le lait chaud. Saler et ajouter une pincée de muscade." },
+          { "texte": "Servir le poisson avec la purée et un quartier de citron." }
+        ],
+        "astuces": [
+          "Gamelles : 2 parts pour mardi midi. La purée se réchauffe très bien ; le poisson ramollit un peu au micro-ondes."
+        ]
+      }
+    },
+    {
+      "id": "2026-10-13-soir",
+      "date": "2026-10-13",
+      "creneau": "soir",
+      "titre": "Gratin de pâtes au jambon et petits pois",
+      "temps_min": 35,
+      "kcal_adulte": 615,
+      "tags": [],
+      "gamelles": { "portions": 2, "pour": "2026-10-14", "kcal_adulte": 615 },
+      "recette": {
+        "portions": "4 parts pour le soir et 2 gamelles pour le lendemain midi",
+        "preparation_min": 15,
+        "cuisson_min": 20,
+        "ingredients": [
+          "500 g de pâtes (coquillettes ou penne)",
+          "4 tranches de jambon",
+          "1 boîte de petits pois (environ 280 g égouttés)",
+          "1 pot de crème fraîche (20 cl)",
+          "10 cl de lait",
+          "100 g d'emmental râpé",
+          "Poivre, muscade"
+        ],
+        "etapes": [
+          {
+            "texte": "Préchauffer le four à 200 °C. Cuire les pâtes 2 min de moins qu'indiqué sur le paquet, puis les égoutter.",
+            "four": { "temperature_c": 200 }
+          },
+          { "texte": "Couper le jambon en dés et égoutter les petits pois." },
+          { "texte": "Dans le plat à gratin, mélanger les pâtes, le jambon, les petits pois, la crème, le lait et la moitié de l'emmental. Poivrer et ajouter une pincée de muscade. Peu de sel : le jambon est déjà salé." },
+          {
+            "texte": "Couvrir avec le reste d'emmental et enfourner 20 min, jusqu'à ce que le dessus soit doré.",
+            "minuteur": { "libelle": "Gratin au four", "duree_s": 1200 }
+          }
+        ],
+        "astuces": [
+          "À garder : les 2 dernières tranches de jambon, bien emballées, pour le riz cantonais de mercredi.",
+          "Gamelles : 2 parts pour mercredi midi."
+        ]
+      }
+    },
+    {
+      "id": "2026-10-14-soir",
+      "date": "2026-10-14",
+      "creneau": "soir",
+      "titre": "Riz cantonais maison",
+      "accompagnement": "Œufs, jambon, petits pois, carottes",
+      "temps_min": 45,
+      "kcal_adulte": 510,
+      "tags": [],
+      "gamelles": { "portions": 2, "pour": "2026-10-15", "kcal_adulte": 510 },
+      "recette": {
+        "portions": "4 parts pour le soir et 2 gamelles pour le lendemain midi",
+        "preparation_min": 20,
+        "cuisson_min": 25,
+        "ingredients": [
+          "450 g de riz",
+          "6 œufs",
+          "2 tranches de jambon",
+          "250 g de petits pois",
+          "150 g de carottes",
+          "1 oignon",
+          "3 c. à s. d'huile",
+          "Sauce soja (facultatif), sel"
+        ],
+        "etapes": [
+          { "texte": "Cuire le riz à l'eau salée, l'égoutter et l'étaler sur une plaque pour qu'il refroidisse. L'idéal est de le cuire le matin ou la veille." },
+          { "texte": "Battre les œufs avec une pincée de sel. Les cuire en 2 ou 3 omelettes fines dans une grande poêle huilée, les rouler et les couper en lanières." },
+          {
+            "texte": "Couper les carottes en petits dés et émincer l'oignon. Les faire revenir 5 min à feu vif avec 2 c. à s. d'huile, dans une grande poêle ou un wok.",
+            "minuteur": { "libelle": "Carottes et oignon", "duree_s": 300 }
+          },
+          {
+            "texte": "Ajouter les petits pois pendant 3 min.",
+            "minuteur": { "libelle": "Petits pois", "duree_s": 180 }
+          },
+          {
+            "texte": "Ajouter le riz froid. Faire sauter 5 min en remuant.",
+            "minuteur": { "libelle": "Riz sauté", "duree_s": 300 }
+          },
+          {
+            "texte": "Ajouter le jambon en dés, les lanières d'omelette et 1 ou 2 c. à s. de sauce soja. Mélanger encore 2 min.",
+            "minuteur": { "libelle": "Dernier mélange", "duree_s": 120 }
+          }
+        ],
+        "astuces": [
+          "Le secret : du riz froid, qui ne colle pas.",
+          "Gamelles : 2 parts pour jeudi midi."
+        ]
+      }
+    },
+    {
+      "id": "2026-10-15-soir",
+      "date": "2026-10-15",
+      "creneau": "soir",
+      "titre": "Boulettes à la sauce tomate et aux courgettes",
+      "accompagnement": "Semoule",
+      "temps_min": 35,
+      "kcal_adulte": 650,
+      "tags": [],
+      "gamelles": { "portions": 2, "pour": "2026-10-16", "kcal_adulte": 650 },
+      "recette": {
+        "portions": "4 parts pour le soir et 2 gamelles pour le lendemain midi",
+        "preparation_min": 10,
+        "cuisson_min": 25,
+        "ingredients": [
+          "600 g de mini boulettes de bœuf surgelées (sur les 750 g)",
+          "1 boîte de courgettes cuisinées à la sauce tomate",
+          "1 bouteille de purée de tomates (720 ml)",
+          "1 oignon, 1 gousse d'ail",
+          "1 c. à s. d'huile",
+          "Herbes de Provence, 1 pincée de sucre",
+          "400 g de semoule",
+          "1 noisette de beurre, sel"
+        ],
+        "etapes": [
+          {
+            "texte": "Faire dorer les boulettes encore surgelées dans une sauteuse huilée, 8 à 10 min, en remuant.",
+            "minuteur": { "libelle": "Boulettes", "duree_s": 480, "duree_max_s": 600 }
+          },
+          {
+            "texte": "Ajouter l'oignon émincé et l'ail, cuire 2 min.",
+            "minuteur": { "libelle": "Oignon et ail", "duree_s": 120 }
+          },
+          {
+            "texte": "Verser la purée de tomates et les courgettes, ajouter les herbes, le sucre, du sel et du poivre. Couvrir et laisser mijoter 15 min à feu doux.",
+            "minuteur": { "libelle": "Sauce tomate", "duree_s": 900 }
+          },
+          {
+            "texte": "Pendant ce temps, mettre la semoule dans un saladier avec le sel et le beurre. Verser le même volume d'eau bouillante, couvrir 5 min, puis égrainer à la fourchette.",
+            "minuteur": { "libelle": "Semoule", "duree_s": 300 }
+          },
+          { "texte": "Servir les boulettes et leur sauce sur la semoule." }
+        ],
+        "astuces": [
+          "Les 150 g de boulettes restants retournent au congélateur.",
+          "Gamelles : 2 parts pour vendredi midi."
+        ]
+      }
+    },
+    {
+      "id": "2026-10-16-soir",
+      "date": "2026-10-16",
+      "creneau": "soir",
+      "titre": "Quiche poireau et lardons",
+      "accompagnement": "Salade verte",
+      "temps_min": 50,
+      "kcal_adulte": 770,
+      "tags": [],
+      "gamelles": null,
+      "recette": {
+        "portions": "2 adultes et 2 enfants",
+        "preparation_min": 15,
+        "cuisson_min": 35,
+        "ingredients": [
+          "1 pâte brisée",
+          "200 g de lardons fumés",
+          "1 poireau",
+          "3 œufs",
+          "10 cl de crème fraîche",
+          "10 cl de lait",
+          "30 g d'emmental râpé (facultatif)",
+          "Poivre, muscade (pas de sel)",
+          "½ laitue et une vinaigrette"
+        ],
+        "etapes": [
+          {
+            "texte": "Préchauffer le four à 190 °C. Laver le poireau en rinçant bien entre les feuilles, puis l'émincer finement.",
+            "four": { "temperature_c": 190 }
+          },
+          {
+            "texte": "Faire revenir les lardons 3 min à sec dans une poêle.",
+            "minuteur": { "libelle": "Lardons", "duree_s": 180 }
+          },
+          {
+            "texte": "Ajouter le poireau et cuire 8 à 10 min à feu moyen, jusqu'à ce qu'il soit fondant.",
+            "minuteur": { "libelle": "Poireau", "duree_s": 480, "duree_max_s": 600 }
+          },
+          { "texte": "Dérouler la pâte dans un moule avec son papier et piquer le fond à la fourchette." },
+          { "texte": "Battre les œufs avec la crème, le lait, le poivre et la muscade." },
+          { "texte": "Étaler le poireau et les lardons sur la pâte, verser le mélange aux œufs et parsemer d'emmental." },
+          {
+            "texte": "Cuire 30 à 35 min, jusqu'à ce que la quiche soit dorée et prise au centre.",
+            "minuteur": { "libelle": "Quiche au four", "duree_s": 1800, "duree_max_s": 2100 }
+          }
+        ],
+        "astuces": [
+          "Version plus gourmande : 20 cl de crème et 50 g d'emmental, environ 880 kcal la part."
+        ]
+      }
+    }
+  ],
+  "petits_dejeuners": [
+    {
+      "libelle": "Yaourt et muesli",
+      "portion": "1 yaourt à la grecque, 40 g de muesli chocolat ou de flocons d'avoine, 1 compote sans sucre",
+      "kcal": 420
+    },
+    {
+      "libelle": "Tartines",
+      "portion": "80 g de pain de boulangerie et 35 g de fromage à tartiner nature",
+      "kcal": 305
+    },
+    {
+      "libelle": "Les garçons",
+      "portion": "Pain au lait, pâte à tartiner cacahuète et cacao ou confiture allégée, fromage en tranches (edam, mimolette) ou Milky, une compote ou une gourde"
+    }
+  ],
+  "rappels": [
+    {
+      "date": "2026-10-11",
+      "moment": "matin",
+      "texte": "Prendre un grand pain de campagne pour les tartines du soir, en plus du pain du matin.",
+      "repas_id": "2026-10-11-soir"
+    },
+    {
+      "date": "2026-10-14",
+      "moment": "matin",
+      "texte": "Cuire le riz du riz cantonais et l'étaler sur une plaque pour qu'il refroidisse.",
+      "repas_id": "2026-10-14-soir"
+    }
+  ],
+  "memo": [
+    "Gamelles : mettre les 2 parts de côté avant de servir, de dimanche midi à jeudi soir.",
+    "Pain : un grand pain de campagne pour dimanche soir, en plus du pain du matin.",
+    "Œufs : 6 pour le riz cantonais, 3 pour la quiche. Il en restera 3.",
+    "Congélateur : steaks pour samedi, poisson pour lundi, boulettes pour jeudi. Tout se cuit sans décongeler.",
+    "Crème : 1 pot pour le gratin de mardi, ½ pot pour la quiche de vendredi.",
+    "Petit plaisir : pains au chocolat surgelés pour un matin du week-end (four à 180 °C, environ 18 min)."
+  ]
+}

@@ -1,0 +1,125 @@
+# Récupération du cadre
+
+Première version le 11/10/2026 (M0), complétée le 13/10 avec le relevé du jour J et l'installation M2, puis le
+14/10 avec le chien de garde Wi-Fi du kiosque (détail : `docs/cadre-ave948.md`).
+
+Toute commande qui modifie le cadre porte **(accord de Thomas)** : elle ne se lance qu'après un
+oui explicite, une par une. Les commandes sont lancées depuis `~/Projets/cadre-cuisine` sur le Clevo.
+
+## Valeurs à garder sous la main
+
+| Valeur | Relevé |
+|---|---|
+| Activité d'accueil de Frameo | `net.frameo.frame/.ui.activities.AWaitForDeferredInitCompleted` |
+| Version d'Android du cadre | 9 (SDK 28), RK3326, pas root, SELinux permissif |
+| Paquets désactivés en M2 (`pm disable-user`, 13/10) | `net.frameo.frame`, `android.rockchip.update.service` |
+| Origine compilée dans l'APK installé | `http://192.168.1.187:8020` (M900, depuis le 13/10) |
+| Réseau | Wi-Fi de la box en DHCP. **La MAC Wi-Fi change à chaque démarrage** (pas d'adresse gravée), donc aucune règle Freebox par appareil possible ; l'IP change aussi |
+| Accès à Internet | non coupé : MAC aléatoire et IPv6 publique de la Freebox empêchent une coupure fiable sans root. Rien sur le cadre ne s'en sert (Frameo et la mise à jour Rockchip désactivés, pas de Play Store, kiosque verrouillé sur le M900). L'IP fixe sans passerelle a été essayée : cette version d'Android perd alors la route du réseau local |
+
+## Ce qu'il faut toujours avoir
+
+- Le port USB-C du cadre accessible, même une fois fixé au mur.
+- Le câble USB-A (Clevo) vers USB-C (cadre), et `adb` sur le Clevo.
+- L'ADB par câble : débogage USB activé dans les options pour les développeurs d'Android, et le kiosque qui
+  remet le port USB-C en mode appareil 20 s après son lancement (`PortUsb.java`). Après un redémarrage, l'ADB
+  apparaît, disparaît vers +30 s, puis revient vers +55 s. Sans ADB, il reste le geste à deux doigts.
+- Le secteur branché : sur le seul USB, le cadre est sous-alimenté (l'écran scintille).
+- Une sauvegarde de `~/.android/debug.keystore`. Sans elle, une nouvelle version du kiosque ne
+  s'installe plus par-dessus l'ancienne : il faut désinstaller, ce qui efface la clé d'appareil.
+
+## 1. Sortir du kiosque
+
+- **Sur l'écran** : poser deux doigts et les garder immobiles 1,5 s. Les Réglages Android s'ouvrent.
+- Le bouton retour ne fait rien dans le kiosque (voulu).
+- **Revenir au kiosque** : bouton Accueil si le kiosque est l'appli d'accueil, sinon
+  `adb shell am start -n fr.arronis.cuisine/.MainActivity` (ne modifie rien).
+
+## 2. Wi-Fi perdu (box changée, mot de passe changé)
+
+Symptôme : la page de secours reste affichée (grosse heure, « Serveur injoignable, nouvel essai
+automatique »). En M0, cette page n'affiche que l'heure ; les minuteurs y arrivent en M2.
+
+1. Ouvrir l'écran Wi-Fi, au choix :
+   - sur l'écran : geste à deux doigts, puis Réglages, Wi-Fi ;
+   - par USB : `adb shell am start -a android.settings.WIFI_SETTINGS` (ouvre l'écran, ne change rien).
+2. **(accord de Thomas)** Choisir le réseau et saisir le mot de passe sur le cadre.
+3. Le kiosque sonde le serveur toutes les 15 s et recharge la vraie page dès qu'il répond.
+4. Si l'adresse du cadre a changé : revoir le bail DHCP fixe dans Freebox OS (M2).
+
+Si le Wi-Fi est bon mais que la page de secours reste : le serveur est en cause. Depuis le Clevo,
+`curl -s http://192.168.1.187:8020/api/sante` (à partir de M1).
+
+Le chien de garde Wi-Fi du kiosque n'aide pas ici : il ne change jamais de réseau et ne rallume pas un Wi-Fi
+désactivé à la main. Il coupe puis rallume seulement un Wi-Fi connecté dont la sonde de 4 Kio ne passe plus
+(décrochages de la puce RK915) ; un Wi-Fi qui se coupe et revient tout seul, c'est lui (`docs/cadre-ave948.md`).
+Une remise qu'il n'a pas pu finir (kiosque fermé entre la coupure et le rallumage) est rallumée au démarrage
+suivant du kiosque.
+
+## 3. Retour arrière complet vers Frameo
+
+L'ordre compte : Frameo est remis en état **avant** de retirer le kiosque, sinon le cadre peut se
+retrouver sans appli d'accueil.
+
+1. **(accord de Thomas)** Réactiver Frameo, seulement s'il a été désactivé (M2) :
+   `adb shell pm enable net.frameo.frame`, puis la même commande pour chaque paquet de mise à
+   jour du tableau ci-dessus.
+2. **(accord de Thomas)** Rendre l'accueil à Frameo.
+   - Android 7 ou plus : `adb shell cmd package set-home-activity <activité Frameo relevée>`
+   - Android 6 (pas de `cmd`) : Réglages, Applis, Cuisine, « Effacer les valeurs par défaut »,
+     puis bouton Accueil et choisir Frameo « Toujours » [à vérifier sur le cadre].
+3. **(accord de Thomas)** `adb uninstall fr.arronis.cuisine`
+4. **(accord de Thomas)** `adb reboot`, puis vérifier que Frameo démarre seul.
+5. **(accord de Thomas)** Rendre Internet au cadre (contrôle parental Freebox) si Frameo doit
+   de nouveau recevoir les photos des proches.
+6. Facultatif, **(accord de Thomas)** : quitter la bêta Frameo, ce qui coupe l'ADB.
+
+## 4. Désinstaller seulement le kiosque
+
+- Si le kiosque est l'appli d'accueil : faire d'abord les points 1 et 2 de la section 3.
+- **(accord de Thomas)** `adb uninstall fr.arronis.cuisine`
+- La clé d'appareil rangée dans le kiosque est perdue. Après une réinstallation, la renvoyer
+  (à partir de M2) : **(accord de Thomas)**
+  `adb shell am start -n fr.arronis.cuisine/.ReglageAdb --es cle "$(cat <chemin de cle_cadre>)"`
+  (`.ReglageAdb` : alias réservé au shell ADB ; passés par `.MainActivity`, la clé et le
+  débogage sont ignorés et logcat affiche « Extras cle et debug ignorés »).
+
+## 5. Mettre à jour le kiosque sans perdre la clé
+
+- Construire pour le M900 : `bash kiosque/build.sh http://192.168.1.187:8020` (l'étape 1 vérifie la règle et la
+  remise du chien Wi-Fi ; un contrôle qui échoue arrête la construction).
+- Avant d'installer une version avec le chien Wi-Fi (depuis le 14/10) : le serveur doit déjà servir la sonde,
+  `curl -s -o /dev/null -w '%{http_code} %{size_download}\n' http://192.168.1.187:8020/sonde.bin` donne
+  `200 4096` (sinon redéployer le serveur d'abord, accord de Thomas). Et relever, en lecture seule,
+  `adb shell getprop ro.permission_review_required` : 1 veut dire qu'Android demandera un consentement à l'écran
+  à la première remise à zéro (la refuser, voir `docs/cadre-ave948.md`).
+- **(accord de Thomas)** `adb install -r kiosque/build/cuisine-debug.apk`
+- **Juste après**, **(accord de Thomas)** : `adb shell cmd package set-home-activity fr.arronis.cuisine/.MainActivity`
+  puis `adb shell input keyevent KEYCODE_HOME`. La mise à jour ferme le kiosque, et Android retombe sinon
+  sur un autre écran d'accueil (vu le 13/10). Si Android demande quelle appli d'accueil utiliser : « Cuisine »,
+  « Toujours ».
+- La clé d'appareil est conservée par `install -r`. Les permissions ajoutées (état du réseau et du Wi-Fi,
+  changement d'état du Wi-Fi) sont « normales » : accordées par `install -r`, sans dialogue.
+- Une installation qui tombe pendant une remise à zéro du Wi-Fi (kiosque fermé alors que le Wi-Fi est coupé) ne
+  laisse pas le cadre hors ligne : le kiosque relancé par l'étape ci-dessus rallume le Wi-Fi tout seul (« remise
+  précédente inachevée » dans logcat). Par câble, `adb install` ne dépend pas du Wi-Fi.
+- `INSTALL_FAILED_UPDATE_INCOMPATIBLE` : l'APK n'est pas signé avec la même clé de débogage.
+  Restaurer la sauvegarde de `~/.android/debug.keystore`, reconstruire, réessayer. À défaut :
+  section 4 (désinstaller, réinstaller, renvoyer la clé).
+
+## 6. Kiosque planté, page blanche
+
+- Si le processus de rendu de la WebView meurt, le kiosque la recrée seul (Android 8 et plus).
+  Avant Android 8, c'est l'appli entière qui s'arrête ; étant l'appli d'accueil, elle revient.
+- Journaux du kiosque : `adb logcat -s Cuisine` (lecture seule) ; ceux du chien Wi-Fi seuls :
+  `adb logcat -s Cuisine | grep "chien Wi-Fi"`.
+- Console de la page : **(accord de Thomas)**
+  `adb shell am start -n fr.arronis.cuisine/.ReglageAdb --ez debug true`, puis
+  `chrome://inspect` dans Chrome sur le Clevo. Le débogage se coupe au prochain lancement normal.
+
+## 7. Plus d'ADB et kiosque bloqué
+
+Dernier recours, **(accord de Thomas)** : geste à deux doigts, Réglages, Sauvegarde et
+réinitialisation, « Restaurer les valeurs d'usine ». Tout est effacé, le kiosque compris, et Frameo
+revient dans sa version d'usine [à vérifier : seulement si Frameo est une appli système, chemin
+`/system/...` dans le relevé].

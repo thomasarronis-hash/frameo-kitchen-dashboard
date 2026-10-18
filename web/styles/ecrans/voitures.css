@@ -1,0 +1,462 @@
+/*
+ * web/styles/ecrans/voitures.css
+ *
+ * Rôle    : l'écran Voitures (choix de Thomas du 14/10) : en-tête avec « Mode essai », une grande carte par voiture (nom,
+ *           état, pourcentage, autonomie, jauge en forme de batterie), carte grisée quand la donnée est vieille, les
+ *           commandes de la voiture sous sa carte (4 boutons à pictogramme, 2 réglages pas à pas, ligne de retour), et
+ *           l'état vide « Voiture pas encore reliée ».
+ * Entrées : le DOM de web/src/ecrans/voitures.js et voitures-commandes.js ; jetons.css ; base.css (.carte, .intitule,
+ *           .chiffres, .chiffres-affiche, .bouton-doux, [disabled]) ; pages.css (.ecran-page, .page-vide, .page-vide-titre).
+ * Sorties : .voitures-entete, .voitures-essai, .voitures-liste, .voitures-deux, .voitures-pilotables, .voiture-bloc,
+ *           .voiture-bloc-pilotable,
+ *           .voiture et ses parties (-tete, -nom, -etat, -chiffres, -pourcentage, -autonomie, -jauge, -niveau),
+ *           .voiture-etat-<état>, .voiture-bas, .voiture-perimee, .voitures-vide-icone ; .voiture-commandes, .voiture-boutons,
+ *           .voiture-commande, .voiture-reglage, .voiture-reglage-<réglage>, .voiture-reglage-en-cours, .voiture-pas,
+ *           .voiture-reglage-valeur, .voiture-message, .voiture-message-alerte.
+ * Pièges  :
+ *   - Hauteur utile : 1080 - 2 x 32 (marges) - 46 (en-tête, hauteur fixe qu'il y ait « Mode essai » ou non, comme
+ *     l'écran Maison) - 20 = 950 px. Une voiture : carte de 1 616 px de large, pourcentage en 240 px (lu à 2 m, comme
+ *     l'heure de l'Accueil), autonomie en 96 px, jauge de 160 px (610 px de contenu) ; avec ses commandes, une rangée de
+ *     216 px dessous (boutons de 128 px, réglages de 96 px sous leur nom, ligne de retour de 40 px) : la carte garde
+ *     950 - 16 - 216 = 718 px. Deux voitures (voitures-deux) : deux blocs de 463 px, pourcentage en 150 px, jauge de
+ *     88 px, et les commandes À DROITE de chaque carte (deux rangées : boutons, puis réglages), faute de hauteur, dans
+ *     un panneau de largeur fixe (784 px : les deux réglages de 356 px et leur écart de 24 px, plus les marges). Dès
+ *     qu'une voiture est pilotable (voitures-pilotables sur la liste), cette colonne est réservée sur les DEUX blocs,
+ *     vide pour une voiture en lecture seule (panneau masqué) : les deux cartes gardent la même largeur (816 px) et
+ *     les deux jauges se comparent d'un coup d'œil. Aucune voiture pilotable : les deux cartes sur toute la largeur.
+ *   - Cibles tactiles de 96 px au moins (conception §1.2) : boutons de commande de 128 px (112 px à deux voitures), − et
+ *     + de 96 x 96. Un mot sous chaque pictogramme ; retour visuel au toucher par :active (transform), sans minuterie.
+ *   - Valeur d'un réglage en cours de choix (pas encore envoyée) en --accent : on voit qu'elle n'est pas encore partie.
+ *     − ou + désactivé à la borne ([disabled] de base.css, jamais d'opacité).
+ *   - Le signe % (voiture-unite) en demi-taille, graisse 600 et opsz 40 : en opsz 144 à 240 px, Fraunces le dessine
+ *     d'un filet presque invisible à 2 m (vu sur capture). Nom en interligne 1,35 : à 1,1, la descente du « g » de
+ *     « Mégane » dépassait de 6 px la boîte rognée par l'ellipse (mesuré), encore de 3 px à 1,25.
+ *   - La couleur du texte se pose sur la carte (--texte, --texte-2 si la donnée est vieille) et descend aux parties : le
+ *     contour et le téton de la batterie suivent le texte (currentColor), la carte grisée n'a qu'une règle à changer.
+ *     Les règles grisées (.voiture.voiture-perimee) viennent EN DERNIER avec trois classes : elles l'emportent sur les
+ *     couleurs d'état (en charge, erreur, sous 25 % et débranchée). Elles ne touchent pas aux commandes (autre carte) :
+ *     une donnée vieille n'empêche pas d'envoyer une commande.
+ *   - Jauge en transform: scaleX (seule animation permise avec opacity), posée par voitures.js ; remplissage en --accent,
+ *     --alerte sous 25 %, --texte-2 si la donnée est vieille : objets graphiques à 3:1 au moins sur la carte.
+ *   - Grilles seulement (grid-gap), jamais de gap en flex (conception §3.1) ; aucune opacité partielle.
+ */
+
+.voitures-entete {
+  min-height: 46px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+}
+
+.voitures-essai {
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-column-gap: 12px;
+  align-items: center;
+  padding: 6px 20px;
+  border-radius: 999px;
+  background: var(--carte);
+  color: var(--texte-2);
+}
+
+.voitures-essai-icone {
+  font-size: 28px;
+}
+
+.voitures-liste {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr);
+  grid-row-gap: 24px;
+  min-height: 0;
+}
+
+.voitures-deux {
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+}
+
+.voiture-bloc {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr);
+  min-height: 0;
+}
+
+.voiture-bloc-pilotable {
+  grid-template-rows: minmax(0, 1fr) auto;
+  grid-row-gap: 16px;
+}
+
+.voiture {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  grid-row-gap: 32px;
+  min-height: 0;
+  padding: 48px 56px 56px;
+  color: var(--texte);
+}
+
+.voiture-tete {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-column-gap: 32px;
+  align-items: center;
+}
+
+.voiture-nom {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-column-gap: 20px;
+  align-items: center;
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.voiture-nom-texte {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.voiture-nom-icone {
+  font-size: 64px;
+  color: var(--accent);
+}
+
+.voiture-etat {
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-column-gap: 20px;
+  align-items: center;
+}
+
+.voiture-etat-icone {
+  font-size: 72px;
+}
+
+.voiture-etat-textes {
+  display: grid;
+  line-height: 1.2;
+}
+
+.voiture-etat-libelle {
+  font-size: 40px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.voiture-etat-detail {
+  font-size: 32px;
+  white-space: nowrap;
+  color: var(--texte-2);
+}
+
+.voiture-chiffres {
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-column-gap: 56px;
+  justify-content: start;
+  align-items: baseline;
+  align-self: center;
+}
+
+.voiture-pourcentage {
+  font-size: 240px;
+  line-height: 0.9;
+}
+
+.voiture-unite {
+  margin-left: 0.12em;
+  font-size: 0.5em;
+  font-weight: 600;
+  font-variation-settings: "opsz" 40;
+}
+
+.voiture-autonomie {
+  font-size: 96px;
+  line-height: 1;
+  color: var(--texte-2);
+}
+
+/* Jauge en forme de batterie : contour et téton au trait du texte, remplissage mis à l'échelle. */
+.voiture-jauge {
+  position: relative;
+  height: 160px;
+  margin-right: 32px;
+  padding: 12px;
+  border: 6px solid;
+  border-radius: 36px;
+}
+
+.voiture-jauge::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: -32px;
+  width: 20px;
+  height: 64px;
+  margin-top: -32px;
+  border-radius: 0 12px 12px 0;
+  background: currentColor;
+}
+
+.voiture-niveau {
+  display: block;
+  height: 100%;
+  border-radius: 20px;
+  background: var(--accent);
+  transform-origin: 0 50%;
+}
+
+/* Couleurs d'état */
+
+.voiture-etat-en-charge .voiture-etat-icone {
+  color: var(--accent);
+}
+
+.voiture-etat-erreur .voiture-etat {
+  color: var(--alerte);
+}
+
+.voiture-bas .voiture-niveau {
+  background: var(--alerte);
+}
+
+.voiture-bas.voiture-etat-debranchee .voiture-etat {
+  color: var(--alerte);
+}
+
+/* Deux voitures : l'une sous l'autre, tailles réduites */
+
+.voitures-deux .voiture {
+  grid-row-gap: 20px;
+  padding: 32px 48px 36px;
+}
+
+.voitures-deux .voiture-nom {
+  font-size: 40px;
+}
+
+.voitures-deux .voiture-nom-icone {
+  font-size: 52px;
+}
+
+.voitures-deux .voiture-etat-icone {
+  font-size: 56px;
+}
+
+.voitures-deux .voiture-etat-libelle {
+  font-size: 36px;
+}
+
+.voitures-deux .voiture-etat-detail {
+  font-size: 28px;
+}
+
+.voitures-deux .voiture-pourcentage {
+  font-size: 150px;
+}
+
+.voitures-deux .voiture-unite {
+  margin-left: 0.12em;
+  font-size: 0.5em;
+  font-weight: 600;
+  font-variation-settings: "opsz" 40;
+}
+
+.voitures-deux .voiture-autonomie {
+  font-size: 64px;
+}
+
+.voitures-deux .voiture-jauge {
+  height: 88px;
+  padding: 8px;
+  border-width: 5px;
+  border-radius: 26px;
+}
+
+.voitures-deux .voiture-jauge::after {
+  right: -28px;
+  width: 16px;
+  height: 40px;
+  margin-top: -20px;
+}
+
+.voitures-deux .voiture-niveau {
+  border-radius: 14px;
+}
+
+/* Commandes sous la carte : 4 boutons, puis les 2 réglages, en une rangée ; la ligne de retour dessous. */
+
+.voiture-commandes {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  grid-template-areas:
+    "boutons charge_min charge_cible"
+    "message message message";
+  grid-column-gap: 24px;
+  grid-row-gap: 8px;
+  align-items: end;
+  min-width: 0;
+  padding: 20px 24px 12px;
+}
+
+.voiture-boutons {
+  grid-area: boutons;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-column-gap: 16px;
+}
+
+.voiture-commande {
+  grid-auto-flow: row;
+  grid-row-gap: 4px;
+  justify-items: center;
+  align-content: center;
+  min-height: 128px;
+  padding: 0 8px;
+  font-size: 30px;
+}
+
+.voiture-commande:active,
+.voiture-pas-bouton:active {
+  transform: scale(0.94);
+}
+
+.voiture-commande-icone {
+  font-size: 56px;
+}
+
+.voiture-reglage {
+  display: grid;
+  grid-row-gap: 6px;
+  justify-items: center;
+}
+
+.voiture-reglage-charge_min {
+  grid-area: charge_min;
+}
+
+.voiture-reglage-charge_cible {
+  grid-area: charge_cible;
+}
+
+.voiture-reglage-nom {
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--texte-2);
+}
+
+.voiture-pas {
+  display: grid;
+  grid-template-columns: 96px 168px 96px;
+  grid-column-gap: 12px;
+  align-items: center;
+}
+
+.voiture-pas-bouton {
+  min-height: 96px;
+  padding: 0;
+}
+
+.voiture-pas-icone {
+  font-size: 44px;
+}
+
+.voiture-reglage-valeur {
+  font-size: 60px;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.voiture-reglage-unite {
+  margin-left: 0.1em;
+  font-size: 0.5em;
+  font-weight: 600;
+}
+
+.voiture-reglage-en-cours .voiture-reglage-valeur {
+  color: var(--accent);
+}
+
+.voiture-message {
+  grid-area: message;
+  height: 40px;
+  min-width: 0;
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 40px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--texte-2);
+}
+
+.voiture-message-alerte {
+  color: var(--alerte);
+}
+
+/* Deux voitures : les commandes à droite de chaque carte, boutons puis réglages, tailles réduites ; la colonne est
+   réservée sur les deux blocs dès qu'une voiture est pilotable (même largeur de carte). */
+
+.voitures-deux.voitures-pilotables .voiture-bloc {
+  grid-template-rows: minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) 784px;
+  grid-row-gap: 0;
+  grid-column-gap: 16px;
+}
+
+.voitures-deux .voiture-commandes {
+  grid-template-columns: auto auto;
+  grid-template-areas:
+    "boutons boutons"
+    "charge_min charge_cible"
+    "message message";
+  align-content: center;
+  padding: 16px 24px 8px;
+}
+
+.voitures-deux .voiture-commande {
+  min-height: 112px;
+  font-size: 26px;
+}
+
+.voitures-deux .voiture-commande-icone {
+  font-size: 48px;
+}
+
+.voitures-deux .voiture-pas {
+  grid-template-columns: 96px 140px 96px;
+}
+
+.voitures-deux .voiture-reglage-valeur {
+  font-size: 52px;
+}
+
+/* Donnée vieille (plus de 6 h) : toute la carte en gris secondaire. En dernier, trois classes : l'emporte sur l'état. */
+
+.voiture.voiture-perimee {
+  color: var(--texte-2);
+}
+
+.voiture.voiture-perimee .voiture-nom-icone,
+.voiture.voiture-perimee .voiture-etat,
+.voiture.voiture-perimee .voiture-etat-icone {
+  color: var(--texte-2);
+}
+
+.voiture.voiture-perimee .voiture-etat-detail {
+  font-weight: 700;
+}
+
+.voiture.voiture-perimee .voiture-niveau {
+  background: var(--texte-2);
+}
+
+/* Sans voiture configurée */
+
+.voitures-vide-icone {
+  font-size: 160px;
+  color: var(--texte-2);
+}

@@ -1,0 +1,154 @@
+/*
+ * web/styles/ecrans/repas.css
+ *
+ * Rôle    : l'écran Repas (conception §1.5) : 7 lignes (une par jour du cycle), le midi et le soir en deux
+ *           colonnes, aujourd'hui en avant ; chaque repas en carte touchable quand sa recette existe.
+ * Entrées : le DOM construit par web/src/ecrans/repas.js ; jetons.css ; pages.css (.ecran-page, en-tête).
+ * Sorties : classes .repas-grille, .repas-colonnes, .repas-jour(-auj), .repas-nom, .repas-cellule, .repas-midi,
+ *           .repas-soir, .repas-avec-recette, .repas-gamelle, .repas-plat, .repas-meta, .repas-temps,
+ *           .repas-a-venir, .repas-etiquette, .repas-accompagnement, .repas-fleche.
+ * Pièges  :
+ *   - Hauteur : 7 lignes de 118 px environ (1 016 px utiles, moins l'en-tête et la ligne Midi / Soir) : un plat
+ *     sur 2 lignes de 28 px (line-clamp, ellipse au-delà, vers 70 caractères) et une ligne de détails.
+ *   - Chaque cellule a sa colonne (repas-midi : 2, repas-soir : 3) : une cellule masquée ne décale pas l'autre.
+ *   - Ligne des détails en flex (sans gap, marges à droite) : temps, « Recette à venir » et étiquettes ne se
+ *     tassent pas, l'accompagnement prend la place restante et se coupe par une ellipse ; la ligne elle-même
+ *     coupe ce qui dépasse encore (4 étiquettes à la fois). La flèche d'une carte avec recette est à droite,
+ *     sur les deux lignes.
+ *   - Un repas sans recette (« Recette à venir ») et une gamelle n'ont pas de fond de carte : rien à toucher.
+ */
+
+.repas-grille {
+  display: grid;
+  grid-template-rows: auto repeat(7, minmax(0, 1fr));
+  grid-row-gap: 8px;
+  min-height: 0;
+}
+
+.repas-colonnes,
+.repas-jour {
+  display: grid;
+  grid-template-columns: 136px minmax(0, 1fr) minmax(0, 1fr);
+  grid-column-gap: 16px;
+}
+
+.repas-colonnes .intitule {
+  padding-left: 20px;
+}
+
+.repas-jour {
+  min-height: 0;
+  border-radius: 20px;
+  border-left: 6px solid transparent;
+}
+
+.repas-jour-auj {
+  background: var(--surbrillance);
+  border-left-color: var(--accent);
+}
+
+.repas-nom {
+  grid-column: 1;
+  align-self: center;
+  padding-left: 14px;
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--texte);
+}
+
+.repas-cellule {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-column-gap: 12px;
+  align-content: center;
+  grid-row-gap: 2px;
+  padding: 6px 16px 6px 20px;
+  border-radius: 20px;
+}
+
+.repas-midi {
+  grid-column: 2;
+}
+
+.repas-soir {
+  grid-column: 3;
+}
+
+.repas-avec-recette {
+  background: var(--carte);
+  box-shadow: 0 2px 0 var(--carte-ombre);
+  cursor: pointer;
+}
+
+.repas-plat {
+  grid-column: 1;
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--texte);
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+.repas-gamelle .repas-plat {
+  font-size: 26px;
+  font-weight: 400;
+  color: var(--texte-2);
+}
+
+.repas-meta {
+  grid-column: 1;
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  color: var(--texte-2);
+}
+
+.repas-temps,
+.repas-a-venir,
+.repas-etiquette,
+.repas-accompagnement {
+  margin-right: 12px;
+}
+
+.repas-temps,
+.repas-a-venir,
+.repas-etiquette {
+  flex-shrink: 0;
+}
+
+.repas-temps {
+  font-weight: 700;
+}
+
+.repas-etiquette {
+  padding: 0 12px;
+  border: 2px solid var(--separateur);
+  border-radius: 999px;
+  line-height: 1.25;
+}
+
+.repas-accompagnement {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.repas-fleche {
+  grid-column: 2;
+  grid-row: 1 / 3;
+  align-self: center;
+  display: grid;
+  font-size: 40px;
+  color: var(--accent);
+}
+
+.repas-fleche-icone {
+  stroke-width: 2.4;
+}

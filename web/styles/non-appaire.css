@@ -1,0 +1,53 @@
+/*
+ * web/styles/non-appaire.css
+ *
+ * Rôle    : l'écran « Cadre non appairé » (conception §2.3) : plein écran, l'heure, le titre en rouge d'alerte,
+ *           l'explication et la marche à suivre.
+ * Entrées : le DOM construit par web/src/composants/non-appaire.js ; jetons.css ; base.css (.chiffres-affiche).
+ * Sorties : classes .non-appaire, .non-appaire-heure, -titre, -texte, -conseil.
+ * Pièges  :
+ *   - Couche 15 : au-dessus des écrans et du bandeau, SOUS la pastille, le tiroir et l'alerte des minuteurs :
+ *     les minuteurs sont locaux et restent utilisables sans serveur. Masqué la nuit par base.css.
+ *   - Fond opaque (--fond) : les contrastes sont contrôlés par tests/contraste.test.js.
+ */
+
+.non-appaire {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1920px;
+  height: 1080px;
+  z-index: 15;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  grid-row-gap: 28px;
+  padding: 0 240px;
+  background: var(--fond);
+  color: var(--texte);
+  text-align: center;
+}
+
+.non-appaire-heure {
+  font-size: 200px;
+  line-height: 0.9;
+  color: var(--texte);
+}
+
+.non-appaire-titre {
+  font-size: 72px;
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--alerte);
+}
+
+.non-appaire-texte {
+  font-size: 40px;
+  line-height: 1.3;
+}
+
+.non-appaire-conseil {
+  font-size: 32px;
+  line-height: 1.35;
+  color: var(--texte-2);
+}

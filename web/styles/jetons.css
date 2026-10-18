@@ -1,0 +1,180 @@
+/*
+ * web/styles/jetons.css
+ *
+ * Rôle    : les couleurs des trois thèmes, valeurs de la conception §1.3 : jour « Chêne clair » (piste 2),
+ *           soir « Ardoise » (piste 1), nuit (Ardoise, horloge seule et atténuée) ; et les couleurs fixes
+ *           des niveaux de l'indice européen de l'air.
+ * Entrées : la classe que main.js pose sur <html> : theme-jour, theme-soir ou theme-nuit.
+ * Sorties : propriétés personnalisées (--fond, --texte...) lues par toutes les autres feuilles.
+ * Pièges  :
+ *   - SEUL fichier de la page qui contient des couleurs : les autres feuilles n'emploient que var(--...),
+ *     ce que vérifie tests/contraste.test.js. C'est ce qui rend son contrôle des contrastes complet.
+ *   - Chaque couleur de texte doit figurer dans la liste PAIRES de tests/contraste.test.js, avec chaque
+ *     fond sur lequel elle s'affiche (4,5:1 au moins) : le test échoue sinon.
+ *   - Fonds opaques sous tout texte, sauf le verre « teinte » du bandeau sonnette (--verre-sonnette, semi-opaque,
+ *     AUCUN flou : le flou fait tomber les fondus à 16 FPS sur le cadre) : tests/contraste.test.js contrôle chaque
+ *     texte posé dessus au pire cas, verre composé sur du noir ET sur du blanc, quoi qu'il y ait dessous.
+ *   - Texte secondaire sur le menu : #4d4433 (6,52:1), et non #5d6b65 (3,80:1 seulement sur #e2d3bd).
+ *   - :root porte le jour (thème par défaut, avant le premier calcul) ; .theme-soir et .theme-nuit, de même
+ *     spécificité, l'emportent parce qu'ils viennent après.
+ *   - Les pastilles de l'air (--aqi-*) ne portent pas de texte : le niveau est toujours écrit à côté.
+ *   - --voile (derrière le tiroir des minuteurs) et --verre-bord (filet du bandeau sonnette) sont translucides mais
+ *     ne portent jamais de texte (décoratifs, voir tests/contraste.test.js).
+ *   - Ouvertures de l'écran Maison : une ouverte a le fond --ouvert-fond, son état en --alerte, une icône et un
+ *     libellé (jamais la couleur seule) ; --texte, --texte-2 et --alerte y atteignent 4,5:1 (test).
+ *   - QR code du Wi-Fi invités : --qr-module sur --qr-fond, noir sur blanc dans TOUS les thèmes (un lecteur de QR
+ *     attend des modules foncés sur fond clair).
+ *   - L'alerte de fin de minuteur garde les mêmes couleurs jour et soir (ambre de l'Ardoise, texte presque noir) :
+ *     elle doit sauter aux yeux à toute heure, nuit comprise.
+ *   - Mode Photos (--photo-*, --verre-photo*, --texte-photo*) : les MÊMES couleurs dans tous les thèmes (définies une
+ *     fois sur :root), puisque les pastilles se posent sur des photos, claires ou sombres, et les portraits sur fond
+ *     Ardoise. Verre « teinte » à 78 % (aucun flou) : textes clairs contrôlés au pire cas, verre sur noir et sur blanc
+ *     (5,46:1 au moins pour le texte secondaire, tests/contraste.test.js) ; --verre-photo-bord est décoratif.
+ *   - Personnes de l'agenda (--personne-1 à 4, dans l'ordre des prénoms de AGENDA_CALENDRIERS : une couleur PAR
+ *     PERSONNE, pas par calendrier) : bleu, terre cuite, violet, prune, aucun vert pour ne pas se confondre avec
+ *     l'accent. Fond de la pastille qui porte l'initiale, écrite en --texte-pastille (6,21:1 au moins le jour,
+ *     7,75:1 au moins le soir) ; la pastille elle-même se détache du fond, des cartes et de la surbrillance
+ *     d'aujourd'hui à 5,29:1 au moins le jour, 6,57:1 le soir (contraste d'objet graphique : 3:1 exigés). Calculs WCAG vérifiés par
+ *     tests/contraste.test.js.
+ *   - EDF Tempo (--tempo-*, 14/10) : bleu, blanc, rouge et inconnu (gris) des pastilles, du liseré et de la case de la
+ *     veille d'un rouge ; plus clairs le soir pour rester vifs sur l'Ardoise. L'éclair et le « ? » sont en --texte-tempo
+ *     (--texte-tempo-blanc sur le blanc) : 5,59:1 au moins le jour, 5,51:1 le soir ; chaque pastille (ou le filet
+ *     --tempo-bord du blanc) se détache à 4,67:1 au moins des cartes et de la surbrillance (tests/contraste.test.js).
+ *   - Enfants (--enfant-timo, --enfant-pablo, 14/10, partie 3) : la couleur de chaque enfant, que config/enfants.json
+ *     nomme (champ couleur) : ambre pour Timo, violet pour Pablo, ni vert (accent), ni bleu, ni rouge (alertes, Tempo).
+ *     Avatar et repères de son tableau : l'initiale y est en --texte-pastille (6,26:1 au moins le jour, 7,90:1 le soir),
+ *     et la couleur se détache à 5,33:1 au moins du fond, des cartes et de la surbrillance (tests/contraste.test.js).
+ *   - Écrans des enfants (14/10, partie 4) : --piece (or des pièces, des étoiles et du bocal) cernée de --piece-trait (or
+ *     foncé le jour : 5,05:1 au moins sur le fond, les cartes et la surbrillance ; le soir l'or seul se détache déjà), le
+ *     « +5 » écrit en --texte-piece sur une pièce (7,67:1 le jour, 10:1 le soir) ; --sauge, la barre du temps jusqu'au
+ *     départ (jamais rouge), sur --sauge-piste (3,10:1 le jour) ; --chemin, les pointillés de la quête (décoratifs) ;
+ *     --coffre, le trait du coffre (7,09:1 le jour). L'étoile « fini » d'un visage est posée sur un rond de --carte : sur
+ *     la couleur de l'enfant, l'or ne se verrait pas le soir (1,16:1 sur l'ambre de Timo).
+ */
+
+:root {
+  --fond: #eef1ec;
+  --menu: #e2d3bd;
+  --menu-bordure: #cdb999;
+  --menu-actif: #2f5d50;
+  --carte: #ffffff;
+  --carte-ombre: #d8ddd6;
+  --separateur: #e4e9e3;
+  --surbrillance: #e6efe9;
+  --bandeau: #7a4a0c;
+  --bouton-fort: #2f5d50;
+  --bouton-doux: #e6efe9;
+  --case: #ffffff;
+  --voile: rgba(20, 28, 26, 0.55);
+  --alerte-fond: #f2c57c;
+  --alerte-bouton: #1c2225;
+  --verre-sonnette: rgba(255, 255, 255, 0.95);
+  --verre-bord: rgba(34, 48, 43, 0.18);
+  --ouvert-fond: #fbe9e6;
+  --qr-fond: #ffffff;
+  --qr-module: #000000;
+  --photo-fond: #1c2225;
+  --verre-photo: rgba(20, 28, 26, 0.78);
+  --verre-photo-bord: rgba(255, 255, 255, 0.2);
+
+  --texte: #22302b;
+  --texte-2: #5d6b65;
+  --texte-menu: #22302b;
+  --texte-menu-2: #4d4433;
+  --texte-menu-actif: #f4f1ea;
+  --texte-bandeau: #fff6e5;
+  --texte-bouton-fort: #f4f1ea;
+  --texte-alerte: #1c2225;
+  --texte-alerte-bouton: #f2c57c;
+  --accent: #2f5d50;
+  --chaud: #2f5d50;
+  --alerte: #a3261a;
+  --texte-pastille: #ffffff;
+  --texte-photo: #f4f1ea;
+  --texte-photo-2: #c9d1cd;
+  --texte-photo-chaud: #f2c57c;
+  --personne-1: #1d5fa0;
+  --personne-2: #a1451c;
+  --personne-3: #6b3fa0;
+  --personne-4: #9c2d6b;
+  --tempo-bleu: #1d5fa0;
+  --tempo-blanc: #ffffff;
+  --tempo-rouge: #a3261a;
+  --tempo-inconnu: #5d6b65;
+  --tempo-bord: #5d6b65;
+  --texte-tempo: #ffffff;
+  --texte-tempo-blanc: #22302b;
+  --enfant-timo: #9a4a00;
+  --enfant-pablo: #7044a8;
+  --piece: #f2b632;
+  --piece-trait: #8a5a00;
+  --texte-piece: #3d2800;
+  --sauge: #5a8a71;
+  --sauge-piste: #dde6e0;
+  --chemin: #c9b48e;
+  --coffre: #7a4f1d;
+
+  /* Indice européen de l'air (couleurs de l'Agence européenne de l'environnement), identiques dans tous les thèmes. */
+  --aqi-1: #50f0e6;
+  --aqi-2: #50ccaa;
+  --aqi-3: #f0e641;
+  --aqi-4: #ff5050;
+  --aqi-5: #960032;
+  --aqi-6: #7d2181;
+}
+
+.theme-soir,
+.theme-nuit {
+  --fond: #1c2225;
+  --menu: #151a1c;
+  --menu-bordure: #232b2d;
+  --menu-actif: #26312e;
+  --carte: #232b2d;
+  --carte-ombre: #151a1c;
+  --separateur: #2b3532;
+  --surbrillance: #25302d;
+  --bandeau: #f2c57c;
+  --bouton-fort: #a9d3ae;
+  --bouton-doux: #2c3835;
+  --case: #1c2225;
+  --verre-sonnette: rgba(28, 34, 37, 0.95);
+  --verre-bord: rgba(232, 235, 228, 0.25);
+  --ouvert-fond: #3d2622;
+
+  --texte: #e8ebe4;
+  --texte-2: #8d9a95;
+  --texte-menu: #e8ebe4;
+  --texte-menu-2: #8d9a95;
+  --texte-menu-actif: #a9d3ae;
+  --texte-bandeau: #1c2225;
+  --texte-bouton-fort: #1c2225;
+  --accent: #a9d3ae;
+  --chaud: #f2c57c;
+  --alerte: #ff9b8a;
+  --texte-pastille: #1c2225;
+  --personne-1: #8fbcf0;
+  --personne-2: #f0a37a;
+  --personne-3: #c6a6f0;
+  --personne-4: #f09cc8;
+  --tempo-bleu: #8fbcf0;
+  --tempo-blanc: #e8ebe4;
+  --tempo-rouge: #ff9b8a;
+  --tempo-inconnu: #8d9a95;
+  --tempo-bord: #8d9a95;
+  --texte-tempo: #1c2225;
+  --texte-tempo-blanc: #1c2225;
+  --enfant-timo: #f5b06a;
+  --enfant-pablo: #c7a8f2;
+  --piece: #f2c57c;
+  --piece-trait: #f2c57c;
+  --texte-piece: #1c2225;
+  --sauge: #8fbf9c;
+  --sauge-piste: #2c3835;
+  --chemin: #5c5446;
+  --coffre: #e0b37a;
+}
+
+/* Nuit : seule l'horloge reste, dans le gris secondaire de l'Ardoise (5,51:1 sur le fond). */
+.theme-nuit {
+  --texte-nuit: #8d9a95;
+}

@@ -1,0 +1,182 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "cadre-cuisine/menu-semaine/v1",
+  "title": "Menu de la semaine du cadre cuisine, version 1",
+  "description": "Écrit par /menu (étape 6 : statut valide, recettes à null ; étape 7 : statut commande, recettes complètes), vérifié par outils/cadre.mjs verifier, publié dans data/menus du serveur, relu et revalidé par serveur/sources/menus.js. Règles que le schéma ne sait pas dire (9 créneaux dans l'ordre, gamelles, durées des minuteurs, rappels) : partage/valider-menu.js. Chaque champ sert à l'écran ou à /menu : rien d'autre n'est accepté.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "cycle", "statut", "maj_le", "repas"],
+  "properties": {
+    "version": { "const": 1 },
+    "cycle": {
+      "description": "Du samedi (debut) au vendredi (fin) : un cycle de courses.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["debut", "fin"],
+      "properties": {
+        "debut": { "type": "string", "format": "date" },
+        "fin": { "type": "string", "format": "date" }
+      }
+    },
+    "statut": {
+      "description": "valide : menu validé par Thomas, recettes pas encore écrites. commande : drive validé, recettes complètes.",
+      "enum": ["valide", "commande"]
+    },
+    "maj_le": {
+      "description": "Heure de publication : départage deux fichiers qui couvrent le même jour (le plus récent gagne).",
+      "type": "string",
+      "format": "date-time"
+    },
+    "repas": {
+      "description": "Les 9 repas dans l'ordre : samedi midi et soir, dimanche midi et soir, soirs du lundi au vendredi. Les midis de semaine ne sont pas stockés : l'écran les déduit de gamelles.pour.",
+      "type": "array",
+      "minItems": 9,
+      "maxItems": 9,
+      "items": { "$ref": "#/$defs/repas" }
+    },
+    "petits_dejeuners": {
+      "description": "Écran Repas : les petits-déjeuners de la semaine, étiquetés par leur contenu (jamais par un prénom).",
+      "type": "array",
+      "maxItems": 6,
+      "items": { "$ref": "#/$defs/petit_dejeuner" }
+    },
+    "rappels": {
+      "description": "Ce qu'il faut anticiper (riz à cuire le matin, pain à prendre) : carte « À prévoir » de la page Aujourd'hui du cadre.",
+      "type": "array",
+      "maxItems": 30,
+      "items": { "$ref": "#/$defs/rappel" }
+    },
+    "memo": {
+      "description": "Organisation de la semaine (gamelles, congélateur, œufs...) : écran Repas.",
+      "type": "array",
+      "maxItems": 12,
+      "items": { "type": "string", "minLength": 1, "maxLength": 200 }
+    }
+  },
+  "$defs": {
+    "repas": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "date", "creneau", "titre", "temps_min", "kcal_adulte", "tags", "gamelles", "recette"],
+      "properties": {
+        "id": {
+          "description": "<date>-<creneau>, par exemple 2026-10-10-midi.",
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}-(midi|soir)$"
+        },
+        "date": { "type": "string", "format": "date" },
+        "creneau": { "enum": ["midi", "soir"] },
+        "titre": {
+          "description": "Plat affiché en 90 px sur une ligne (Accueil, « Ce soir ») et en entier dans « La semaine » et l'écran Repas.",
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "accompagnement": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "temps_min": { "description": "Temps total (préparation + cuisson), affiché sous le plat.", "type": "integer", "minimum": 0, "maximum": 600 },
+        "kcal_adulte": { "description": "Une portion adulte, estimation à ±15 %.", "type": "integer", "minimum": 0, "maximum": 3000 },
+        "tags": {
+          "description": "Étiquettes de l'écran Repas.",
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "enum": ["plaisir", "poisson", "frigo_seul", "sans_viande"] }
+        },
+        "gamelles": {
+          "description": "Repas cuisiné « +2 » pour les gamelles des adultes du lendemain midi (pour = la date du lendemain), ou null.",
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "required": ["portions", "pour"],
+          "properties": {
+            "portions": { "type": "integer", "minimum": 1, "maximum": 6 },
+            "pour": { "type": "string", "format": "date" },
+            "kcal_adulte": { "description": "Calories de la gamelle (le plat sans la salade ni le pain) ; à défaut, celles du repas.", "type": "integer", "minimum": 0, "maximum": 3000 }
+          }
+        },
+        "avis": {
+          "description": "Retour de Thomas après coup (★ = aime, ✗ = rejete), relu par /menu pour les semaines suivantes.",
+          "enum": [null, "aime", "rejete"]
+        },
+        "recette": {
+          "description": "Recette pas à pas (écran Recette), ou null tant que le drive n'est pas validé (« Recette à venir »).",
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "required": ["portions", "preparation_min", "cuisson_min", "ingredients", "etapes"],
+          "properties": {
+            "portions": { "description": "Par exemple « 4 parts pour le soir et 2 gamelles pour le lendemain midi ».", "type": "string", "minLength": 1, "maxLength": 80 },
+            "preparation_min": { "type": "integer", "minimum": 0, "maximum": 600 },
+            "cuisson_min": { "type": "integer", "minimum": 0, "maximum": 600 },
+            "ingredients": {
+              "description": "Cochables localement sur l'écran Recette.",
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 30,
+              "items": { "type": "string", "minLength": 1, "maxLength": 120 }
+            },
+            "etapes": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 20,
+              "items": { "$ref": "#/$defs/etape" }
+            },
+            "astuces": {
+              "description": "En fin de recette (gamelles, enfants, conservation, variante).",
+              "type": "array",
+              "maxItems": 10,
+              "items": { "type": "string", "minLength": 1, "maxLength": 300 }
+            }
+          }
+        }
+      }
+    },
+    "etape": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["texte"],
+      "properties": {
+        "texte": { "description": "Affichée en 40 px et plus.", "type": "string", "minLength": 1, "maxLength": 400 },
+        "four": {
+          "description": "Badge four de l'étape.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["temperature_c"],
+          "properties": {
+            "temperature_c": { "type": "integer", "minimum": 50, "maximum": 300 },
+            "gril": { "type": "boolean" }
+          }
+        },
+        "minuteur": {
+          "description": "Bouton « Lancer <libelle> <durée> » ; « 35 à 40 min » donne duree_s 2100 et duree_max_s 2400.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["libelle", "duree_s"],
+          "properties": {
+            "libelle": { "type": "string", "minLength": 1, "maxLength": 30 },
+            "duree_s": { "type": "integer", "minimum": 10, "maximum": 21600 },
+            "duree_max_s": { "type": "integer", "minimum": 10, "maximum": 21600 }
+          }
+        }
+      }
+    },
+    "petit_dejeuner": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["libelle", "portion"],
+      "properties": {
+        "libelle": { "type": "string", "minLength": 1, "maxLength": 40 },
+        "portion": { "type": "string", "minLength": 1, "maxLength": 200 },
+        "kcal": { "type": "integer", "minimum": 0, "maximum": 2000 }
+      }
+    },
+    "rappel": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["date", "moment", "texte"],
+      "properties": {
+        "date": { "type": "string", "format": "date" },
+        "moment": { "enum": ["matin", "midi", "apres_midi", "soir"] },
+        "texte": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "repas_id": { "description": "Repas concerné, s'il y en a un (doit exister dans repas).", "type": "string" }
+      }
+    }
+  }
+}

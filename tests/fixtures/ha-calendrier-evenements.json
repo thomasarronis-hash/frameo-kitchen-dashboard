@@ -1,0 +1,33 @@
+{
+  "events": [
+    {
+      "start": "2026-10-14",
+      "end": "2026-10-15",
+      "summary": "Sortie scolaire au musée",
+      "description": "Prévoir pique-nique, rendez-vous 8h15"
+    },
+    {
+      "start": "2026-10-14T09:30:00+02:00",
+      "end": "2026-10-14T10:00:00+02:00",
+      "summary": "Dentiste",
+      "description": "Visio https://visio.exemple.invalid/salle-factice, 06 00 00 00 00",
+      "location": "Cabinet du centre, Paris"
+    },
+    {
+      "start": "2026-10-14T18:00:00+02:00",
+      "end": "2026-10-14T19:30:00+02:00",
+      "summary": "Entraînement de foot",
+      "location": "  "
+    },
+    {
+      "start": "2026-10-17",
+      "end": "2026-10-20",
+      "summary": "Week-end chez les grands-parents"
+    },
+    {
+      "start": "2026-10-18T23:30:00+02:00",
+      "end": "2026-10-19T00:30:00+02:00",
+      "summary": "Retour en voiture"
+    }
+  ]
+}

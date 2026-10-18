@@ -1,0 +1,317 @@
+/*
+ * web/styles/ecrans/enfants.css
+ *
+ * Rôle    : l'écran Enfants (ecrans/enfants.js) : l'entrée (deux grandes cartes, visage et prénom), le mode enfant plein
+ *           écran (menu masqué : classe scene-enfant de la scène), son en-tête (bouton maison, titre ou bandeau du mode
+ *           parent, « +1 » libre de Timo et son retour de 5 s, onglets de Timo, visages pour passer d'un enfant à l'autre)
+ *           et la ligne de message.
+ * Entrées : jetons.css ; base.css (.carte, .intitule, .bouton-doux) ; pages.css (.ecran-page, .page-vide-titre) ;
+ *           avatar.css ; anneau.css.
+ * Sorties : .scene-enfant, .enfants, .enfants-entree, .enfants-cartes, .enfants-carte(-avatar, -prenom), .enfants-attente,
+ *           .enfants-mode, .enfants-tete, .enfants-maison(-icone), .enfants-titre, .enfants-bandeau-parent (et ses parties),
+ *           .enfants-onglets, .enfants-onglet(-actif, -icone), .enfants-visages, .enfants-visage(-actif, -avatar),
+ *           .plus-un, .plus-un-bouton (-plafond), .plus-un-etoile, .plus-un-texte, .plus-un-retour(-icone, -barre),
+ *           .enfants-corps, .enfants-message.
+ * Pièges  :
+ *   - Mode enfant sur toute la scène (1 920 px) : 32 px de marge, en-tête de 96 px, corps de 1 856 x 888 px.
+ *   - Cibles de 96 px au moins (conception §1.2) : maison, « +1 » (96 x 220 px, l'or des pièces et le « +1 » en
+ *     --texte-piece comme les « +1 » de la liste Bravo ; grisé au plafond, « À demain » sous la lune) et son retour,
+ *     onglets, visages, Fermer.
+ *   - Geste parent (appui long de 3 s sur un visage, composants/geste-parent.js) : rien de dessiné, rien qui bouge.
+ *     touch-action: none sur les visages seulement (en-tête et carte d'entrée) : un doigt qui tremble de quelques pixels
+ *     ne doit pas lancer un défilement du navigateur, qui enverrait pointercancel avant les 40 px tolérés.
+ *   - En-tête en cinq colonnes : maison, titre ou bandeau (seule colonne souple, titre coupé par des points de
+ *     suspension s'il le faut), « +1 », onglets, visages.
+ *   - La pastille des minuteurs de cuisine passe en bas à gauche en mode enfant (en haut à droite, elle cacherait les
+ *     visages) : seul coin libre de toutes les vues.
+ *   - Grilles seulement (grid-gap), jamais de gap en flex (conception §3.1) ; aucune opacité partielle.
+ */
+
+.scene-enfant {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.scene-enfant .menu {
+  display: none;
+}
+
+.scene-enfant .ecran {
+  grid-column: 1;
+}
+
+.scene-enfant .pastille {
+  top: auto;
+  right: auto;
+  left: 32px;
+  bottom: 32px;
+}
+
+.enfants {
+  position: relative;
+  height: 1080px;
+}
+
+.enfants-cartes {
+  display: grid;
+  grid-auto-flow: column;
+  grid-column-gap: 64px;
+  justify-content: center;
+  align-content: center;
+}
+
+.enfants-carte {
+  width: 600px;
+  height: 780px;
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  grid-row-gap: 48px;
+  padding: 0;
+  color: var(--texte);
+}
+
+.enfants-carte-avatar {
+  width: 380px;
+  height: 380px;
+  touch-action: none;
+}
+
+.enfants-carte-avatar .avatar-dessin {
+  stroke-width: 1.2;
+}
+
+.enfants-carte-prenom {
+  font-family: "Fraunces", serif;
+  font-variation-settings: "opsz" 72;
+  font-size: 80px;
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+.enfants-attente {
+  align-self: center;
+  justify-self: center;
+}
+
+.enfants-mode {
+  position: relative;
+  height: 1080px;
+  padding: 32px;
+  display: grid;
+  grid-template-rows: 96px minmax(0, 1fr);
+  grid-row-gap: 32px;
+}
+
+.enfants-tete {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr) auto auto auto;
+  grid-column-gap: 32px;
+  align-items: center;
+}
+
+.enfants-maison {
+  grid-column: 1;
+  width: 96px;
+  height: 96px;
+  display: grid;
+  align-items: center;
+  justify-items: center;
+  border-radius: 24px;
+  background: var(--carte);
+  color: var(--accent);
+  box-shadow: 0 2px 0 var(--carte-ombre);
+}
+
+.enfants-maison-icone {
+  font-size: 56px;
+}
+
+.enfants-titre {
+  grid-column: 2;
+  margin: 0;
+  font-family: "Fraunces", serif;
+  font-variation-settings: "opsz" 72;
+  font-size: 56px;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--texte);
+}
+
+.enfants-bandeau-parent {
+  grid-column: 2;
+  display: grid;
+  grid-template-columns: auto auto minmax(0, 1fr) auto;
+  grid-column-gap: 20px;
+  align-items: center;
+  height: 96px;
+  padding-left: 28px;
+  border-radius: 24px;
+  background: var(--bouton-fort);
+  color: var(--texte-bouton-fort);
+}
+
+.enfants-bandeau-icone {
+  font-size: 52px;
+}
+
+.enfants-bandeau-nom {
+  font-size: 36px;
+  font-weight: 700;
+}
+
+.enfants-bandeau-restant {
+  font-size: 52px;
+  line-height: 1;
+}
+
+.enfants-onglets {
+  grid-column: 4;
+  display: grid;
+  grid-auto-flow: column;
+  grid-column-gap: 16px;
+}
+
+.enfants-onglet {
+  display: grid;
+  grid-auto-flow: column;
+  grid-column-gap: 14px;
+  align-items: center;
+  height: 96px;
+  padding: 0 32px;
+  border-radius: 24px;
+  background: var(--carte);
+  color: var(--texte);
+  box-shadow: 0 2px 0 var(--carte-ombre);
+  font-size: 30px;
+  font-weight: 700;
+}
+
+.enfants-onglet-actif {
+  background: var(--bouton-fort);
+  color: var(--texte-bouton-fort);
+}
+
+.enfants-onglet-icone {
+  font-size: 44px;
+}
+
+.enfants-visages {
+  grid-column: 5;
+  display: grid;
+  grid-auto-flow: column;
+  grid-column-gap: 24px;
+}
+
+.enfants-visage {
+  width: 96px;
+  height: 96px;
+  display: grid;
+  align-items: center;
+  justify-items: center;
+  padding: 0;
+  border-radius: 50%;
+  background: transparent;
+  touch-action: none;
+}
+
+.enfants-visage-avatar {
+  width: 84px;
+  height: 84px;
+}
+
+.enfants-visage-actif .enfants-visage-avatar {
+  box-shadow: 0 0 0 5px var(--fond), 0 0 0 11px var(--accent);
+}
+
+.plus-un {
+  grid-column: 3;
+  display: grid;
+  grid-auto-flow: column;
+  grid-column-gap: 16px;
+  align-items: center;
+}
+
+.plus-un-bouton {
+  display: grid;
+  grid-auto-flow: column;
+  grid-column-gap: 12px;
+  align-items: center;
+  justify-content: center;
+  min-width: 220px;
+  height: 96px;
+  padding: 0 28px;
+  border-radius: 48px;
+  background: var(--piece);
+  color: var(--texte-piece);
+  box-shadow: 0 2px 0 var(--carte-ombre), inset 0 0 0 4px var(--piece-trait);
+}
+
+.plus-un-bouton.plus-un-plafond {
+  background: var(--carte);
+  color: var(--texte-2);
+  box-shadow: inset 0 0 0 2px var(--separateur);
+}
+
+.plus-un-etoile {
+  font-size: 52px;
+  stroke-width: 1.6;
+}
+
+.plus-un-texte {
+  font-size: 52px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.plus-un-plafond .plus-un-texte {
+  font-family: "Nunito Sans", sans-serif;
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.plus-un-retour {
+  position: relative;
+  overflow: hidden;
+  width: 96px;
+  padding: 0;
+  box-shadow: 0 2px 0 var(--carte-ombre), 0 0 0 4px var(--separateur);
+}
+
+.plus-un-retour-icone {
+  font-size: 48px;
+}
+
+.plus-un-retour-barre {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 8px;
+  background: var(--piece-trait);
+  transform-origin: 0 50%;
+}
+
+.enfants-corps {
+  position: relative;
+  display: grid;
+  min-height: 0;
+}
+
+.enfants-message {
+  position: absolute;
+  left: 50%;
+  bottom: 48px;
+  z-index: 5;
+  transform: translateX(-50%);
+  padding: 22px 44px;
+  border-radius: 48px;
+  background: var(--carte);
+  color: var(--texte);
+  box-shadow: 0 2px 0 var(--carte-ombre), 0 0 0 4px var(--separateur);
+  font-size: 32px;
+  font-weight: 700;
+  white-space: nowrap;
+}

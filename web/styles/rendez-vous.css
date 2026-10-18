@@ -1,0 +1,74 @@
+/*
+ * web/styles/rendez-vous.css
+ *
+ * Rôle    : la pastille d'une personne de l'agenda (rond de sa couleur, son initiale dedans), les couleurs des
+ *           personnes, et la ligne de rendez-vous au fil du texte (pastille, texte, « · », puis « +N ») ; la pastille
+ *           sert à l'écran Agenda, à la colonne « La semaine » de l'Accueil et à la page Aujourd'hui, la ligne à « La
+ *           semaine » et à la ligne « Journée » de la page Aujourd'hui.
+ * Entrées : le DOM de web/src/composants/rendez-vous.js ; jetons.css (--personne-1 à 4, --texte-pastille).
+ * Sorties : classes .pastille-personne, .personne-1 à .personne-4, .rdv-ligne, .rdv-liste, .rdv, .rdv-texte,
+ *           .rdv-plus.
+ * Pièges  :
+ *   - Une couleur PAR PERSONNE, dans l'ordre des prénoms de AGENDA_CALENDRIERS (agenda-donnees.js), de 1 à 4 puis
+ *     on recommence ; jamais une couleur par calendrier.
+ *   - La couleur n'est jamais seule à dire qui : l'initiale est écrite dans la pastille (WCAG 1.4.1). Elle est
+ *     posée avec son fond dans la même règle, ce qui fait contrôler la paire par tests/contraste.test.js.
+ *   - Taille de la pastille et corps de l'initiale : réglés par chaque écran (agenda.css, accueil.css, aujourdhui.css), la
+ *     pastille devant tenir dans la hauteur de sa ligne de texte.
+ *   - Ligne de rendez-vous : chaque rendez-vous est une colonne de grille (minmax(0, max-content)) avec sa PROPRE
+ *     ellipse : quand le premier rendez-vous de deux personnes ne tient pas en entier (agenda-donnees.js), chacun
+ *     garde sa pastille et une part de la ligne (la grille donne d'abord sa place au plus court) ; le « +N » ne se
+ *     coupe jamais. La pastille est en inline-block, au fil du texte.
+ *   - Grilles seulement (grid-gap), jamais de gap en flex (conception §3.1).
+ */
+
+.pastille-personne {
+  display: inline-block;
+  border-radius: 50%;
+  text-align: center;
+  font-weight: 700;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.personne-1 { background: var(--personne-1); color: var(--texte-pastille); }
+.personne-2 { background: var(--personne-2); color: var(--texte-pastille); }
+.personne-3 { background: var(--personne-3); color: var(--texte-pastille); }
+.personne-4 { background: var(--personne-4); color: var(--texte-pastille); }
+
+.rdv-ligne {
+  display: grid;
+  grid-template-columns: minmax(0, max-content) auto;
+  grid-column-gap: 10px;
+  justify-content: start;
+  align-items: center;
+}
+
+.rdv-liste {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, max-content);
+  justify-content: start;
+  min-width: 0;
+}
+
+.rdv {
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Espaces insécables : en tête d'une case de grille, une espace ordinaire serait avalée (« Réunion· Coiffeur »). */
+.rdv + .rdv::before {
+  content: "\00a0·\00a0";
+}
+
+.rdv .pastille-personne {
+  margin-right: 8px;
+}
+
+.rdv-plus {
+  font-weight: 700;
+  color: var(--texte-2);
+}

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Manifeste de l'appli kiosque fr.arronis.cuisine.
+
+  Rôle : une seule activité plein écran en paysage, déclarée appli d'accueil (HOME) pour démarrer
+  seule après une coupure, et LAUNCHER pour apparaître dans la liste des applis.
+  Pièges :
+  - Permissions : INTERNET ; ACCESS_NETWORK_STATE, ACCESS_WIFI_STATE et CHANGE_WIFI_STATE pour le chien
+    de garde Wi-Fi (ChienWifi.java : état du réseau ; RadioWifi.java : coupure et rallumage du Wi-Fi).
+    Toutes « normales » : accordées à l'installation (et à une mise à jour par adb install -r), sans dialogue.
+  - usesCleartextTraffic : le serveur est en HTTP sur le réseau local (pas de racines Let's Encrypt
+    avant Android 7.1.1, conception §2.5).
+  - Aucun filtre VIEW : aucune autre appli ne peut faire ouvrir une URL au kiosque.
+  - targetSdk 23 (24 si le cadre est sous Android 15 ou plus, voir la grille du jour J).
+    minSdkVersion est relu par build.sh pour d8 : ne le changer qu'ici. Ne pas passer targetSdk à 29
+    ou plus : WifiManager.setWifiEnabled, dont dépend le chien de garde Wi-Fi, y est refusé.
+  - allowBackup="false" : la clé d'appareil rangée dans les SharedPreferences ne sort pas par adb backup.
+  - configChanges : brancher un clavier ou tourner l'écran ne recrée pas l'activité (pas de rechargement).
+  - Thème système Material sans barre d'action, plein écran dès le démarrage (API 21).
+  - MainActivity est exportée d'office (filtre d'intent, targetSdk inférieur à 31). L'alias
+    ReglageAdb, protégé par la permission DUMP (détenue par le shell ADB, jamais par une appli
+    tierce), est le seul chemin des extras « cle » et « debug » :
+    adb shell am start -n fr.arronis.cuisine/.ReglageAdb ...
+    Un alias doit être déclaré après son activité cible.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="fr.arronis.cuisine"
+    android:versionCode="1"
+    android:versionName="0.1.0">
+
+    <uses-sdk
+        android:minSdkVersion="21"
+        android:targetSdkVersion="23" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+
+    <application
+        android:allowBackup="false"
+        android:icon="@drawable/ic_lanceur"
+        android:label="@string/nom_appli"
+        android:theme="@android:style/Theme.Material.NoActionBar.Fullscreen"
+        android:usesCleartextTraffic="true">
+
+        <activity
+            android:name=".MainActivity"
+            android:configChanges="keyboard|keyboardHidden|navigation|orientation|screenLayout|screenSize|smallestScreenSize"
+            android:launchMode="singleTask"
+            android:screenOrientation="landscape">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.HOME" />
+                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <activity-alias
+            android:name=".ReglageAdb"
+            android:exported="true"
+            android:permission="android.permission.DUMP"
+            android:targetActivity=".MainActivity" />
+    </application>
+</manifest>

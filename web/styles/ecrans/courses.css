@@ -1,0 +1,253 @@
+/*
+ * web/styles/ecrans/courses.css
+ *
+ * Rôle    : l'écran Courses (conception §1.5) : la liste à gauche (case de 96 px par article, cochés grisés et
+ *           barrés, barre de confirmation dans la page), à droite l'ajout, « Prêt pour le drive », « Vider les
+ *           cochés », les messages (erreur, hors ligne) et le bandeau discret « mode essai ».
+ * Entrées : le DOM construit par web/src/ecrans/courses.js ; jetons.css ; base.css ; pages.css.
+ * Sorties : classes .courses*, dont .courses-article(-coche, -attente), .courses-case, .courses-confirmation,
+ *           .courses-champ, .courses-essai.
+ * Pièges  :
+ *   - Largeurs : liste 1 024 px, colonne de droite 560 px (comme l'Accueil), 32 px d'écart.
+ *   - Lignes de 112 px (case de 96 px) : 8 articles visibles, la liste défile au-delà (touch-action: pan-y).
+ *   - Appui long : une barre de 6 px se remplit en 1 s sous l'article (transform: scaleX, seule animation
+ *     permise avec opacity) ; rien sur un article en attente.
+ *   - Le champ a 96 px de haut et 32 px de texte ; pas de texte indicatif (::placeholder) : son contraste ne
+ *     serait pas contrôlé, l'intitulé au-dessus dit quoi faire.
+ *   - Bandeau « mode essai » : discret (texte secondaire de 26 px en bas de colonne), mais toujours visible
+ *     sur cet écran tant que le serveur simule.
+ *   - Boutons doux posés sur le fond (« Vider les cochés ») : fond de carte et ombre, sinon leur teinte se
+ *     confond avec le fond de la page. La barre de confirmation est blanche et cernée pour la même raison.
+ *   - « Liste vide » occupe la même case de grille que la liste (vide) : centré dans la carte.
+ *   - Grilles (grid-gap) seulement.
+ */
+
+.courses {
+  grid-template-columns: minmax(0, 1fr) 560px;
+  grid-template-rows: minmax(0, 1fr);
+  grid-column-gap: 32px;
+}
+
+.courses-principal {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  grid-row-gap: 20px;
+  min-height: 0;
+}
+
+.courses-liste-carte {
+  position: relative;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr);
+  min-height: 0;
+  padding: 8px 24px;
+  overflow: hidden;
+}
+
+.courses-liste {
+  overflow-y: auto;
+  touch-action: pan-y;
+}
+
+.courses-article {
+  position: relative;
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr);
+  grid-column-gap: 24px;
+  align-items: center;
+  min-height: 112px;
+  padding: 8px 0;
+  border-top: 2px solid var(--separateur);
+  cursor: pointer;
+}
+
+.courses-article:first-child {
+  border-top-color: transparent;
+}
+
+.courses-article::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 6px;
+  background: var(--alerte);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+}
+
+.courses-article.appui-long-en-cours::after {
+  transform: scaleX(1);
+  transition: transform 1s linear;
+}
+
+.courses-article-attente.appui-long-en-cours::after {
+  transform: scaleX(0);
+  transition: none;
+}
+
+.courses-case {
+  width: 96px;
+  height: 96px;
+  display: grid;
+  align-items: center;
+  justify-items: center;
+  border: 3px solid var(--texte-2);
+  border-radius: 20px;
+  background: var(--case);
+}
+
+.courses-coche {
+  font-size: 64px;
+  stroke-width: 2.6;
+  visibility: hidden;
+}
+
+.courses-article-coche .courses-case {
+  border-color: var(--bouton-fort);
+  background: var(--bouton-fort);
+  color: var(--texte-bouton-fort);
+}
+
+.courses-article-coche .courses-coche {
+  visibility: visible;
+}
+
+.courses-texte {
+  min-width: 0;
+  font-size: 34px;
+  line-height: 1.25;
+  word-wrap: break-word;
+  color: var(--texte);
+}
+
+.courses-article-coche .courses-texte {
+  color: var(--texte-2);
+  text-decoration: line-through;
+}
+
+.courses-article-attente .courses-texte {
+  color: var(--texte-2);
+}
+
+.courses-vide {
+  grid-row: 1;
+  grid-column: 1;
+  align-self: center;
+  justify-self: center;
+  font-size: 40px;
+  color: var(--texte-2);
+}
+
+.courses-confirmation {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: 16px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  grid-column-gap: 20px;
+  align-items: center;
+  padding: 20px 24px;
+  border: 3px solid var(--texte-2);
+  border-radius: 24px;
+  background: var(--carte);
+  box-shadow: 0 4px 0 var(--carte-ombre);
+  color: var(--texte);
+}
+
+/* La question sur toute la largeur (un article de 60 caractères tient sur 2 lignes), les boutons dessous. */
+.courses-confirmation-texte {
+  grid-column: 1 / 4;
+  margin-bottom: 16px;
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1.25;
+  word-wrap: break-word;
+}
+
+.courses-confirmation-oui {
+  grid-column: 2;
+}
+
+/* Colonne de droite */
+
+.courses-cote {
+  display: grid;
+  grid-template-rows: auto auto auto auto auto minmax(0, 1fr);
+  grid-row-gap: 24px;
+  min-height: 0;
+}
+
+.courses-ajout,
+.courses-drive {
+  display: grid;
+  grid-row-gap: 16px;
+  padding: 24px;
+}
+
+.courses-ajout .intitule {
+  margin: 0;
+}
+
+.courses-formulaire {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-column-gap: 16px;
+}
+
+.courses-champ {
+  min-width: 0;
+  height: 96px;
+  padding: 0 20px;
+  border: 3px solid var(--texte-2);
+  border-radius: 20px;
+  background: var(--case);
+  color: var(--texte);
+  font-size: 32px;
+}
+
+.courses-champ:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.courses-ajouter {
+  padding: 0 24px;
+}
+
+.courses-drive-date {
+  color: var(--texte-2);
+}
+
+.courses-vider {
+  background: var(--carte);
+  box-shadow: 0 2px 0 var(--carte-ombre);
+}
+
+.courses-erreur {
+  padding: 16px 20px;
+  border-radius: 20px;
+  background: var(--carte);
+  color: var(--alerte);
+  font-weight: 700;
+}
+
+.courses-hors-ligne {
+  color: var(--texte-2);
+}
+
+.courses-essai {
+  grid-row: 6;
+  align-self: end;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-column-gap: 12px;
+  align-items: center;
+  color: var(--texte-2);
+}
+
+.courses-essai-icone {
+  font-size: 30px;
+}

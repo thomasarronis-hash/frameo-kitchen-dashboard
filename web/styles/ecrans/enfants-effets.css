@@ -1,0 +1,75 @@
+/*
+ * web/styles/ecrans/enfants-effets.css
+ *
+ * Rôle    : les éléments volants des animations du tableau des enfants (ecrans/enfants-effets.js) : le « +5 » qui vole vers
+ *           la bourse, les pièces qui tombent dedans, l'étoile de Pablo, les brins de la fête du coffre.
+ * Entrées : jetons.css (--piece, --piece-trait, --texte-piece, --accent, --enfant-timo, --enfant-pablo).
+ * Sorties : .effet, .effet-plus, .effet-texte, .effet-piece, .effet-etoile, .effet-icone, .effet-brin, .fete-1 à .fete-4.
+ * Pièges  :
+ *   - Posés en absolu dans la racine de l'écran, centrés par translate(-50%, -50%) ; le mouvement est fait par Web
+ *     Animations (transform et opacity seulement), aucune @keyframes ; invisibles hors animation (opacité 0).
+ *   - Le « +5 » est écrit en --texte-piece sur l'or (paire contrôlée) ; pièces et brins sont décoratifs.
+ */
+
+.effet {
+  position: absolute;
+  z-index: 10;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+}
+
+.effet-plus {
+  padding: 8px 28px;
+  border-radius: 48px;
+  background: var(--piece);
+  color: var(--texte-piece);
+  box-shadow: 0 0 0 5px var(--piece-trait);
+  font-family: "Fraunces", serif;
+  font-variation-settings: "opsz" 72;
+  font-size: 72px;
+  font-weight: 600;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+.effet-piece {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--piece);
+  box-shadow: 0 0 0 5px var(--piece-trait);
+}
+
+.effet-etoile {
+  color: var(--piece-trait);
+}
+
+.effet-icone {
+  display: block;
+  font-size: 140px;
+  fill: var(--piece);
+  stroke-width: 1.4;
+}
+
+.effet-brin {
+  width: 18px;
+  height: 30px;
+  border-radius: 4px;
+}
+
+.fete-1 {
+  background: var(--piece);
+}
+
+.fete-2 {
+  background: var(--accent);
+}
+
+.fete-3 {
+  background: var(--enfant-timo);
+}
+
+.fete-4 {
+  background: var(--enfant-pablo);
+}

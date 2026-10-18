@@ -1,0 +1,229 @@
+/*
+ * web/styles/ecrans/boutique.css
+ *
+ * Rôle    : les points et la boutique de Timo (ecrans/enfants-boutique.js) : à gauche son total (étoile et nombre) et ses
+ *           derniers gains, à droite les trois récompenses (dessin de plus en plus grand, prix, jauge, « encore 12 » ou
+ *           « Je veux ça », « En attente d'un parent »).
+ * Entrées : jetons.css (--piece, --piece-trait, --texte-piece, --sauge-piste, --accent) ; base.css (.carte, .intitule,
+ *           .chiffres, .chiffres-affiche, .bouton-fort).
+ * Sorties : .boutique, .boutique-points, .boutique-total, .boutique-etoile, .boutique-solde, .boutique-intitule,
+ *           .boutique-gains, .boutique-gain(-picto, -texte, -valeur), .boutique-vide, .boutique-cadeaux, .boutique-cadeau
+ *           (-possible, -demande), .boutique-cadeau-picto, .boutique-taille-1/2/3, .boutique-cadeau-nom,
+ *           .boutique-cadeau-prix, .boutique-etoile-petite, .boutique-jauge(-niveau), .boutique-manque, .boutique-vouloir,
+ *           .boutique-attente(-icone).
+ * Pièges  :
+ *   - Total en 200 px (lu de loin) ; gains en 32 px ; contenu des cadeaux centré verticalement. Le « +1 » libre est dans
+ *     l'en-tête (enfants.css), pas ici : le même bouton sur les onglets Quête et Points.
+ *   - Étoiles et pièces d'or cernées d'or foncé (--piece-trait, 5,05:1 au moins le jour) ; le « +1 » écrit en --texte-piece
+ *     sur l'or (paire contrôlée).
+ *   - Jauge en transform: scaleX posée par le script ; « Je veux ça » à l'appui long, barre d'or qui se remplit en bas.
+ *   - « Pas encore de points » vient juste sous l'intitulé (avant la liste dans le DOM) : après la liste vide, la rangée
+ *     souple l'envoyait en bas de la carte (vu sur capture).
+ */
+
+.boutique {
+  display: grid;
+  grid-template-columns: 560px minmax(0, 1fr);
+  grid-column-gap: 32px;
+  min-height: 0;
+}
+
+.boutique-points {
+  display: grid;
+  grid-template-rows: auto auto auto minmax(0, 1fr);
+  grid-row-gap: 24px;
+  align-content: start;
+  padding: 40px 48px;
+  min-height: 0;
+}
+
+.boutique-total {
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-column-gap: 24px;
+  align-items: center;
+  justify-content: center;
+}
+
+.boutique-etoile {
+  font-size: 150px;
+  stroke-width: 1.4;
+  color: var(--piece-trait);
+  fill: var(--piece);
+}
+
+.boutique-solde {
+  font-size: 200px;
+  line-height: 1;
+  color: var(--texte);
+}
+
+.boutique-intitule {
+  margin-top: 8px;
+}
+
+.boutique-gains {
+  display: grid;
+  grid-row-gap: 12px;
+  align-content: start;
+}
+
+.boutique-gain {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr) auto;
+  grid-column-gap: 20px;
+  align-items: center;
+  min-height: 72px;
+}
+
+.boutique-gain-picto {
+  font-size: 52px;
+  color: var(--accent);
+}
+
+.boutique-gain-texte {
+  font-size: 32px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.boutique-gain-valeur {
+  min-width: 72px;
+  height: 56px;
+  padding: 0 14px;
+  display: grid;
+  align-items: center;
+  justify-items: center;
+  border-radius: 28px;
+  background: var(--piece);
+  color: var(--texte-piece);
+  font-size: 32px;
+  line-height: 1;
+}
+
+.boutique-vide {
+  font-size: 30px;
+  color: var(--texte-2);
+}
+
+.boutique-cadeaux {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-column-gap: 32px;
+  min-height: 0;
+}
+
+.boutique-cadeau {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  grid-row-gap: 20px;
+  padding: 32px;
+  text-align: center;
+}
+
+.boutique-cadeau-demande {
+  box-shadow: 0 0 0 6px var(--accent);
+}
+
+.boutique-cadeau-picto {
+  stroke-width: 1.4;
+  color: var(--piece-trait);
+}
+
+.boutique-taille-1 {
+  font-size: 120px;
+}
+
+.boutique-taille-2 {
+  font-size: 170px;
+}
+
+.boutique-taille-3 {
+  font-size: 220px;
+}
+
+.boutique-cadeau-nom {
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+.boutique-cadeau-prix {
+  display: grid;
+  grid-auto-flow: column;
+  grid-column-gap: 10px;
+  align-items: center;
+  font-size: 64px;
+  line-height: 1;
+}
+
+.boutique-etoile-petite {
+  font-size: 52px;
+  color: var(--piece-trait);
+  fill: var(--piece);
+}
+
+.boutique-jauge {
+  position: relative;
+  width: 100%;
+  height: 20px;
+  border-radius: 10px;
+  background: var(--sauge-piste);
+  overflow: hidden;
+}
+
+.boutique-jauge-niveau {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--piece-trait);
+  transform-origin: 0 50%;
+}
+
+.boutique-manque {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--texte-2);
+}
+
+.boutique-vouloir {
+  position: relative;
+  overflow: hidden;
+}
+
+.boutique-vouloir::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 12px;
+  background: var(--piece);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+}
+
+.boutique-vouloir.appui-long-en-cours::after {
+  transform: scaleX(1);
+  transition: transform 1s linear;
+}
+
+.boutique-attente {
+  display: grid;
+  grid-auto-flow: column;
+  grid-column-gap: 12px;
+  align-items: center;
+  min-height: 96px;
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.boutique-attente-icone {
+  font-size: 44px;
+}

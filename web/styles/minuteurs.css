@@ -1,0 +1,353 @@
+/*
+ * web/styles/minuteurs.css
+ *
+ * Rôle    : les couches des minuteurs (conception §1.5 et §1.6) : la pastille (visible partout, nuit comprise),
+ *           le tiroir à droite (réglage, démarrer, liste) et l'alerte plein écran de fin.
+ * Entrées : le DOM construit par web/src/composants/pastille.js et web/src/composants/minuteurs.js ; jetons.css ;
+ *           base.css (.bouton-fort, .bouton-doux, .chiffres).
+ * Sorties : classes .pastille*, .couche-tiroir, .tiroir*, .alerte*.
+ * Pièges  :
+ *   - Ordre des couches : bandeau (10), « non appairé » (15), pastille (20), tiroir (30), alerte (50) au-dessus
+ *     de tout, vue de nuit comprise (la nuit est une couche sans z-index, placée avant dans le DOM). Les
+ *     minuteurs, locaux, restent utilisables sur un cadre non appairé.
+ *   - Pastille dans le bas du menu (sous la 7e entrée, au-dessus du pied) quand le menu est là : elle ne cache
+ *     aucun écran ; 224 px de large : l'icône et le temps (« 5:59:59 » en 44 px), puis le nom (« Minuteur 1 »
+ *     et « +2 » tiennent) sur toute la largeur. Sans menu (recette : .scene-plein ; nuit), elle passe en haut à droite, sur une ligne, dans un
+ *     coin que l'en-tête de la recette laisse libre ; en mode enfant (.scene-enfant), sur une ligne aussi, mais en bas à
+ *     gauche (enfants.css : en haut à droite sont les visages des enfants).
+ *   - La nuit, ses textes prennent le gris de l'horloge atténuée (--texte-nuit) : pas de point lumineux.
+ *   - Tiroir de 760 px : 5 minuteurs, le réglage et l'en-tête tiennent sans défiler (1 029 px sur 1 080).
+ *   - L'alerte a ses propres couleurs (ambre, jetons.css) et des textes de 40 px au moins : lisible de loin.
+ *   - Fraunces : opsz fixé dans chaque règle qui l'emploie (base.css explique pourquoi).
+ *   - Grilles seulement (grid-gap), jamais de gap en flex (conception §3.1) ; aucune opacité partielle.
+ */
+
+/* Pastille */
+
+.pastille {
+  position: absolute;
+  left: 8px;
+  top: 836px;
+  width: 224px;
+  z-index: 20;
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr);
+  grid-column-gap: 10px;
+  align-items: center;
+  padding: 12px 16px 14px;
+  border-radius: 24px;
+  background: var(--carte);
+  box-shadow: 0 2px 0 var(--carte-ombre);
+  color: var(--texte);
+  cursor: pointer;
+}
+
+.pastille-icone {
+  font-size: 32px;
+}
+
+/* Dans le menu : l'icône et le temps (« 5:59:59 » tient en 44 px), le nom et les autres en dessous. */
+.pastille-temps {
+  font-size: 44px;
+  line-height: 1.1;
+  white-space: nowrap;
+  color: var(--chaud);
+}
+
+.pastille-textes {
+  grid-column: 1 / 3;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-column-gap: 8px;
+  min-width: 0;
+}
+
+.pastille-libelle {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--texte-2);
+}
+
+.pastille-autres {
+  font-weight: 700;
+}
+
+.scene-plein .pastille,
+.scene-enfant .pastille,
+.theme-nuit .pastille {
+  left: auto;
+  right: 32px;
+  top: 32px;
+  width: auto;
+  max-width: 560px;
+  grid-template-columns: 40px auto auto;
+  grid-column-gap: 16px;
+  padding: 12px 24px;
+}
+
+.scene-plein .pastille-textes,
+.scene-enfant .pastille-textes,
+.theme-nuit .pastille-textes {
+  grid-column: auto;
+}
+
+.scene-plein .pastille-icone,
+.scene-enfant .pastille-icone,
+.theme-nuit .pastille-icone {
+  font-size: 40px;
+}
+
+.theme-nuit .pastille,
+.theme-nuit .pastille-temps,
+.theme-nuit .pastille-libelle {
+  color: var(--texte-nuit);
+}
+
+.pastille-sonne {
+  background: var(--alerte-fond);
+  color: var(--texte-alerte);
+}
+
+.pastille-sonne .pastille-temps,
+.pastille-sonne .pastille-libelle {
+  color: var(--texte-alerte);
+}
+
+/* « Terminé » est plus long qu'un temps : plus petit, pour tenir dans les 224 px du menu. */
+.pastille-sonne .pastille-temps {
+  font-size: 34px;
+}
+
+/* Tiroir */
+
+.couche-tiroir {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1920px;
+  height: 1080px;
+  z-index: 30;
+}
+
+.tiroir-voile {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1920px;
+  height: 1080px;
+  background: var(--voile);
+}
+
+.tiroir {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 760px;
+  height: 1080px;
+  padding: 32px;
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  grid-row-gap: 28px;
+  align-content: start;
+  background: var(--carte);
+  color: var(--texte);
+}
+
+.tiroir-entete {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-column-gap: 24px;
+  align-items: center;
+}
+
+.tiroir-titre {
+  margin: 0;
+  font-family: "Fraunces", serif;
+  font-size: 48px;
+  font-weight: 600;
+  font-variation-settings: "opsz" 48;
+  line-height: 1.1;
+}
+
+.tiroir-reglage {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
+  grid-gap: 16px;
+  padding-bottom: 28px;
+  border-bottom: 2px solid var(--separateur);
+}
+
+.tiroir-reglage .intitule {
+  grid-column: 1 / 4;
+  margin: 0;
+}
+
+.tiroir-duree {
+  font-size: 60px;
+  line-height: 1;
+  white-space: nowrap;
+  color: var(--chaud);
+  align-self: center;
+}
+
+.tiroir-demarrer {
+  grid-column: 2 / 4;
+}
+
+.tiroir-regler {
+  padding: 0 16px;
+}
+
+.tiroir-message {
+  grid-column: 1 / 4;
+  color: var(--alerte);
+  font-weight: 700;
+}
+
+.tiroir-liste {
+  display: grid;
+  grid-row-gap: 16px;
+  align-content: start;
+}
+
+.tiroir-minuteur {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  grid-column-gap: 32px;
+  align-items: center;
+}
+
+.tiroir-minuteur-textes {
+  display: grid;
+  min-width: 0;
+}
+
+.tiroir-minuteur-nom {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--texte-2);
+}
+
+.tiroir-minuteur-temps {
+  font-size: 56px;
+  line-height: 1.05;
+  color: var(--chaud);
+}
+
+.tiroir-minuteur .bouton-doux {
+  padding: 0 20px;
+}
+
+/* Minuteur annulé depuis moins de 5 s : la ligne reste à sa place, « Rétablir » (sans le +) à la place de « +1 min »,
+   la place d'Annuler reste vide (visibility, pas display : la colonne garde sa largeur, rien ne glisse). */
+.tiroir-minuteur-annule .tiroir-minuteur-temps {
+  color: var(--texte-2);
+}
+
+.tiroir-minuteur-annule .tiroir-plus .bouton-fort-icone {
+  display: none;
+}
+
+.tiroir-minuteur-annule .tiroir-annuler {
+  visibility: hidden;
+}
+
+.tiroir-vide {
+  color: var(--texte-2);
+}
+
+/* Alerte de fin : plein écran, au-dessus de tout, jusqu'au toucher. */
+
+.alerte {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1920px;
+  height: 1080px;
+  z-index: 50;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  grid-row-gap: 40px;
+  padding: 64px 160px;
+  background: var(--alerte-fond);
+  color: var(--texte-alerte);
+  text-align: center;
+  cursor: pointer;
+}
+
+.alerte-tete {
+  display: grid;
+  justify-items: center;
+  grid-row-gap: 8px;
+}
+
+.alerte-icone {
+  font-size: 140px;
+}
+
+.alerte-titre {
+  font-size: 48px;
+  font-weight: 700;
+}
+
+.alerte-liste {
+  display: grid;
+  grid-row-gap: 28px;
+  width: 1600px;
+}
+
+.alerte-ligne {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-column-gap: 48px;
+  align-items: center;
+  text-align: left;
+}
+
+.alerte-textes {
+  display: grid;
+  min-width: 0;
+}
+
+.alerte-nom {
+  font-family: "Fraunces", serif;
+  font-size: 120px;
+  font-weight: 600;
+  font-variation-settings: "opsz" 144;
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.alerte-fin {
+  font-size: 40px;
+}
+
+.alerte-bouton {
+  display: grid;
+  grid-auto-flow: column;
+  grid-column-gap: 16px;
+  align-items: center;
+  min-height: 120px;
+  padding: 0 48px;
+  border-radius: 28px;
+  background: var(--alerte-bouton);
+  color: var(--texte-alerte-bouton);
+  font-size: 40px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.alerte-autres {
+  font-size: 40px;
+  font-weight: 700;
+}
+
+.alerte-arreter {
+  font-size: 40px;
+  font-weight: 700;
+}

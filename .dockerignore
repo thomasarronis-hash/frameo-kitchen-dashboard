@@ -1,0 +1,14 @@
+# .dockerignore : rien d'autre que le nécessaire au serveur dans le contexte de construction (voir Dockerfile).
+# Le faux Immich de démonstration (IMMICH_DEMO=1, développement seulement) n'entre jamais dans l'image.
+.git
+node_modules
+data
+docs
+tests
+kiosque
+outils
+deploiement
+web/compat
+.env
+*.md
+serveur/sources/immich-demo.js

@@ -1,0 +1,2577 @@
+[
+ {
+  "entity_id": "conversation.home_assistant",
+  "state": "unknown",
+  "attributes": {
+   "friendly_name": "Home Assistant",
+   "supported_features": 1
+  },
+  "last_changed": "2026-10-04T05:40:17.386384+00:00",
+  "last_updated": "2026-10-04T05:40:17.386384+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "event.backup_automatic_backup",
+  "state": "unknown",
+  "attributes": {
+   "event_types": [
+    "completed",
+    "failed",
+    "in_progress"
+   ],
+   "event_type": null,
+   "friendly_name": "Backup Sauvegarde automatique"
+  },
+  "last_changed": "2026-10-04T05:40:17.422794+00:00",
+  "last_updated": "2026-10-04T05:40:17.422794+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "sensor.backup_backup_manager_state",
+  "state": "idle",
+  "attributes": {
+   "options": [
+    "idle",
+    "create_backup",
+    "blocked",
+    "receive_backup",
+    "restore_backup"
+   ],
+   "device_class": "enum",
+   "friendly_name": "Backup État du gestionnaire de sauvegarde"
+  },
+  "last_changed": "2026-10-04T05:40:18.921953+00:00",
+  "last_updated": "2026-10-04T05:40:18.921953+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "sensor.backup_next_scheduled_automatic_backup",
+  "state": "unknown",
+  "attributes": {
+   "device_class": "timestamp",
+   "friendly_name": "Backup Prochaine sauvegarde automatique programmée"
+  },
+  "last_changed": "2026-10-04T05:40:17.423726+00:00",
+  "last_updated": "2026-10-04T05:40:17.423726+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "sensor.backup_last_successful_automatic_backup",
+  "state": "unknown",
+  "attributes": {
+   "device_class": "timestamp",
+   "friendly_name": "Backup Dernière sauvegarde automatique réussie"
+  },
+  "last_changed": "2026-10-04T05:40:17.423904+00:00",
+  "last_updated": "2026-10-04T05:40:17.423904+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "sensor.backup_last_attempted_automatic_backup",
+  "state": "unknown",
+  "attributes": {
+   "device_class": "timestamp",
+   "friendly_name": "Backup Dernière tentative de sauvegarde automatique"
+  },
+  "last_changed": "2026-10-04T05:40:17.424079+00:00",
+  "last_updated": "2026-10-04T05:40:17.424079+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "zone.home",
+  "state": "2",
+  "attributes": {
+   "latitude": 12.3456,
+   "longitude": 65.4321,
+   "radius": 100,
+   "passive": false,
+   "persons": [
+    "person.personne_2",
+    "person.personne_1"
+   ],
+   "editable": true,
+   "icon": "mdi:home",
+   "friendly_name": "Maison"
+  },
+  "last_changed": "2026-10-04T05:40:17.609279+00:00",
+  "last_updated": "2026-10-04T05:40:17.609279+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "person.personne_1",
+  "state": "home",
+  "attributes": {
+   "editable": true,
+   "id": "personne_1",
+   "device_trackers": [
+    "device_tracker.nope"
+   ],
+   "in_zones": [
+    "zone.home"
+   ],
+   "latitude": 12.3456,
+   "longitude": 65.4321,
+   "gps_accuracy": 5,
+   "source": "device_tracker.nope",
+   "user_id": "utilisateur-factice",
+   "friendly_name": "Personne 1"
+  },
+  "last_changed": "2026-10-04T05:40:17.608996+00:00",
+  "last_updated": "2026-10-10T17:03:11.287247+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "person.personne_2",
+  "state": "home",
+  "attributes": {
+   "editable": true,
+   "id": "personne_2",
+   "device_trackers": [
+    "device_tracker.iphone_5"
+   ],
+   "in_zones": [
+    "zone.home"
+   ],
+   "latitude": 12.3456,
+   "longitude": 65.4321,
+   "gps_accuracy": 5,
+   "source": "device_tracker.iphone_5",
+   "user_id": "utilisateur-factice",
+   "friendly_name": "Personne 2"
+  },
+  "last_changed": "2026-10-04T05:40:17.609214+00:00",
+  "last_updated": "2026-10-04T05:40:18.914749+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "script.sonnette_flux_on",
+  "state": "off",
+  "attributes": {
+   "last_triggered": "2026-10-08T11:49:49.842045+00:00",
+   "mode": "single",
+   "current": 0,
+   "friendly_name": "Sonnette : ouvrir le flux P2P"
+  },
+  "last_changed": "2026-10-08T11:49:56.686473+00:00",
+  "last_updated": "2026-10-08T11:49:56.686473+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "script.sonnette_flux_off",
+  "state": "off",
+  "attributes": {
+   "last_triggered": "2026-10-08T11:53:00.311960+00:00",
+   "mode": "single",
+   "current": 0,
+   "friendly_name": "Sonnette : fermer le flux P2P"
+  },
+  "last_changed": "2026-10-08T11:53:00.375064+00:00",
+  "last_updated": "2026-10-08T11:53:00.375064+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "script.sonnette_capture",
+  "state": "off",
+  "attributes": {
+   "last_triggered": "2026-10-08T11:49:49.840600+00:00",
+   "mode": "single",
+   "current": 0,
+   "friendly_name": "Sonnette : capturer une photo (flux P2P laissé ouvert)"
+  },
+  "last_changed": "2026-10-08T11:49:59.751577+00:00",
+  "last_updated": "2026-10-08T11:49:59.751577+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "script.sonnette_direct",
+  "state": "off",
+  "attributes": {
+   "last_triggered": "2026-09-17T17:05:41.933515+00:00",
+   "mode": "restart",
+   "current": 0,
+   "friendly_name": "Sonnette : direct 3 min (bouton tablette)"
+  },
+  "last_changed": "2026-10-04T05:40:17.851836+00:00",
+  "last_updated": "2026-10-04T05:40:17.851836+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "counter.alarme_codes_faux",
+  "state": "0",
+  "attributes": {
+   "editable": true,
+   "initial": 0,
+   "step": 1,
+   "friendly_name": "Alarme codes faux"
+  },
+  "last_changed": "2026-10-04T05:40:17.861604+00:00",
+  "last_updated": "2026-10-04T05:40:17.861604+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "alarm_control_panel.alarme_maison",
+  "state": "armed_home",
+  "attributes": {
+   "code_format": "number",
+   "changed_by": null,
+   "code_arm_required": false,
+   "friendly_name": "Alarme maison",
+   "supported_features": 7
+  },
+  "last_changed": "2026-10-11T03:00:02.091431+00:00",
+  "last_updated": "2026-10-11T03:00:02.091431+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "sun.sun",
+  "state": "above_horizon",
+  "attributes": {
+   "next_dawn": "2026-10-12T05:20:46.858018+00:00",
+   "next_dusk": "2026-10-11T17:30:30.357970+00:00",
+   "next_midnight": "2026-10-11T23:25:09+00:00",
+   "next_noon": "2026-10-11T11:25:31+00:00",
+   "next_rising": "2026-10-12T05:51:10.205686+00:00",
+   "next_setting": "2026-10-11T17:00:12.718734+00:00",
+   "elevation": 32.41,
+   "azimuth": 148.99,
+   "rising": true,
+   "friendly_name": "Sun"
+  },
+  "last_changed": "2026-10-11T05:49:51.529766+00:00",
+  "last_updated": "2026-10-11T09:41:23.049039+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "sensor.sun_next_dawn",
+  "state": "2026-10-12T05:20:46+00:00",
+  "attributes": {
+   "device_class": "timestamp",
+   "friendly_name": "Sun Prochaine aube"
+  },
+  "last_changed": "2026-10-11T05:19:30.249596+00:00",
+  "last_updated": "2026-10-11T05:19:30.249596+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "sensor.sun_next_dusk",
+  "state": "2026-10-11T17:30:30+00:00",
+  "attributes": {
+   "device_class": "timestamp",
+   "friendly_name": "Sun Prochain crépuscule"
+  },
+  "last_changed": "2026-10-10T17:32:18.113226+00:00",
+  "last_updated": "2026-10-10T17:32:18.113226+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "sensor.sun_next_midnight",
+  "state": "2026-10-11T23:25:09+00:00",
+  "attributes": {
+   "device_class": "timestamp",
+   "friendly_name": "Sun Prochain minuit"
+  },
+  "last_changed": "2026-10-10T23:25:24.003873+00:00",
+  "last_updated": "2026-10-10T23:25:24.003873+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "sensor.sun_next_noon",
+  "state": "2026-10-11T11:25:31+00:00",
+  "attributes": {
+   "device_class": "timestamp",
+   "friendly_name": "Sun Prochain midi"
+  },
+  "last_changed": "2026-10-10T11:25:47.002779+00:00",
+  "last_updated": "2026-10-10T11:25:47.002779+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "sensor.sun_next_rising",
+  "state": "2026-10-12T05:51:10+00:00",
+  "attributes": {
+   "device_class": "timestamp",
+   "friendly_name": "Sun Prochain lever"
+  },
+  "last_changed": "2026-10-11T05:49:51.530345+00:00",
+  "last_updated": "2026-10-11T05:49:51.530345+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "sensor.sun_next_setting",
+  "state": "2026-10-11T17:00:12+00:00",
+  "attributes": {
+   "device_class": "timestamp",
+   "friendly_name": "Sun Prochain coucher"
+  },
+  "last_changed": "2026-10-10T17:02:02.461054+00:00",
+  "last_updated": "2026-10-10T17:02:02.461054+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "camera.sonnette_derniere_photo",
+  "state": "idle",
+  "attributes": {
+   "access_token": "jeton-factice-0000",
+   "entity_picture": "/api/camera_proxy/camera.sonnette_derniere_photo?token=jeton-factice-0000",
+   "friendly_name": "Sonnette (dernière photo)",
+   "supported_features": 2
+  },
+  "last_changed": "2026-10-04T05:40:18.505171+00:00",
+  "last_updated": "2026-10-11T09:40:19.789375+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "media_player.smart_tv_pro_2_192_0_2_178",
+  "state": "idle",
+  "attributes": {
+   "sound_mode_list": [
+    "FactoryDefaults"
+   ],
+   "volume_level": 0.0,
+   "is_volume_muted": false,
+   "media_content_id": "",
+   "media_duration": 0,
+   "media_track": 0,
+   "shuffle": false,
+   "repeat": "off",
+   "friendly_name": "Smart TV Pro 2(192.0.2.178)",
+   "supported_features": 479807
+  },
+  "last_changed": "2026-10-07T15:30:34.411335+00:00",
+  "last_updated": "2026-10-07T15:30:36.660061+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "media_player.smart_tv_pro_2_2",
+  "state": "off",
+  "attributes": {
+   "assumed_state": true,
+   "device_class": "tv",
+   "friendly_name": "Smart TV Pro 2",
+   "supported_features": 153529
+  },
+  "last_changed": "2026-10-11T07:09:33.614312+00:00",
+  "last_updated": "2026-10-11T07:09:33.614312+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "remote.smart_tv_pro_2",
+  "state": "off",
+  "attributes": {
+   "activity_list": [],
+   "current_activity": "com.tcl.tv",
+   "friendly_name": "Smart TV Pro 2",
+   "supported_features": 4
+  },
+  "last_changed": "2026-10-11T07:09:33.614499+00:00",
+  "last_updated": "2026-10-11T07:09:33.614499+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "weather.forecast_maison",
+  "state": "partlycloudy",
+  "attributes": {
+   "temperature": 14.1,
+   "dew_point": 11.4,
+   "temperature_unit": "°C",
+   "humidity": 84,
+   "cloud_coverage": 68.7,
+   "uv_index": 2.0,
+   "pressure": 1017.4,
+   "pressure_unit": "mbar",
+   "wind_bearing": 338.6,
+   "wind_speed": 14.4,
+   "wind_speed_unit": "km/h",
+   "visibility_unit": "mi",
+   "precipitation_unit": "mm",
+   "attribution": "Weather forecast from met.no, delivered by the Norwegian Meteorological Institute.",
+   "friendly_name": "Forecast Maison",
+   "supported_features": 3
+  },
+  "last_changed": "2026-10-11T08:20:20.652213+00:00",
+  "last_updated": "2026-10-11T09:24:20.722577+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "device_tracker.nope",
+  "state": "home",
+  "attributes": {
+   "tracking_type": "position",
+   "in_zones": [
+    "zone.home"
+   ],
+   "source_type": "gps",
+   "battery_level": 50,
+   "latitude": 12.3456,
+   "longitude": 65.4321,
+   "gps_accuracy": 5,
+   "altitude": 100,
+   "vertical_accuracy": 3,
+   "friendly_name": "Nope"
+  },
+  "last_changed": "2026-10-10T17:03:11.287052+00:00",
+  "last_updated": "2026-10-10T17:03:11.287052+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "notify.nope",
+  "state": "2026-10-08T11:49:59.988039+00:00",
+  "attributes": {
+   "friendly_name": "Nope",
+   "supported_features": 1
+  },
+  "last_changed": "2026-10-08T11:49:59.988110+00:00",
+  "last_updated": "2026-10-08T11:49:59.988110+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "binary_sensor.iphone_focus",
+  "state": "off",
+  "attributes": {
+   "icon": "mdi:dots-square",
+   "friendly_name": "iPhone Focus"
+  },
+  "last_changed": "2026-10-04T05:40:18.541337+00:00",
+  "last_updated": "2026-10-04T05:40:18.541337+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "binary_sensor.iphone_kiosk_mode",
+  "state": "off",
+  "attributes": {
+   "icon": "mdi:dots-square",
+   "friendly_name": "iPhone Kiosk Mode"
+  },
+  "last_changed": "2026-10-04T05:40:18.541499+00:00",
+  "last_updated": "2026-10-04T05:40:18.541499+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "binary_sensor.iphone_kiosk_screensaver",
+  "state": "off",
+  "attributes": {
+   "icon": "mdi:dots-square",
+   "friendly_name": "iPhone Kiosk Screensaver"
+  },
+  "last_changed": "2026-10-04T05:40:18.541651+00:00",
+  "last_updated": "2026-10-04T05:40:18.541651+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "device_tracker.iphone_5",
+  "state": "home",
+  "attributes": {
+   "tracking_type": "position",
+   "in_zones": [
+    "zone.home"
+   ],
+   "source_type": "gps",
+   "battery_level": 25,
+   "latitude": 12.3456,
+   "longitude": 65.4321,
+   "gps_accuracy": 5,
+   "altitude": 100,
+   "vertical_accuracy": 3,
+   "friendly_name": "iPhone"
+  },
+  "last_changed": "2026-10-04T05:40:18.542014+00:00",
+  "last_updated": "2026-10-04T05:40:18.542014+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "notify.iphone",
+  "state": "2026-10-08T11:50:00.309590+00:00",
+  "attributes": {
+   "friendly_name": "iPhone",
+   "supported_features": 1
+  },
+  "last_changed": "2026-10-08T11:50:00.309659+00:00",
+  "last_updated": "2026-10-08T11:50:00.309659+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "sensor.iphone_average_active_pace",
+  "state": "unavailable",
+  "attributes": {
+   "icon": "mdi:dots-square",
+   "friendly_name": "iPhone Average Active Pace"
+  },
+  "last_changed": "2026-10-04T05:40:18.542795+00:00",
+  "last_updated": "2026-10-04T05:40:18.542795+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "sensor.iphone_floors_ascended",
+  "state": "unavailable",
+  "attributes": {
+   "icon": "mdi:dots-square",
+   "friendly_name": "iPhone Floors Ascended"
+  },
+  "last_changed": "2026-10-04T05:40:18.542969+00:00",
+  "last_updated": "2026-10-04T05:40:18.542969+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "sensor.iphone_activity",
+  "state": "unavailable",
+  "attributes": {
+   "icon": "mdi:dots-square",
+   "friendly_name": "iPhone Activity"
+  },
+  "last_changed": "2026-10-04T05:40:18.543135+00:00",
+  "last_updated": "2026-10-04T05:40:18.543135+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "sensor.iphone_current_cadence",
+  "state": "unavailable",
+  "attributes": {
+   "icon": "mdi:dots-square",
+   "friendly_name": "iPhone Current Cadence"
+  },
+  "last_changed": "2026-10-04T05:40:18.543302+00:00",
+  "last_updated": "2026-10-04T05:40:18.543302+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "sensor.iphone_steps",
+  "state": "unavailable",
+  "attributes": {
+   "icon": "mdi:dots-square",
+   "friendly_name": "iPhone Steps"
+  },
+  "last_changed": "2026-10-04T05:40:18.543465+00:00",
+  "last_updated": "2026-10-04T05:40:18.543465+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "sensor.iphone_distance",
+  "state": "unavailable",
+  "attributes": {
+   "icon": "mdi:dots-square",
+   "friendly_name": "iPhone Distance"
+  },
+  "last_changed": "2026-10-04T05:40:18.543624+00:00",
+  "last_updated": "2026-10-04T05:40:18.543624+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "sensor.iphone_battery_state",
+  "state": "unavailable",
+  "attributes": {
+   "icon": "mdi:dots-square",
+   "friendly_name": "iPhone Battery State"
+  },
+  "last_changed": "2026-10-04T05:40:18.543785+00:00",
+  "last_updated": "2026-10-04T05:40:18.543785+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "sensor.iphone_current_pace",
+  "state": "unavailable",
+  "attributes": {
+   "icon": "mdi:dots-square",
+   "friendly_name": "iPhone Current Pace"
+  },
+  "last_changed": "2026-10-04T05:40:18.543945+00:00",
+  "last_updated": "2026-10-04T05:40:18.543945+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "sensor.iphone_floors_descended",
+  "state": "unavailable",
+  "attributes": {
+   "icon": "mdi:dots-square",
+   "friendly_name": "iPhone Floors Descended"
+  },
+  "last_changed": "2026-10-04T05:40:18.544340+00:00",
+  "last_updated": "2026-10-04T05:40:18.544340+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "sensor.iphone_battery_level",
+  "state": "unavailable",
+  "attributes": {
+   "unit_of_measurement": "%",
+   "device_class": "battery",
+   "icon": "mdi:dots-square",
+   "friendly_name": "iPhone Battery Level"
+  },
+  "last_changed": "2026-10-04T05:40:18.544528+00:00",
+  "last_updated": "2026-10-04T05:40:18.544528+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "sensor.iphone_connection_type",
+  "state": "unavailable",
+  "attributes": {
+   "icon": "mdi:dots-square",
+   "friendly_name": "iPhone Connection Type"
+  },
+  "last_changed": "2026-10-04T05:40:18.544696+00:00",
+  "last_updated": "2026-10-04T05:40:18.544696+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "sensor.iphone_ssid",
+  "state": "unavailable",
+  "attributes": {
+   "icon": "mdi:dots-square",
+   "friendly_name": "iPhone SSID"
+  },
+  "last_changed": "2026-10-04T05:40:18.544859+00:00",
+  "last_updated": "2026-10-04T05:40:18.544859+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "sensor.iphone_storage",
+  "state": "unavailable",
+  "attributes": {
+   "unit_of_measurement": "% available",
+   "icon": "mdi:dots-square",
+   "friendly_name": "iPhone Storage"
+  },
+  "last_changed": "2026-10-04T05:40:18.545022+00:00",
+  "last_updated": "2026-10-04T05:40:18.545022+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "sensor.iphone_bssid",
+  "state": "unavailable",
+  "attributes": {
+   "icon": "mdi:dots-square",
+   "friendly_name": "iPhone BSSID"
+  },
+  "last_changed": "2026-10-04T05:40:18.545183+00:00",
+  "last_updated": "2026-10-04T05:40:18.545183+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "sensor.iphone_sim_1",
+  "state": "unavailable",
+  "attributes": {
+   "icon": "mdi:dots-square",
+   "friendly_name": "iPhone SIM 1"
+  },
+  "last_changed": "2026-10-04T05:40:18.545342+00:00",
+  "last_updated": "2026-10-04T05:40:18.545342+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "sensor.iphone_sim_2",
+  "state": "unavailable",
+  "attributes": {
+   "icon": "mdi:dots-square",
+   "friendly_name": "iPhone SIM 2"
+  },
+  "last_changed": "2026-10-04T05:40:18.545503+00:00",
+  "last_updated": "2026-10-04T05:40:18.545503+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "sensor.iphone_kiosk_brightness",
+  "state": "unavailable",
+  "attributes": {
+   "unit_of_measurement": "%",
+   "icon": "mdi:dots-square",
+   "friendly_name": "iPhone Kiosk Brightness"
+  },
+  "last_changed": "2026-10-04T05:40:18.545661+00:00",
+  "last_updated": "2026-10-04T05:40:18.545661+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "sensor.iphone_last_update_trigger",
+  "state": "unavailable",
+  "attributes": {
+   "icon": "mdi:dots-square",
+   "friendly_name": "iPhone Last Update Trigger"
+  },
+  "last_changed": "2026-10-04T05:40:18.545820+00:00",
+  "last_updated": "2026-10-04T05:40:18.545820+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "sensor.iphone_geocoded_location",
+  "state": "unavailable",
+  "attributes": {
+   "icon": "mdi:dots-square",
+   "friendly_name": "iPhone Geocoded Location"
+  },
+  "last_changed": "2026-10-04T05:40:18.545977+00:00",
+  "last_updated": "2026-10-04T05:40:18.545977+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "sensor.iphone_kiosk_volume",
+  "state": "unavailable",
+  "attributes": {
+   "unit_of_measurement": "%",
+   "icon": "mdi:dots-square",
+   "friendly_name": "iPhone Kiosk Volume"
+  },
+  "last_changed": "2026-10-04T05:40:18.546134+00:00",
+  "last_updated": "2026-10-04T05:40:18.546134+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "sensor.iphone_location_permission",
+  "state": "unavailable",
+  "attributes": {
+   "icon": "mdi:dots-square",
+   "friendly_name": "iPhone Location permission"
+  },
+  "last_changed": "2026-10-04T05:40:18.546291+00:00",
+  "last_updated": "2026-10-04T05:40:18.546291+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "sensor.iphone_app_version",
+  "state": "unavailable",
+  "attributes": {
+   "icon": "mdi:dots-square",
+   "friendly_name": "iPhone App Version"
+  },
+  "last_changed": "2026-10-04T05:40:18.546448+00:00",
+  "last_updated": "2026-10-04T05:40:18.546448+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "sensor.iphone_pressure",
+  "state": "unavailable",
+  "attributes": {
+   "icon": "mdi:dots-square",
+   "friendly_name": "iPhone Pressure"
+  },
+  "last_changed": "2026-10-04T05:40:18.546606+00:00",
+  "last_updated": "2026-10-04T05:40:18.546606+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "sensor.iphone_audio_output",
+  "state": "unavailable",
+  "attributes": {
+   "icon": "mdi:dots-square",
+   "friendly_name": "iPhone Audio Output"
+  },
+  "last_changed": "2026-10-04T05:40:18.546820+00:00",
+  "last_updated": "2026-10-04T05:40:18.546820+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "tts.google_translate_en_com",
+  "state": "unknown",
+  "attributes": {
+   "friendly_name": "Google Translate en com"
+  },
+  "last_changed": "2026-10-04T05:40:18.547247+00:00",
+  "last_updated": "2026-10-04T05:40:18.547247+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "todo.shopping_list",
+  "state": "0",
+  "attributes": {
+   "friendly_name": "Shopping list",
+   "supported_features": 15
+  },
+  "last_changed": "2026-10-04T05:40:18.563518+00:00",
+  "last_updated": "2026-10-04T05:40:18.563518+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "automation.alarme_passer_en_mode_nuit_a_23h",
+  "state": "on",
+  "attributes": {
+   "id": "alarme_nuit_armer",
+   "last_triggered": "2026-10-10T21:00:00.261728+00:00",
+   "mode": "single",
+   "current": 0,
+   "friendly_name": "Alarme : passer en mode Nuit à 23h"
+  },
+  "last_changed": "2026-10-04T05:40:18.582952+00:00",
+  "last_updated": "2026-10-10T21:00:00.267930+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "automation.alarme_retour_en_mode_maison_a_5h",
+  "state": "on",
+  "attributes": {
+   "id": "alarme_nuit_retour_jour",
+   "last_triggered": "2026-10-11T03:00:00.348220+00:00",
+   "mode": "single",
+   "current": 0,
+   "friendly_name": "Alarme : retour en mode Maison à 5h"
+  },
+  "last_changed": "2026-10-04T05:40:18.583098+00:00",
+  "last_updated": "2026-10-11T03:00:00.354290+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "automation.alarme_armer_en_absent_quand_tout_le_monde_est_parti",
+  "state": "on",
+  "attributes": {
+   "id": "alarme_depart",
+   "last_triggered": null,
+   "mode": "single",
+   "current": 0,
+   "friendly_name": "Alarme : armer en Absent quand tout le monde est parti"
+  },
+  "last_changed": "2026-10-04T05:40:18.583207+00:00",
+  "last_updated": "2026-10-04T05:40:18.583207+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "automation.alarme_desarmer_au_retour_du_premier",
+  "state": "on",
+  "attributes": {
+   "id": "alarme_retour",
+   "last_triggered": null,
+   "mode": "single",
+   "current": 0,
+   "friendly_name": "Alarme : désarmer au retour du premier"
+  },
+  "last_changed": "2026-10-04T05:40:18.583308+00:00",
+  "last_updated": "2026-10-04T05:40:18.583308+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "automation.sonnette_photo_notifications_direct",
+  "state": "on",
+  "attributes": {
+   "id": "sonnette_sur_tv",
+   "last_triggered": "2026-10-08T11:49:47.314704+00:00",
+   "mode": "restart",
+   "current": 0,
+   "friendly_name": "Sonnette : photo, notifications et direct"
+  },
+  "last_changed": "2026-10-04T05:40:18.584232+00:00",
+  "last_updated": "2026-10-08T11:53:00.312971+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "automation.sonnette_pre_capture_quand_quelqu_un_approche",
+  "state": "on",
+  "attributes": {
+   "id": "sonnette_precapture",
+   "last_triggered": null,
+   "mode": "single",
+   "current": 0,
+   "friendly_name": "Sonnette : pré-capture quand quelqu'un approche"
+  },
+  "last_changed": "2026-10-04T05:40:18.584383+00:00",
+  "last_updated": "2026-10-04T05:40:18.584383+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "automation.alarme_alerte_codes_faux_sur_la_tablette",
+  "state": "on",
+  "attributes": {
+   "id": "alarme_codes_faux_alerte",
+   "last_triggered": "2026-09-17T17:11:43.102829+00:00",
+   "mode": "single",
+   "current": 0,
+   "friendly_name": "Alarme : alerte codes faux sur la tablette"
+  },
+  "last_changed": "2026-10-04T05:40:18.584526+00:00",
+  "last_updated": "2026-10-04T05:40:18.584526+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "binary_sensor.sejour_sejour_focus_du_clavier",
+  "state": "off",
+  "attributes": {
+   "friendly_name": "Séjour Focus du clavier"
+  },
+  "last_changed": "2026-10-07T05:05:35.028506+00:00",
+  "last_updated": "2026-10-07T05:05:35.028506+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "media_player.sejour_sejour",
+  "state": "off",
+  "attributes": {
+   "source_list": [
+    "App Store",
+    "Arcade",
+    "ARTE",
+    "CANAL+",
+    "Disney+",
+    "FaceTime",
+    "Forme",
+    "france•tv",
+    "Free TV",
+    "HBO Max",
+    "M6+",
+    "Musique",
+    "Netflix",
+    "Ordinateurs",
+    "Photos",
+    "Podcasts",
+    "Prime Video",
+    "Rechercher",
+    "Réglages",
+    "Sing",
+    "TF1+",
+    "TV",
+    "Twitch",
+    "YouTube"
+   ],
+   "friendly_name": "Séjour",
+   "supported_features": 450487
+  },
+  "last_changed": "2026-10-11T07:09:32.860352+00:00",
+  "last_updated": "2026-10-11T07:09:32.860352+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "remote.sejour_sejour",
+  "state": "on",
+  "attributes": {
+   "friendly_name": "Séjour",
+   "supported_features": 0
+  },
+  "last_changed": "2026-10-04T05:40:18.610126+00:00",
+  "last_updated": "2026-10-04T05:40:18.610126+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "button.freebox_v9_r1_redemarrer",
+  "state": "unknown",
+  "attributes": {
+   "device_class": "restart",
+   "friendly_name": "Freebox v9 (r1) Redémarrer"
+  },
+  "last_changed": "2026-10-04T05:40:18.687021+00:00",
+  "last_updated": "2026-10-04T05:40:18.705906+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "button.freebox_v9_r1_marquer_les_appels_comme_lus",
+  "state": "unknown",
+  "attributes": {
+   "friendly_name": "Freebox v9 (r1) Marquer les appels comme lus"
+  },
+  "last_changed": "2026-10-04T05:40:18.687606+00:00",
+  "last_updated": "2026-10-04T05:40:18.705992+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "device_tracker.freebox_v9_r1",
+  "state": "home",
+  "attributes": {
+   "tracking_type": "connection",
+   "in_zones": [
+    "zone.home"
+   ],
+   "source_type": "router",
+   "mac": "00:00:00:00:00:00",
+   "IPv4": "192.0.2.1",
+   "IPv6": "2001:db8::1",
+   "connection_type": "ftth",
+   "uptime": "2026-09-11T17:47:51",
+   "firmware_version": "0.0.0",
+   "serial": "SERIE-FACTICE",
+   "icon": "mdi:router-wireless",
+   "friendly_name": "Freebox v9 (r1) Freebox v9 (r1)"
+  },
+  "last_changed": "2026-10-04T05:40:18.703895+00:00",
+  "last_updated": "2026-10-11T08:20:44.493326+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "sensor.freebox_v9_r1_temperature_cpu_1",
+  "state": "138.2",
+  "attributes": {
+   "state_class": "measurement",
+   "unit_of_measurement": "°F",
+   "device_class": "temperature",
+   "friendly_name": "Freebox v9 (r1) Température CPU 1"
+  },
+  "last_changed": "2026-10-11T09:41:14.730175+00:00",
+  "last_updated": "2026-10-11T09:41:14.730175+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "sensor.freebox_v9_r1_temperature_cpu_3",
+  "state": "136.4",
+  "attributes": {
+   "state_class": "measurement",
+   "unit_of_measurement": "°F",
+   "device_class": "temperature",
+   "friendly_name": "Freebox v9 (r1) Température CPU 3"
+  },
+  "last_changed": "2026-10-11T09:41:44.730513+00:00",
+  "last_updated": "2026-10-11T09:41:44.730513+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "sensor.freebox_v9_r1_temperature_cpu_0",
+  "state": "140.0",
+  "attributes": {
+   "state_class": "measurement",
+   "unit_of_measurement": "°F",
+   "device_class": "temperature",
+   "friendly_name": "Freebox v9 (r1) Température CPU 0"
+  },
+  "last_changed": "2026-10-11T09:41:44.730699+00:00",
+  "last_updated": "2026-10-11T09:41:44.730699+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "sensor.freebox_v9_r1_temperature_cpu_2",
+  "state": "138.2",
+  "attributes": {
+   "state_class": "measurement",
+   "unit_of_measurement": "°F",
+   "device_class": "temperature",
+   "friendly_name": "Freebox v9 (r1) Température CPU 2"
+  },
+  "last_changed": "2026-10-11T09:41:14.730557+00:00",
+  "last_updated": "2026-10-11T09:41:14.730557+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "sensor.freebox_v9_r1_temperature_1",
+  "state": "138.2",
+  "attributes": {
+   "state_class": "measurement",
+   "unit_of_measurement": "°F",
+   "device_class": "temperature",
+   "friendly_name": "Freebox v9 (r1) Température 1"
+  },
+  "last_changed": "2026-10-11T09:41:14.730692+00:00",
+  "last_updated": "2026-10-11T09:41:14.730692+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "sensor.freebox_v9_r1_ventilateur_1",
+  "state": "450",
+  "attributes": {
+   "state_class": "measurement",
+   "unit_of_measurement": "rpm",
+   "icon": "mdi:fan",
+   "friendly_name": "Freebox v9 (r1) Ventilateur 1"
+  },
+  "last_changed": "2026-10-11T09:34:14.724768+00:00",
+  "last_updated": "2026-10-11T09:34:14.724768+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "sensor.freebox_v9_r1_vitesse_de_telechargement",
+  "state": "6.53",
+  "attributes": {
+   "state_class": "measurement",
+   "unit_of_measurement": "kB/s",
+   "device_class": "data_rate",
+   "friendly_name": "Freebox v9 (r1) Vitesse de téléchargement"
+  },
+  "last_changed": "2026-10-11T09:41:44.731033+00:00",
+  "last_updated": "2026-10-11T09:41:44.731033+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "sensor.freebox_v9_r1_vitesse_d_envoi",
+  "state": "8.45",
+  "attributes": {
+   "state_class": "measurement",
+   "unit_of_measurement": "kB/s",
+   "device_class": "data_rate",
+   "friendly_name": "Freebox v9 (r1) Vitesse d'envoi"
+  },
+  "last_changed": "2026-10-11T09:41:44.731133+00:00",
+  "last_updated": "2026-10-11T09:41:44.731133+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "sensor.freebox_v9_r1_appels_manques",
+  "state": "17",
+  "attributes": {
+   "state_class": "measurement",
+   "unit_of_measurement": "calls",
+   "friendly_name": "Freebox v9 (r1) Appels manqués",
+   "2026-01-01T10:00:00+00:00": "+33600000000",
+   "2026-01-02T10:00:00+00:00": "0600000000"
+  },
+  "last_changed": "2026-10-04T05:40:18.712568+00:00",
+  "last_updated": "2026-10-04T05:40:18.712568+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "media_player.smart_tv_pro_2",
+  "state": "off",
+  "attributes": {
+   "friendly_name": "Smart TV Pro 2",
+   "supported_features": 152461
+  },
+  "last_changed": "2026-10-11T01:38:16.275788+00:00",
+  "last_updated": "2026-10-11T01:38:16.275788+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "switch.freebox_v9_r1_wi_fi",
+  "state": "on",
+  "attributes": {
+   "friendly_name": "Freebox v9 (r1) Wi-Fi"
+  },
+  "last_changed": "2026-10-04T05:40:18.729837+00:00",
+  "last_updated": "2026-10-04T05:40:18.729837+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "binary_sensor.baie_vitree_gauche_battery_low",
+  "state": "off",
+  "attributes": {
+   "device_class": "battery",
+   "friendly_name": "Baie vitrée gauche Battery low"
+  },
+  "last_changed": "2026-10-04T05:40:18.743504+00:00",
+  "last_updated": "2026-10-04T05:40:18.743504+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "binary_sensor.baie_vitree_gauche_sensor_open",
+  "state": "off",
+  "attributes": {
+   "device_class": "door",
+   "friendly_name": "Baie vitrée gauche Sensor open"
+  },
+  "last_changed": "2026-10-04T05:40:18.743677+00:00",
+  "last_updated": "2026-10-04T05:40:18.743677+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "binary_sensor.fenetre_chambre_battery_low",
+  "state": "off",
+  "attributes": {
+   "device_class": "battery",
+   "friendly_name": "Fenêtre chambre Battery low"
+  },
+  "last_changed": "2026-10-04T05:40:18.743824+00:00",
+  "last_updated": "2026-10-04T05:40:18.743824+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "binary_sensor.fenetre_chambre_sensor_open",
+  "state": "off",
+  "attributes": {
+   "device_class": "door",
+   "friendly_name": "Fenêtre chambre Sensor open"
+  },
+  "last_changed": "2026-10-04T05:40:18.743962+00:00",
+  "last_updated": "2026-10-04T05:40:18.743962+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "binary_sensor.salon_battery_low",
+  "state": "off",
+  "attributes": {
+   "device_class": "battery",
+   "friendly_name": "Salon Battery low"
+  },
+  "last_changed": "2026-10-04T05:40:18.744099+00:00",
+  "last_updated": "2026-10-04T05:40:18.744099+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "binary_sensor.salon_motion_detected",
+  "state": "off",
+  "attributes": {
+   "device_class": "motion",
+   "friendly_name": "Salon Motion detected"
+  },
+  "last_changed": "2026-10-04T05:40:18.744822+00:00",
+  "last_updated": "2026-10-04T05:40:18.744822+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "binary_sensor.baie_vitree_droit_battery_low",
+  "state": "off",
+  "attributes": {
+   "device_class": "battery",
+   "friendly_name": "Baie vitrée droit Battery low"
+  },
+  "last_changed": "2026-10-04T05:40:18.744973+00:00",
+  "last_updated": "2026-10-04T05:40:18.744973+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "binary_sensor.baie_vitree_droit_sensor_open",
+  "state": "off",
+  "attributes": {
+   "device_class": "door",
+   "friendly_name": "Baie vitrée droit Sensor open"
+  },
+  "last_changed": "2026-10-04T05:40:18.745151+00:00",
+  "last_updated": "2026-10-04T05:40:18.745151+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "binary_sensor.fenetre_salon_battery_low",
+  "state": "off",
+  "attributes": {
+   "device_class": "battery",
+   "friendly_name": "Fenêtre salon Battery low"
+  },
+  "last_changed": "2026-10-04T05:40:18.745300+00:00",
+  "last_updated": "2026-10-04T05:40:18.745300+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "binary_sensor.fenetre_salon_sensor_open",
+  "state": "off",
+  "attributes": {
+   "device_class": "door",
+   "friendly_name": "Fenêtre salon Sensor open"
+  },
+  "last_changed": "2026-10-06T17:50:43.751117+00:00",
+  "last_updated": "2026-10-06T17:50:43.751117+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "binary_sensor.alarme_interieur_battery_low",
+  "state": "off",
+  "attributes": {
+   "device_class": "battery",
+   "friendly_name": "Alarme intérieur Battery low"
+  },
+  "last_changed": "2026-10-04T05:40:18.745580+00:00",
+  "last_updated": "2026-10-04T05:40:18.745580+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "binary_sensor.alarme_interieur_snooze",
+  "state": "off",
+  "attributes": {
+   "icon": "mdi:alarm-snooze",
+   "friendly_name": "Alarme intérieur Snooze"
+  },
+  "last_changed": "2026-10-04T05:40:18.745722+00:00",
+  "last_updated": "2026-10-04T05:40:18.745722+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "binary_sensor.garage_battery_low",
+  "state": "off",
+  "attributes": {
+   "device_class": "battery",
+   "friendly_name": "Garage Battery low"
+  },
+  "last_changed": "2026-10-04T05:40:18.745859+00:00",
+  "last_updated": "2026-10-04T05:40:18.745859+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "binary_sensor.garage_motion_detected",
+  "state": "off",
+  "attributes": {
+   "device_class": "motion",
+   "friendly_name": "Garage Motion detected"
+  },
+  "last_changed": "2026-10-04T05:40:18.745989+00:00",
+  "last_updated": "2026-10-04T05:40:18.745989+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "binary_sensor.fenetre_cuisine_battery_low",
+  "state": "off",
+  "attributes": {
+   "device_class": "battery",
+   "friendly_name": "Fenêtre cuisine Battery low"
+  },
+  "last_changed": "2026-10-04T05:40:18.746119+00:00",
+  "last_updated": "2026-10-04T05:40:18.746119+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "binary_sensor.fenetre_cuisine_sensor_open",
+  "state": "off",
+  "attributes": {
+   "device_class": "door",
+   "friendly_name": "Fenêtre cuisine Sensor open"
+  },
+  "last_changed": "2026-10-04T05:40:18.746246+00:00",
+  "last_updated": "2026-10-04T05:40:18.746246+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "binary_sensor.porte_garage_battery_low",
+  "state": "off",
+  "attributes": {
+   "device_class": "battery",
+   "friendly_name": "Porte du garage Battery low"
+  },
+  "last_changed": "2026-10-04T05:40:18.746375+00:00",
+  "last_updated": "2026-10-04T05:40:18.746375+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "binary_sensor.porte_garage_sensor_open",
+  "state": "off",
+  "attributes": {
+   "device_class": "door",
+   "friendly_name": "Porte du garage Sensor open"
+  },
+  "last_changed": "2026-10-07T13:34:43.845816+00:00",
+  "last_updated": "2026-10-07T13:34:43.845816+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "binary_sensor.porte_d_entree_battery_low",
+  "state": "off",
+  "attributes": {
+   "device_class": "battery",
+   "friendly_name": "Porte d'entrée Battery low"
+  },
+  "last_changed": "2026-10-04T05:40:18.746661+00:00",
+  "last_updated": "2026-10-04T05:40:18.746661+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "binary_sensor.porte_d_entree_sensor_open",
+  "state": "off",
+  "attributes": {
+   "device_class": "door",
+   "friendly_name": "Porte d'entrée Sensor open"
+  },
+  "last_changed": "2026-10-10T21:00:02.339446+00:00",
+  "last_updated": "2026-10-10T21:00:02.339446+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "binary_sensor.baie_vitree_centrale_battery_low",
+  "state": "off",
+  "attributes": {
+   "device_class": "battery",
+   "friendly_name": "Baie vitrée centrale Battery low"
+  },
+  "last_changed": "2026-10-04T05:40:18.746930+00:00",
+  "last_updated": "2026-10-04T05:40:18.746930+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "binary_sensor.baie_vitree_centrale_sensor_open",
+  "state": "off",
+  "attributes": {
+   "device_class": "door",
+   "friendly_name": "Baie vitrée centrale Sensor open"
+  },
+  "last_changed": "2026-10-07T16:03:56.621396+00:00",
+  "last_updated": "2026-10-07T16:03:56.621396+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "binary_sensor.porte_fenetre_bureau_battery_low",
+  "state": "off",
+  "attributes": {
+   "device_class": "battery",
+   "friendly_name": "Porte fenêtre bureau Battery low"
+  },
+  "last_changed": "2026-10-04T05:40:18.747183+00:00",
+  "last_updated": "2026-10-04T05:40:18.747183+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "binary_sensor.porte_fenetre_bureau_sensor_open",
+  "state": "off",
+  "attributes": {
+   "device_class": "door",
+   "friendly_name": "Porte fenêtre bureau Sensor open"
+  },
+  "last_changed": "2026-10-04T05:40:18.747308+00:00",
+  "last_updated": "2026-10-04T05:40:18.747308+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "binary_sensor.doorbell_motion_detected",
+  "state": "off",
+  "attributes": {
+   "device_class": "motion",
+   "friendly_name": "Doorbell Motion detected"
+  },
+  "last_changed": "2026-10-04T05:40:18.747444+00:00",
+  "last_updated": "2026-10-04T05:40:18.747444+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "binary_sensor.doorbell_person_detected",
+  "state": "off",
+  "attributes": {
+   "device_class": "motion",
+   "friendly_name": "Doorbell Person detected"
+  },
+  "last_changed": "2026-10-04T05:40:18.747568+00:00",
+  "last_updated": "2026-10-04T05:40:18.747568+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "binary_sensor.doorbell_ringing",
+  "state": "off",
+  "attributes": {
+   "device_class": "running",
+   "icon": "mdi:bell-ring",
+   "friendly_name": "Doorbell Ringing"
+  },
+  "last_changed": "2026-10-08T11:49:57.316002+00:00",
+  "last_updated": "2026-10-08T11:49:57.316002+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "binary_sensor.doorbell_snooze",
+  "state": "off",
+  "attributes": {
+   "icon": "mdi:alarm-snooze",
+   "friendly_name": "Doorbell Snooze"
+  },
+  "last_changed": "2026-10-04T05:40:18.747818+00:00",
+  "last_updated": "2026-10-04T05:40:18.747818+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "binary_sensor.baie_vitree_gauche_debug_device",
+  "state": "on",
+  "attributes": {
+   "properties": {},
+   "commands": [],
+   "voices": null,
+   "friendly_name": "Baie vitrée gauche Debug (device)"
+  },
+  "last_changed": "2026-10-04T05:40:18.748280+00:00",
+  "last_updated": "2026-10-11T08:20:58.761032+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "binary_sensor.fenetre_chambre_debug_device",
+  "state": "on",
+  "attributes": {
+   "properties": {},
+   "commands": [],
+   "voices": null,
+   "friendly_name": "Fenêtre chambre Debug (device)"
+  },
+  "last_changed": "2026-10-04T05:40:18.748441+00:00",
+  "last_updated": "2026-10-11T03:00:02.291514+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "binary_sensor.telecommande_1_debug_device",
+  "state": "on",
+  "attributes": {
+   "properties": {},
+   "commands": [],
+   "voices": null,
+   "friendly_name": "Télécommande 1 Debug (device)"
+  },
+  "last_changed": "2026-10-04T05:40:18.748568+00:00",
+  "last_updated": "2026-10-04T05:40:18.748568+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "binary_sensor.alarme_exterieure_debug_device",
+  "state": "on",
+  "attributes": {
+   "properties": {},
+   "commands": [],
+   "voices": null,
+   "friendly_name": "Jardin Debug (device)"
+  },
+  "last_changed": "2026-10-04T05:40:18.748695+00:00",
+  "last_updated": "2026-10-04T05:40:18.748695+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "binary_sensor.salon_debug_device",
+  "state": "on",
+  "attributes": {
+   "properties": {},
+   "commands": [],
+   "voices": null,
+   "friendly_name": "Salon Debug (device)"
+  },
+  "last_changed": "2026-10-04T05:40:18.748823+00:00",
+  "last_updated": "2026-10-04T05:40:18.748823+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "binary_sensor.baie_vitree_droit_debug_device",
+  "state": "on",
+  "attributes": {
+   "properties": {},
+   "commands": [],
+   "voices": null,
+   "friendly_name": "Baie vitrée droit Debug (device)"
+  },
+  "last_changed": "2026-10-04T05:40:18.748949+00:00",
+  "last_updated": "2026-10-11T03:00:02.286305+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "binary_sensor.fenetre_salon_debug_device",
+  "state": "on",
+  "attributes": {
+   "properties": {},
+   "commands": [],
+   "voices": null,
+   "friendly_name": "Fenêtre salon Debug (device)"
+  },
+  "last_changed": "2026-10-04T05:40:18.749070+00:00",
+  "last_updated": "2026-10-11T03:00:02.287014+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "binary_sensor.telecommande_2_debug_device",
+  "state": "on",
+  "attributes": {
+   "properties": {},
+   "commands": [],
+   "voices": null,
+   "friendly_name": "Télécommande 2 Debug (device)"
+  },
+  "last_changed": "2026-10-04T05:40:18.749199+00:00",
+  "last_updated": "2026-10-04T05:40:18.749199+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "binary_sensor.alarme_interieur_debug_device",
+  "state": "on",
+  "attributes": {
+   "properties": {},
+   "commands": [],
+   "voices": null,
+   "friendly_name": "Alarme intérieur Debug (device)"
+  },
+  "last_changed": "2026-10-04T05:40:18.749322+00:00",
+  "last_updated": "2026-10-11T03:00:02.290882+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "binary_sensor.garage_debug_device",
+  "state": "on",
+  "attributes": {
+   "properties": {},
+   "commands": [],
+   "voices": null,
+   "friendly_name": "Garage Debug (device)"
+  },
+  "last_changed": "2026-10-04T05:40:18.749447+00:00",
+  "last_updated": "2026-10-04T05:40:18.749447+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "binary_sensor.fenetre_cuisine_debug_device",
+  "state": "on",
+  "attributes": {
+   "properties": {},
+   "commands": [],
+   "voices": null,
+   "friendly_name": "Fenêtre cuisine Debug (device)"
+  },
+  "last_changed": "2026-10-04T05:40:18.749566+00:00",
+  "last_updated": "2026-10-11T03:00:02.284951+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "binary_sensor.porte_garage_debug_device",
+  "state": "on",
+  "attributes": {
+   "properties": {},
+   "commands": [],
+   "voices": null,
+   "friendly_name": "Porte du garage Debug (device)"
+  },
+  "last_changed": "2026-10-04T05:40:18.749694+00:00",
+  "last_updated": "2026-10-11T03:00:02.290193+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "binary_sensor.porte_d_entree_debug_device",
+  "state": "on",
+  "attributes": {
+   "properties": {},
+   "commands": [],
+   "voices": null,
+   "friendly_name": "Porte d'entrée Debug (device)"
+  },
+  "last_changed": "2026-10-04T05:40:18.749814+00:00",
+  "last_updated": "2026-10-11T09:40:58.650560+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "binary_sensor.baie_vitree_centrale_debug_device",
+  "state": "on",
+  "attributes": {
+   "properties": {},
+   "commands": [],
+   "voices": null,
+   "friendly_name": "Baie vitrée centrale Debug (device)"
+  },
+  "last_changed": "2026-10-04T05:40:18.749938+00:00",
+  "last_updated": "2026-10-11T03:00:02.289469+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "binary_sensor.porte_fenetre_bureau_debug_device",
+  "state": "on",
+  "attributes": {
+   "properties": {},
+   "commands": [],
+   "voices": null,
+   "friendly_name": "Porte fenêtre bureau Debug (device)"
+  },
+  "last_changed": "2026-10-04T05:40:18.750058+00:00",
+  "last_updated": "2026-10-11T03:00:02.285697+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "binary_sensor.doorbell_debug_device",
+  "state": "on",
+  "attributes": {
+   "properties": {},
+   "commands": [],
+   "voices": null,
+   "friendly_name": "Doorbell Debug (device)"
+  },
+  "last_changed": "2026-10-04T05:40:18.750194+00:00",
+  "last_updated": "2026-10-11T03:00:02.283960+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "binary_sensor.alarm_center_debug_station",
+  "state": "on",
+  "attributes": {
+   "properties": {},
+   "commands": [],
+   "voices": null,
+   "friendly_name": "Alarm Center Debug (station)"
+  },
+  "last_changed": "2026-10-04T05:40:18.750321+00:00",
+  "last_updated": "2026-10-11T03:00:02.091163+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "select.doorbell_motion_detection_type",
+  "state": "All motions",
+  "attributes": {
+   "options": [
+    "Humans only",
+    "All motions"
+   ],
+   "friendly_name": "Doorbell Motion Detection Type"
+  },
+  "last_changed": "2026-10-04T05:40:18.750912+00:00",
+  "last_updated": "2026-10-04T05:40:18.750912+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "select.doorbell_video_streaming_quality",
+  "state": "Auto / High Encoding",
+  "attributes": {
+   "options": [
+    "Auto / Low Encoding",
+    "Low / Low Encoding",
+    "Medium / Low Encoding",
+    "High / Low Encoding",
+    "Auto / High Encoding",
+    "Low / High Encoding",
+    "Medium / High Encoding",
+    "High / High Encoding"
+   ],
+   "friendly_name": "Doorbell Video Streaming Quality"
+  },
+  "last_changed": "2026-10-04T05:40:18.751138+00:00",
+  "last_updated": "2026-10-04T05:40:18.751138+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "select.alarm_center_guard_mode",
+  "state": "Home",
+  "attributes": {
+   "options": [
+    "Away",
+    "Home",
+    "Schedule",
+    "Custom 1",
+    "Custom 2",
+    "Custom 3",
+    "Geofencing",
+    "Disarmed"
+   ],
+   "icon": "mdi:security",
+   "friendly_name": "Alarm Center Guard Mode"
+  },
+  "last_changed": "2026-10-11T03:00:02.091236+00:00",
+  "last_updated": "2026-10-11T03:00:02.091236+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "sensor.doorbell_person_name",
+  "state": "No Person",
+  "attributes": {
+   "icon": "mdi:account-question",
+   "friendly_name": "Doorbell Person Name"
+  },
+  "last_changed": "2026-10-04T05:40:18.752982+00:00",
+  "last_updated": "2026-10-04T05:40:18.752982+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "sensor.doorbell_snooze_time",
+  "state": "0",
+  "attributes": {
+   "unit_of_measurement": "sec",
+   "icon": "mdi:alarm-snooze",
+   "friendly_name": "Doorbell Snooze Time"
+  },
+  "last_changed": "2026-10-04T05:40:18.753222+00:00",
+  "last_updated": "2026-10-04T05:40:18.753222+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "sensor.alarm_center_current_mode",
+  "state": "Home",
+  "attributes": {
+   "icon": "mdi:security",
+   "friendly_name": "Alarm Center Current Mode"
+  },
+  "last_changed": "2026-10-11T03:00:00.714443+00:00",
+  "last_updated": "2026-10-11T03:00:00.714443+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "switch.doorbell_camera_enabled",
+  "state": "on",
+  "attributes": {
+   "friendly_name": "Doorbell Camera enabled"
+  },
+  "last_changed": "2026-10-04T05:40:18.754335+00:00",
+  "last_updated": "2026-10-04T05:40:18.754335+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "switch.doorbell_auto_nightvision",
+  "state": "on",
+  "attributes": {
+   "icon": "mdi:lightbulb-night",
+   "friendly_name": "Doorbell Auto Nightvision"
+  },
+  "last_changed": "2026-10-04T05:40:18.754481+00:00",
+  "last_updated": "2026-10-04T05:40:18.754481+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "switch.doorbell_status_led",
+  "state": "on",
+  "attributes": {
+   "icon": "mdi:alarm-light-outline",
+   "friendly_name": "Doorbell Status LED"
+  },
+  "last_changed": "2026-10-04T05:40:18.754617+00:00",
+  "last_updated": "2026-10-04T05:40:18.754617+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "switch.doorbell_motion_detection",
+  "state": "on",
+  "attributes": {
+   "friendly_name": "Doorbell Motion Detection"
+  },
+  "last_changed": "2026-10-04T05:40:18.754793+00:00",
+  "last_updated": "2026-10-04T05:40:18.754793+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "switch.doorbell_audio_recording",
+  "state": "on",
+  "attributes": {
+   "icon": "mdi:record-circle",
+   "friendly_name": "Doorbell Audio Recording"
+  },
+  "last_changed": "2026-10-04T05:40:18.754917+00:00",
+  "last_updated": "2026-10-04T05:40:18.754917+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "switch.doorbell_indoor_chime_enabled",
+  "state": "off",
+  "attributes": {
+   "icon": "mdi:bell-ring",
+   "friendly_name": "Doorbell Indoor Chime Enabled"
+  },
+  "last_changed": "2026-10-04T05:40:18.755049+00:00",
+  "last_updated": "2026-10-04T05:40:18.755049+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "alarm_control_panel.alarm_center",
+  "state": "armed_home",
+  "attributes": {
+   "code_format": null,
+   "changed_by": null,
+   "code_arm_required": false,
+   "friendly_name": "Alarm Center",
+   "supported_features": 63
+  },
+  "last_changed": "2026-10-11T03:00:00.714791+00:00",
+  "last_updated": "2026-10-11T03:00:00.714791+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "number.doorbell_motion_detection_sensitivity",
+  "state": "3",
+  "attributes": {
+   "min": 1,
+   "max": 5,
+   "step": 1.0,
+   "mode": "auto",
+   "friendly_name": "Doorbell Motion Detection Sensitivity"
+  },
+  "last_changed": "2026-10-04T05:40:18.756080+00:00",
+  "last_updated": "2026-10-04T05:40:18.756080+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "number.doorbell_speaker_volume",
+  "state": "95",
+  "attributes": {
+   "min": 0,
+   "max": 100,
+   "step": 1.0,
+   "mode": "auto",
+   "friendly_name": "Doorbell Speaker Volume"
+  },
+  "last_changed": "2026-10-04T05:40:18.756248+00:00",
+  "last_updated": "2026-10-04T05:40:18.756248+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "number.doorbell_homebase_chime_ringtone_volume",
+  "state": "20",
+  "attributes": {
+   "min": 1,
+   "max": 26,
+   "step": 1.0,
+   "mode": "auto",
+   "friendly_name": "Doorbell Homebase Chime Ringtone Volume"
+  },
+  "last_changed": "2026-10-04T05:40:18.756419+00:00",
+  "last_updated": "2026-10-04T05:40:18.756419+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "number.alarm_center_prompt_volume",
+  "state": "16",
+  "attributes": {
+   "min": 0,
+   "max": 26,
+   "step": 1.0,
+   "mode": "auto",
+   "icon": "mdi:volume-medium",
+   "friendly_name": "Alarm Center Prompt Volume"
+  },
+  "last_changed": "2026-10-04T05:40:18.756566+00:00",
+  "last_updated": "2026-10-04T05:40:18.756566+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "number.alarm_center_alarm_volume",
+  "state": "26",
+  "attributes": {
+   "min": 1,
+   "max": 26,
+   "step": 1.0,
+   "mode": "auto",
+   "icon": "mdi:volume-medium",
+   "friendly_name": "Alarm Center Alarm Volume"
+  },
+  "last_changed": "2026-10-04T05:40:18.756713+00:00",
+  "last_updated": "2026-10-04T05:40:18.756713+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "camera.doorbell",
+  "state": "idle",
+  "attributes": {
+   "access_token": "jeton-factice-0000",
+   "stream_debug": "info - command was done",
+   "entity_picture": "/api/camera_proxy/camera.doorbell?token=jeton-factice-0000",
+   "friendly_name": "Doorbell",
+   "supported_features": 2
+  },
+  "last_changed": "2026-10-08T11:53:00.377707+00:00",
+  "last_updated": "2026-10-11T09:40:19.789595+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "image.doorbell_event_image",
+  "state": "unknown",
+  "attributes": {
+   "access_token": "jeton-factice-0000",
+   "entity_picture": "/api/camera_proxy/image.doorbell_event_image?token=jeton-factice-0000",
+   "friendly_name": "Doorbell Event Image"
+  },
+  "last_changed": "2026-10-04T05:40:18.760759+00:00",
+  "last_updated": "2026-10-11T09:40:19.975929+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "sensor.hp_deskjet_2800_series_black_ink",
+  "state": "70",
+  "attributes": {
+   "state_class": "measurement",
+   "marker_high_level": 100,
+   "marker_low_level": 2,
+   "marker_type": "ink-cartridge",
+   "unit_of_measurement": "%",
+   "friendly_name": "HP DeskJet 2800 series black ink"
+  },
+  "last_changed": "2026-10-09T11:28:31.802428+00:00",
+  "last_updated": "2026-10-09T11:28:31.802428+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "sensor.hp_deskjet_2800_series_tri_color_ink",
+  "state": "90",
+  "attributes": {
+   "state_class": "measurement",
+   "marker_high_level": 100,
+   "marker_low_level": 2,
+   "marker_type": "ink-cartridge",
+   "unit_of_measurement": "%",
+   "friendly_name": "HP DeskJet 2800 series tri-color ink"
+  },
+  "last_changed": "2026-10-09T16:36:56.175866+00:00",
+  "last_updated": "2026-10-09T16:36:56.175866+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ {
+  "entity_id": "sensor.hp_deskjet_2800_series",
+  "state": "idle",
+  "attributes": {
+   "options": [
+    "idle",
+    "printing",
+    "stopped"
+   ],
+   "info": "HP DeskJet 2800 series [000000]",
+   "serial": "SERIE-FACTICE",
+   "location": "",
+   "state_message": "",
+   "state_reason": null,
+   "command_set": "PCL3GUI,PJL,Automatic,JPEG,PCLM,AppleRaster,PWGRaster,DW-PCL,802.11,DESKJET,DYN",
+   "uri_supported": "ipp://192.0.2.7/ipp/print",
+   "device_class": "enum",
+   "friendly_name": "HP DeskJet 2800 series"
+  },
+  "last_changed": "2026-10-09T16:37:57.185613+00:00",
+  "last_updated": "2026-10-09T16:37:57.185613+00:00",
+  "context": {
+   "id": "01FIXTURE0000000000000000",
+   "parent_id": null,
+   "user_id": null
+  }
+ }
+]

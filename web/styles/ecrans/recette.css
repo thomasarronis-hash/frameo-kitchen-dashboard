@@ -1,0 +1,229 @@
+/*
+ * web/styles/ecrans/recette.css
+ *
+ * Rôle    : la recette pas à pas (conception §1.5), en plein écran (menu masqué, .scene-plein de base.css) :
+ *           en-tête (Fermer, plat, portions et temps), ingrédients cochables à gauche, étape à droite en 44 px
+ *           avec « Étape 3/7 », badge du four, bouton du minuteur, et gros boutons Précédent / Suivant (120 px).
+ * Entrées : le DOM construit par web/src/ecrans/recette.js ; jetons.css ; base.css (.carte, .intitule,
+ *           .bouton-fort, .bouton-doux).
+ * Sorties : classes .recette, .recette-entete, .recette-titre(s), .recette-details, .recette-corps,
+ *           .recette-ingredients(-tete), .recette-compte, .recette-liste, .recette-ingredient(-coche),
+ *           .recette-case, .recette-coche, .recette-ingredient-texte, .recette-etape(-tete), .recette-numero,
+ *           .recette-four(-icone), .recette-texte, .recette-astuces, .recette-astuce, .recette-lancer,
+ *           .recette-nav, .recette-fermer.
+ * Pièges  :
+ *   - Le coin en haut à droite reste libre pour la pastille des minuteurs (minuteurs.css) : l'en-tête s'arrête
+ *     à 560 px du bord.
+ *   - Le titre du plat est écrit en entier (2 lignes de 48 px pour 80 caractères, le maximum du schéma) : c'est
+ *     là qu'un titre trop long pour l'écran Repas se lit en entier. Les étapes ont la place de rétrécir.
+ *   - Une étape de 400 caractères (maximum du schéma) tient en 44 px dans la colonne de droite (8 lignes).
+ *   - Ingrédients : lignes de 96 px (cible tactile), la liste défile au-delà de 8 (touch-action: pan-y, un
+ *     défilement annule le geste).
+ *   - Ingrédient coché : texte secondaire barré (contraste contrôlé), case pleine ; aucune opacité.
+ *   - Fraunces : opsz fixé dans chaque règle qui l'emploie.
+ */
+
+.recette {
+  height: 1080px;
+  padding: 32px;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  grid-row-gap: 24px;
+}
+
+.recette-entete {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-column-gap: 28px;
+  align-items: center;
+  margin-right: 560px;
+}
+
+.recette-fermer {
+  background: var(--carte);
+  box-shadow: 0 2px 0 var(--carte-ombre);
+}
+
+.recette-titres {
+  min-width: 0;
+}
+
+.recette-titre {
+  font-family: "Fraunces", serif;
+  font-size: 48px;
+  font-weight: 600;
+  font-variation-settings: "opsz" 72;
+  line-height: 1.1;
+  color: var(--texte);
+}
+
+.recette-details {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--texte-2);
+}
+
+.recette-corps {
+  display: grid;
+  grid-template-columns: 560px minmax(0, 1fr);
+  grid-column-gap: 32px;
+  min-height: 0;
+}
+
+/* Ingrédients */
+
+.recette-ingredients {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  min-height: 0;
+  padding: 24px 0 12px 24px;
+}
+
+.recette-ingredients-tete {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  padding: 0 24px 12px 0;
+}
+
+.recette-compte {
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.recette-liste {
+  overflow-y: auto;
+  touch-action: pan-y;
+  padding-right: 24px;
+}
+
+.recette-ingredient {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr);
+  grid-column-gap: 20px;
+  align-items: center;
+  min-height: 96px;
+  padding: 8px 0;
+  border-top: 2px solid var(--separateur);
+  cursor: pointer;
+}
+
+.recette-case {
+  width: 56px;
+  height: 56px;
+  display: grid;
+  align-items: center;
+  justify-items: center;
+  border: 3px solid var(--texte-2);
+  border-radius: 14px;
+  background: var(--case);
+}
+
+.recette-coche {
+  font-size: 40px;
+  stroke-width: 2.6;
+  visibility: hidden;
+}
+
+.recette-ingredient-coche .recette-case {
+  border-color: var(--bouton-fort);
+  background: var(--bouton-fort);
+  color: var(--texte-bouton-fort);
+}
+
+.recette-ingredient-coche .recette-coche {
+  visibility: visible;
+}
+
+.recette-ingredient-texte {
+  font-size: 28px;
+  line-height: 1.25;
+  color: var(--texte);
+}
+
+.recette-ingredient-coche .recette-ingredient-texte {
+  color: var(--texte-2);
+  text-decoration: line-through;
+}
+
+/* Étape */
+
+.recette-etape {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto auto;
+  grid-row-gap: 28px;
+  min-height: 0;
+  padding: 32px 40px;
+}
+
+.recette-etape-tete {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-column-gap: 24px;
+  align-items: center;
+  min-height: 56px;
+}
+
+.recette-four {
+  display: grid;
+  grid-auto-flow: column;
+  grid-column-gap: 12px;
+  align-items: center;
+  padding: 8px 24px;
+  border-radius: 999px;
+  background: var(--bouton-doux);
+  color: var(--texte);
+  font-size: 30px;
+  font-weight: 700;
+}
+
+.recette-four-icone {
+  font-size: 36px;
+}
+
+.recette-texte {
+  font-size: 44px;
+  line-height: 1.3;
+  color: var(--texte);
+}
+
+.recette-astuces {
+  display: grid;
+  grid-row-gap: 20px;
+  align-content: start;
+}
+
+.recette-astuce {
+  position: relative;
+  padding-left: 32px;
+  font-size: 32px;
+  line-height: 1.35;
+  color: var(--texte);
+}
+
+.recette-astuce::before {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 17px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.recette-lancer {
+  justify-self: start;
+}
+
+.recette-nav {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-column-gap: 24px;
+}
+
+.recette-nav .bouton-doux,
+.recette-nav .bouton-fort {
+  min-height: 120px;
+  font-size: 36px;
+}

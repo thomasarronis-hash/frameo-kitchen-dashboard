@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<!--
+  secours.html : page de secours embarquée dans l'APK (file:///android_asset/secours.html).
+
+  Rôle : quand la page principale est injoignable, MainActivity affiche cette page (l'heure et un
+  message). Le kiosque sonde le serveur toutes les 15 s et recharge la vraie page dès qu'il répond.
+  Entrées : horloge de l'appareil ; taille de la fenêtre (innerWidth, innerHeight).
+  Sorties : affichage seulement.
+
+  Pièges :
+  - ES5 strict et CSS de Chrome 50 au plus (Android 6), sans build ni dépendance, comme
+    web/compat/compat.html. transform et transform-origin sans préfixe : Chrome 36.
+  - Scène fixe de 1920x1080 : si la WebView n'applique pas le viewport width=1920, la scène est
+    mise à l'échelle et centrée par transform (conception §1.2), au chargement et sur resize.
+  - L'heure vient de l'horloge Android (aucun décalage serveur ici) : elle peut être fausse sur
+    un cadre sans Internet. Fuseau Europe/Paris si Intl le permet, sinon heure locale.
+  - Version M0 minimale : de quoi tester la secours et le nouvel essai le jour J. En M2 elle sera
+    produite depuis web/secours.html (2e entrée Vite), avec les minuteurs : voir alors le piège
+    de la sonde dans l'en-tête de MainActivity.
+-->
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1920, user-scalable=no">
+<title>Cuisine, mode secours</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; overflow: hidden; background: #1c2225; }
+  #scene {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 1920px;
+    height: 1080px;
+    transform-origin: 0 0;
+    color: #e8ebe4;
+    font-family: Roboto, "Noto Sans", sans-serif;
+    text-align: center;
+  }
+  #heure { font-size: 300px; font-weight: 700; line-height: 1; }
+  .message { margin: 24px 0 0; color: #8d9a95; font-size: 40px; }
+</style>
+</head>
+<body>
+
+<div id="scene">
+  <div id="heure">--:--</div>
+  <p class="message">Serveur injoignable, nouvel essai automatique</p>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  var LARGEUR = 1920;
+  var HAUTEUR = 1080;
+  var elScene = document.getElementById('scene');
+  var elHeure = document.getElementById('heure');
+  var formaterHeure = creerFormatHeure();
+
+  function deuxChiffres(n) {
+    return (n < 10 ? '0' : '') + n;
+  }
+
+  /** Heure de Paris par Intl si possible, sinon heure locale de l'appareil. */
+  function creerFormatHeure() {
+    var format;
+    try {
+      format = new Intl.DateTimeFormat('fr-FR', { timeZone: 'Europe/Paris', hour: '2-digit', minute: '2-digit' });
+      return function (date) { return format.format(date); };
+    } catch (e) {
+      return function (date) { return deuxChiffres(date.getHours()) + ':' + deuxChiffres(date.getMinutes()); };
+    }
+  }
+
+  /**
+   * Réduit (ou agrandit) la scène de 1920x1080 pour qu'elle tienne dans la fenêtre, centrée.
+   * Rien n'est touché si l'échelle vaut environ 1, ou si la fenêtre n'a pas encore de taille.
+   */
+  function ajusterEchelle() {
+    var s = Math.min(window.innerWidth / LARGEUR, window.innerHeight / HAUTEUR);
+    var decalageX, decalageY;
+    if (!(s > 0) || Math.abs(s - 1) < 0.01) {
+      elScene.style.transform = '';
+      return;
+    }
+    decalageX = (window.innerWidth - LARGEUR * s) / 2;
+    decalageY = (window.innerHeight - HAUTEUR * s) / 2;
+    elScene.style.transform = 'translate(' + decalageX + 'px, ' + decalageY + 'px) scale(' + s + ')';
+  }
+
+  /** Une mise à jour juste après chaque changement de seconde. */
+  function tic() {
+    elHeure.textContent = formaterHeure(new Date());
+    setTimeout(tic, 1010 - (Date.now() % 1000));
+  }
+
+  window.addEventListener('resize', ajusterEchelle);
+  ajusterEchelle();
+  tic();
+}());
+</script>
+</body>
+</html>

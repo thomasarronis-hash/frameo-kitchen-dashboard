@@ -1,0 +1,279 @@
+/*
+ * web/styles/ecrans/quete.css
+ *
+ * Rôle    : la quête du matin de Timo (ecrans/enfants-quete.js) : la carte du chemin (pointillés), les cases rondes (pièce
+ *           « +5 », cadenas, libellé, heure « 6 h 30 »), l'avatar posé sur la case en cours, le coffre, la barre du temps
+ *           jusqu'au départ et le bouton « Annuler ».
+ * Entrées : jetons.css (--surbrillance, --carte, --accent, --piece, --piece-trait, --texte-piece, --chemin, --coffre,
+ *           --sauge, --sauge-piste) ; base.css (.carte, .chiffres, .bouton-doux) ; avatar.css ; anneau.css.
+ * Sorties : .quete, .quete-carte, .quete-trace, .quete-case (-a_faire, -attente, -valide, -en-cours, -tot, -passee), .quete-disque,
+ *           .quete-picto, .quete-piece, .quete-cadenas(-icone), .quete-libelle, .quete-tot(-icone), .quete-avatar,
+ *           .quete-coffre(-dessin, -ouvert), .quete-temps(-piste, -reste, -heure), .quete-annuler(-picto, -barre).
+ * Pièges  :
+ *   - Carte de 1 304 x 888 px, colonne de la bourse de 520 px : positions des cases calculées en pixels de cette carte
+ *     (enfants-quete.js), cases de 200 px, libellé en 30 px à 216 px du haut de la case.
+ *   - Fond de la carte en surbrillance, cases blanches cerclées d'accent (3:1 au moins sur la surbrillance, objet
+ *     graphique testé ; la carte et la surbrillance sont presque égales, le soir surtout : sans ce cercle, une case à faire
+ *     ne se voyait plus, vu sur capture) ; une case faite est pleine d'accent, son pictogramme du blanc des cartes (paire
+ *     contrôlée), sa pièce devient d'or plein.
+ *   - « En attente » : contour en pointillés et sablier, jamais de rouge ni de croix (rien de punitif) ; « passée » (pas
+ *     faite à la fin de la routine du matin) : simplement grise, cercle, pictogramme et pièce en gris secondaire (le filet
+ *     de séparation, essayé d'abord, ne se voyait plus le soir sur la surbrillance, vu sur capture).
+ *   - L'avatar se déplace en transform (transition de 0,6 s) ; la barre du temps est une échelle (scaleX) posée chaque
+ *     seconde ; le bouton Annuler a sa barre qui se vide en 5 s (transition posée par le script).
+ */
+
+.quete {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 520px;
+  grid-column-gap: 32px;
+  min-height: 0;
+}
+
+.quete-carte {
+  position: relative;
+  min-height: 0;
+  background: var(--surbrillance);
+}
+
+.quete-trace {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1304px;
+  height: 888px;
+  fill: none;
+  stroke: var(--chemin);
+  stroke-width: 16;
+  stroke-linecap: round;
+  stroke-dasharray: 1 30;
+}
+
+.quete-case {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  padding: 0;
+  border-radius: 50%;
+  background: transparent;
+}
+
+.quete-disque {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 200px;
+  height: 200px;
+  display: grid;
+  align-items: center;
+  justify-items: center;
+  border-radius: 50%;
+  background: var(--carte);
+  color: var(--accent);
+  box-shadow: 0 0 0 5px var(--accent), 0 4px 0 5px var(--carte-ombre);
+}
+
+.quete-picto {
+  font-size: 108px;
+  stroke-width: 1.6;
+}
+
+.quete-case-valide .quete-disque {
+  background: var(--accent);
+  color: var(--carte);
+  box-shadow: 0 4px 0 var(--carte-ombre);
+}
+
+.quete-case-attente .quete-disque {
+  border: 6px dashed var(--piece-trait);
+  box-shadow: none;
+}
+
+.quete-case-tot .quete-disque {
+  color: var(--texte-2);
+}
+
+.quete-case-passee .quete-disque {
+  color: var(--texte-2);
+  box-shadow: 0 0 0 5px var(--texte-2), 0 4px 0 5px var(--carte-ombre);
+}
+
+.quete-case-passee .quete-piece {
+  color: var(--texte-2);
+  box-shadow: 0 0 0 5px var(--texte-2);
+}
+
+.quete-case-en-cours .quete-disque {
+  box-shadow: 0 0 0 10px var(--piece-trait), 0 4px 0 10px var(--carte-ombre);
+}
+
+.quete-piece {
+  position: absolute;
+  right: -10px;
+  bottom: -6px;
+  min-width: 84px;
+  height: 84px;
+  padding: 0 12px;
+  display: grid;
+  align-items: center;
+  justify-items: center;
+  border-radius: 42px;
+  background: var(--carte);
+  color: var(--piece-trait);
+  box-shadow: 0 0 0 5px var(--piece-trait);
+  font-size: 40px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.quete-case-valide .quete-piece {
+  background: var(--piece);
+  color: var(--texte-piece);
+}
+
+.quete-cadenas {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 64px;
+  height: 64px;
+  display: grid;
+  align-items: center;
+  justify-items: center;
+  border-radius: 50%;
+  background: var(--carte);
+  color: var(--texte-2);
+  box-shadow: 0 0 0 4px var(--separateur);
+}
+
+.quete-cadenas-icone {
+  font-size: 38px;
+}
+
+.quete-case-attente .quete-cadenas {
+  background: var(--bouton-fort);
+  color: var(--texte-bouton-fort);
+}
+
+.quete-libelle {
+  position: absolute;
+  top: 216px;
+  left: -60px;
+  width: 320px;
+  text-align: center;
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--texte);
+}
+
+.quete-tot {
+  position: absolute;
+  top: 256px;
+  left: -60px;
+  width: 320px;
+  display: grid;
+  grid-auto-flow: column;
+  grid-column-gap: 8px;
+  justify-content: center;
+  align-items: center;
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--texte-2);
+}
+
+.quete-tot-icone {
+  font-size: 28px;
+}
+
+.quete-avatar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  width: 132px;
+  height: 132px;
+  box-shadow: 0 0 0 6px var(--carte), 0 6px 0 6px var(--carte-ombre);
+  transition: transform 0.6s ease-in-out;
+}
+
+.quete-coffre {
+  position: absolute;
+  width: 260px;
+  height: 220px;
+  display: grid;
+  align-items: center;
+  justify-items: center;
+  border-radius: 110px;
+  color: var(--coffre);
+}
+
+.quete-coffre-dessin {
+  font-size: 200px;
+  stroke-width: 1.3;
+}
+
+.quete-coffre-ouvert {
+  background: var(--carte);
+  color: var(--piece-trait);
+  box-shadow: 0 0 0 10px var(--piece);
+}
+
+.quete-temps {
+  position: absolute;
+  top: 32px;
+  left: 48px;
+  right: 48px;
+  height: 44px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-column-gap: 20px;
+  align-items: center;
+}
+
+.quete-temps-piste {
+  position: relative;
+  height: 20px;
+  border-radius: 10px;
+  background: var(--sauge-piste);
+  overflow: hidden;
+}
+
+.quete-temps-reste {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--sauge);
+  transform-origin: 0 50%;
+}
+
+.quete-temps-heure {
+  font-size: 36px;
+  line-height: 1;
+  color: var(--texte);
+}
+
+.quete-annuler {
+  position: absolute;
+  top: 16px;
+  right: 24px;
+  z-index: 3;
+  overflow: hidden;
+  box-shadow: 0 2px 0 var(--carte-ombre), 0 0 0 4px var(--separateur);
+}
+
+.quete-annuler-picto {
+  font-size: 48px;
+}
+
+.quete-annuler-barre {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 8px;
+  background: var(--piece-trait);
+  transform-origin: 0 50%;
+}

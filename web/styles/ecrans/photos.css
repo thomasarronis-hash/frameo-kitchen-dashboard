@@ -1,0 +1,242 @@
+/*
+ * web/styles/ecrans/photos.css
+ *
+ * Rôle    : l'écran Photos (conception §1.5, piste 5) : le mode ambiant plein écran (deux calques en fondu, paysage,
+ *           paire de portraits ou portrait seul sur fond Ardoise, pastilles en verre « teinte »). Plus de face « page »
+ *           depuis le 14/10 (plus d'entrée Photos au menu).
+ * Entrées : le DOM de web/src/ecrans/photos.js ; jetons.css (--photo-*, --verre-photo*, --texte-photo*) ; base.css
+ *           (.chiffres, .chiffres-affiche).
+ * Sorties : .scene-photos (menu et pastille des minuteurs masqués), .photos-ambiance, .photos-calque(-visible, -devant),
+ *           .photos-paysage, .photos-paire, .photos-portrait, .photos-cellule, .photos-image, .photos-legende,
+ *           .photos-panne, .photos-pastille et ses blocs (horloge, météo, soir, minuteur).
+ * Pièges  :
+ *   - Verre « teinte » seulement : fond --verre-photo semi-opaque, AUCUN backdrop-filter (16 FPS pendant les fondus
+ *     sur le cadre, docs/cadre-ave948.md). Couleurs identiques dans tous les thèmes (jetons.css).
+ *   - Fondu : transition d'opacité de 1,5 s sur le calque qui passe devant (seule animation, conception §1.2) ; le
+ *     calque a un fond opaque, pour que la vue précédente ne transparaisse pas dans les marges d'un portrait, et son
+ *     propre contexte d'empilement (z-index 0, 1 devant) : sans lui, la légende du calque de derrière (z-index 2)
+ *     passait par-dessus la vue suivante (vu sur capture).
+ *   - Bloc « Ce soir » en grille minmax(0, 1fr) : sans elle, le titre du plat (nowrap) élargissait la colonne au-delà
+ *     des 900 px de la pastille au lieu de finir par une ellipse (vu sur capture) ; 900 px : 45 caractères environ en
+ *     40 px, la pastille de l'horloge garde sa place à gauche.
+ *   - Images entières (object-fit: contain), jamais rognées : une photo 4:3 a des bandes Ardoise sur les côtés, un
+ *     visage n'est jamais coupé. Paire : les deux portraits se serrent au milieu (object-position vers le centre),
+ *     leurs légendes aussi.
+ *   - Coins occupés : horloge en bas à gauche, « Ce soir » et minuteur en bas à droite, météo en haut à droite ;
+ *     légendes en haut (440 px au plus, ellipse) : celle de droite d'une paire finit avant la météo. Le bandeau
+ *     sonnette (couche 40) et l'alerte des minuteurs (50) passent par-dessus.
+ *   - Lecture à 2 m : heure en 120 px, plat et minuteur en 40 px.
+ *   - Grilles seulement (grid-gap), jamais de gap en flex (conception §3.1) ; opacités 0 et 1 seulement (le fondu
+ *     passe par la transition).
+ */
+
+.scene-photos {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.scene-photos .menu,
+.scene-photos .pastille {
+  display: none;
+}
+
+.scene-photos .ecran {
+  grid-column: 1;
+}
+
+/* Mode ambiant */
+
+.photos-ambiance {
+  position: relative;
+  width: 1920px;
+  height: 1080px;
+  overflow: hidden;
+  background: var(--photo-fond);
+  color: var(--texte-photo);
+}
+
+.photos-calque {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1920px;
+  height: 1080px;
+  z-index: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  background: var(--photo-fond);
+  color: var(--texte-photo);
+  opacity: 0;
+  transition: opacity 1.5s ease-in-out;
+}
+
+.photos-calque-visible {
+  opacity: 1;
+}
+
+.photos-calque-devant {
+  z-index: 1;
+}
+
+.photos-paire {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-column-gap: 24px;
+}
+
+.photos-cellule {
+  position: relative;
+  overflow: hidden;
+}
+
+.photos-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.photos-paire .photos-cellule:first-child .photos-image {
+  object-position: right center;
+}
+
+.photos-paire .photos-cellule:last-child .photos-image {
+  object-position: left center;
+}
+
+.photos-legende {
+  position: absolute;
+  top: 32px;
+  left: 32px;
+  z-index: 2;
+  max-width: 440px;
+  padding: 10px 22px;
+  border: 2px solid var(--verre-photo-bord);
+  border-radius: 22px;
+  background: var(--verre-photo);
+  color: var(--texte-photo);
+  font-size: 26px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* « Photos indisponibles pour le moment » : rien d'autre sur la ligne du haut (aucune photo affichée). */
+.photos-panne {
+  max-width: 900px;
+}
+
+.photos-paire .photos-cellule:first-child .photos-legende {
+  left: auto;
+  right: 24px;
+}
+
+.photos-paire .photos-cellule:last-child .photos-legende {
+  left: 24px;
+}
+
+/* Pastilles */
+
+.photos-pastille {
+  position: absolute;
+  z-index: 2;
+  padding: 20px 28px;
+  border: 2px solid var(--verre-photo-bord);
+  border-radius: 28px;
+  background: var(--verre-photo);
+  color: var(--texte-photo);
+}
+
+.photos-horloge {
+  left: 32px;
+  bottom: 32px;
+}
+
+.photos-heure {
+  font-size: 120px;
+  line-height: 0.95;
+}
+
+.photos-date {
+  margin-top: 8px;
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--texte-photo-2);
+}
+
+.photos-meteo {
+  top: 32px;
+  right: 32px;
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-column-gap: 16px;
+  align-items: center;
+}
+
+.photos-meteo-picto {
+  font-size: 64px;
+}
+
+.photos-temperature {
+  font-size: 64px;
+  line-height: 1;
+  color: var(--texte-photo-chaud);
+}
+
+.photos-ciel {
+  grid-column: 1 / 3;
+  margin-top: 6px;
+  font-size: 26px;
+  color: var(--texte-photo-2);
+}
+
+.photos-soir {
+  right: 32px;
+  bottom: 32px;
+  max-width: 900px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-row-gap: 14px;
+}
+
+.photos-intitule {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--texte-photo-2);
+}
+
+.photos-plat {
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.photos-minuteur {
+  display: grid;
+  grid-template-columns: auto auto minmax(0, 1fr);
+  grid-column-gap: 14px;
+  align-items: center;
+}
+
+.photos-minuteur-icone {
+  font-size: 40px;
+  color: var(--texte-photo-chaud);
+}
+
+.photos-minuteur-temps {
+  font-size: 40px;
+  line-height: 1.1;
+  color: var(--texte-photo-chaud);
+}
+
+.photos-minuteur-nom {
+  font-size: 26px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--texte-photo-2);
+}

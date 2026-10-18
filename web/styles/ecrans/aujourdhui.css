@@ -1,0 +1,311 @@
+/*
+ * web/styles/ecrans/aujourdhui.css
+ *
+ * Rôle    : la page « Aujourd'hui » (décision de Thomas du 14/10) : quatre grandes cartes en grille 2 x 2 (Météo et
+ *           Repas en haut, Rendez-vous et À prévoir en bas), et la bande des Alertes sur toute la largeur quand il y
+ *           en a.
+ * Entrées : le DOM construit par web/src/ecrans/aujourdhui.js ; jetons.css ; base.css (.carte, .intitule, .chiffres,
+ *           .chiffres-affiche, .bouton-fort) ; pages.css (.ecran-page, .page-titre) ; accueil.css (.carte-titre,
+ *           .carte-icone, .bouton-recette) ; rendez-vous.css (.pastille-personne).
+ * Sorties : classes .aujourdhui-* .
+ * Pièges  :
+ *   - Hauteurs (1 016 px utiles, en-tête de 79 px puis 20 d'écart : 917 px pour la grille) : rangée du haut fixée à
+ *     376 px (Repas avec un plat sur 2 lignes de 48 px et le bouton Recette de 96 px, le plus haut des deux), donc
+ *     517 px pour la rangée du bas ; avec les alertes (bande de 156 px et 24 d'écart), 337 px. Une ligne de
+ *     rendez-vous fait 53 px plus 8 d'écart (heure en 48 px), un rappel 118 px (moment, puis 2 lignes de 30 px) :
+ *     7 rendez-vous et 3 rappels sans alertes, 4 et 2 avec (aujourdhui-donnees.js), mesuré sur capture du pire cas.
+ *   - Météo : une colonne par période encore à venir (elles se partagent les 740 px de la carte), le nom, le
+ *     pictogramme de 84 px et la température de 84 px l'un sous l'autre, centrés, puis la pluie s'il en tombe : 274 px
+ *     sur les 283 de la carte.
+ *   - Largeurs : deux colonnes de 796 px ; l'heure d'un rendez-vous a une colonne de 150 px (« fin 00:30 » en texte
+ *     de 30 px y tient). La ligne « Journée » (mot dans la même colonne, puis deux événements au plus, chacun avec
+ *     sa pastille de 40 px et sa propre ellipse, « +N » jamais coupé) compte pour une ligne de rendez-vous.
+ *   - Lu de loin : températures en 84 px, plat en 48 px ; lu en touchant : 26 px au moins (conception §1.2),
+ *     intitulés 22 px en capitales (.intitule de base.css).
+ *   - Le rappel est le seul texte en phrase : 2 lignes au plus (-webkit-line-clamp, compris des vieux Chrome).
+ *   - Entrée Tempo (.aujourdhui-tempo, bouton doux de 96 px) dans le coin haut droit, en position absolue de 24 à
+ *     120 px du haut : l'en-tête garde ses 79 px et la grille, qui commence à 131 px, ne bouge pas ; la fiche Tempo
+ *     (tempo.css) se pose par-dessus toute la page (.aujourdhui en position relative).
+ *   - Grilles seulement (grid-gap), jamais de gap en flex (conception §3.1).
+ */
+
+.aujourdhui {
+  position: relative;
+}
+
+.aujourdhui-tempo {
+  position: absolute;
+  top: 24px;
+  right: 32px;
+  padding: 0 32px 0 24px;
+}
+
+.aujourdhui-grille {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: 376px minmax(0, 1fr);
+  grid-column-gap: 24px;
+  grid-row-gap: 24px;
+  min-height: 0;
+}
+
+.aujourdhui-avec-alertes {
+  grid-template-rows: 376px minmax(0, 1fr) auto;
+}
+
+.aujourdhui-carte {
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  padding: 24px 28px 26px;
+}
+
+.aujourdhui-vide {
+  font-size: 32px;
+  color: var(--texte-2);
+}
+
+.aujourdhui-plus {
+  margin-top: 4px;
+  font-weight: 700;
+  color: var(--texte-2);
+}
+
+.aujourdhui-liste {
+  display: grid;
+  grid-row-gap: 8px;
+}
+
+/* Météo : matin, après-midi, soir */
+
+/* Les périodes encore à venir se partagent la largeur (une période passée est masquée). */
+.aujourdhui-periodes {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+}
+
+.aujourdhui-periode {
+  display: grid;
+  grid-row-gap: 8px;
+  align-content: start;
+  justify-items: center;
+}
+
+.aujourdhui-periode + .aujourdhui-periode {
+  border-left: 2px solid var(--separateur);
+}
+
+.aujourdhui-periode-nom {
+  font-weight: 700;
+  color: var(--texte-2);
+}
+
+.aujourdhui-periode-ciel {
+  display: grid;
+  grid-row-gap: 4px;
+  justify-items: center;
+}
+
+.aujourdhui-periode-picto {
+  font-size: 84px;
+  color: var(--accent);
+}
+
+.aujourdhui-periode-temp {
+  font-size: 84px;
+  line-height: 1;
+  white-space: nowrap;
+  color: var(--chaud);
+}
+
+.aujourdhui-pluie {
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-column-gap: 8px;
+  align-items: center;
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.aujourdhui-pluie-icone {
+  font-size: 34px;
+}
+
+/* Repas : midi (gamelle en semaine), soir en grand, temps et bouton Recette */
+
+.aujourdhui-repas-ligne {
+  display: grid;
+  grid-template-columns: 150px minmax(0, 1fr);
+  grid-column-gap: 16px;
+  align-items: baseline;
+  margin-bottom: 14px;
+}
+
+.aujourdhui-repas-intitule {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--texte-2);
+}
+
+.aujourdhui-repas-midi {
+  font-size: 32px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.aujourdhui-plat {
+  font-family: "Fraunces", serif;
+  font-size: 48px;
+  font-weight: 600;
+  font-variation-settings: "opsz" 72;
+  line-height: 1.15;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+.aujourdhui-repas-bas {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-column-gap: 24px;
+  align-items: center;
+}
+
+.aujourdhui-temps {
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-column-gap: 10px;
+  justify-content: start;
+  align-items: center;
+  font-size: 32px;
+  color: var(--texte-2);
+}
+
+.aujourdhui-temps-icone {
+  font-size: 36px;
+}
+
+/* Rendez-vous : heure en grand, pastille de la personne, titre */
+
+.aujourdhui-rdv-ligne {
+  display: grid;
+  grid-template-columns: 150px 44px minmax(0, 1fr);
+  grid-column-gap: 16px;
+  align-items: center;
+}
+
+.aujourdhui-rdv-horaire {
+  font-size: 48px;
+  line-height: 1.1;
+  white-space: nowrap;
+  color: var(--texte);
+}
+
+.aujourdhui-rdv-mot {
+  font-size: 30px;
+  font-weight: 700;
+}
+
+.aujourdhui-pastille {
+  width: 44px;
+  height: 44px;
+  line-height: 44px;
+  font-size: 26px;
+}
+
+.aujourdhui-rdv-titre {
+  font-size: 32px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Ligne « Journée » : les événements sur toute la journée, pastille et titre de chacun (ligne de rendez-vous). */
+.aujourdhui-journee {
+  margin-top: 8px;
+}
+
+.aujourdhui-journee .rdv-ligne {
+  grid-column: 2 / 4;
+  font-size: 30px;
+}
+
+.aujourdhui-journee .pastille-personne {
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+  font-size: 24px;
+}
+
+/* À prévoir : le moment, puis le rappel du menu sur 2 lignes au plus */
+
+.aujourdhui-rappels .aujourdhui-liste {
+  grid-row-gap: 14px;
+}
+
+.aujourdhui-rappel-moment {
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.aujourdhui-rappel-texte {
+  margin-top: 4px;
+  font-size: 30px;
+  line-height: 1.2;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+/* Alertes : bande pleine largeur, 4 cases au plus (la dernière peut être « + N autres ») */
+
+.aujourdhui-alertes {
+  grid-column: 1 / 3;
+}
+
+.aujourdhui-alertes-liste {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-column-gap: 24px;
+  align-items: center;
+}
+
+.aujourdhui-alerte {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-column-gap: 14px;
+  align-items: center;
+  min-width: 0;
+}
+
+.aujourdhui-alerte-icone {
+  font-size: 40px;
+  color: var(--alerte);
+}
+
+.aujourdhui-alerte-textes {
+  display: grid;
+  min-width: 0;
+  line-height: 1.2;
+}
+
+.aujourdhui-alerte-titre {
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.aujourdhui-alerte-valeur {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--alerte);
+}

@@ -1,0 +1,169 @@
+{
+  "version": 1,
+  "cycle": {
+    "debut": "2026-10-10",
+    "fin": "2026-10-16"
+  },
+  "statut": "valide",
+  "maj_le": "2026-10-09T18:12:00+02:00",
+  "repas": [
+    {
+      "id": "2026-10-10-midi",
+      "date": "2026-10-10",
+      "creneau": "midi",
+      "titre": "Saucisson à cuire",
+      "accompagnement": "Pommes de terre vapeur, carottes, moutarde",
+      "temps_min": 50,
+      "kcal_adulte": 675,
+      "tags": [
+        "frigo_seul"
+      ],
+      "gamelles": null,
+      "recette": null
+    },
+    {
+      "id": "2026-10-10-soir",
+      "date": "2026-10-10",
+      "creneau": "soir",
+      "titre": "Burgers maison",
+      "accompagnement": "Potatoes au four",
+      "temps_min": 55,
+      "kcal_adulte": 660,
+      "tags": [
+        "plaisir"
+      ],
+      "gamelles": null,
+      "recette": null
+    },
+    {
+      "id": "2026-10-11-midi",
+      "date": "2026-10-11",
+      "creneau": "midi",
+      "titre": "Rôti de porc",
+      "accompagnement": "Pommes de terre fondantes, haricots verts",
+      "temps_min": 75,
+      "kcal_adulte": 395,
+      "tags": [],
+      "gamelles": {
+        "portions": 2,
+        "pour": "2026-10-12",
+        "kcal_adulte": 395
+      },
+      "recette": null
+    },
+    {
+      "id": "2026-10-11-soir",
+      "date": "2026-10-11",
+      "creneau": "soir",
+      "titre": "Tartines gratinées aux aubergines et à la mozzarella",
+      "accompagnement": "Salade verte",
+      "temps_min": 20,
+      "kcal_adulte": 615,
+      "tags": [
+        "sans_viande"
+      ],
+      "gamelles": null,
+      "recette": null
+    },
+    {
+      "id": "2026-10-12-soir",
+      "date": "2026-10-12",
+      "creneau": "soir",
+      "titre": "Colin façon fish & chips",
+      "accompagnement": "Purée de butternut et pommes de terre",
+      "temps_min": 45,
+      "kcal_adulte": 540,
+      "tags": [
+        "poisson"
+      ],
+      "gamelles": {
+        "portions": 2,
+        "pour": "2026-10-13",
+        "kcal_adulte": 540
+      },
+      "recette": null
+    },
+    {
+      "id": "2026-10-14-soir",
+      "date": "2026-10-14",
+      "creneau": "soir",
+      "titre": "Riz cantonais maison",
+      "accompagnement": "Œufs, jambon, petits pois, carottes",
+      "temps_min": 45,
+      "kcal_adulte": 510,
+      "tags": [],
+      "gamelles": {
+        "portions": 2,
+        "pour": "2026-10-15",
+        "kcal_adulte": 510
+      },
+      "recette": null
+    },
+    {
+      "id": "2026-10-15-soir",
+      "date": "2026-10-15",
+      "creneau": "soir",
+      "titre": "Boulettes à la sauce tomate et aux courgettes",
+      "accompagnement": "Semoule",
+      "temps_min": 35,
+      "kcal_adulte": 650,
+      "tags": [],
+      "gamelles": {
+        "portions": 2,
+        "pour": "2026-10-16",
+        "kcal_adulte": 650
+      },
+      "recette": null
+    },
+    {
+      "id": "2026-10-16-soir",
+      "date": "2026-10-16",
+      "creneau": "soir",
+      "titre": "Quiche poireau et lardons",
+      "accompagnement": "Salade verte",
+      "temps_min": 50,
+      "kcal_adulte": 770,
+      "tags": [],
+      "gamelles": null,
+      "recette": null
+    }
+  ],
+  "petits_dejeuners": [
+    {
+      "libelle": "Yaourt et muesli",
+      "portion": "1 yaourt à la grecque, 40 g de muesli chocolat ou de flocons d'avoine, 1 compote sans sucre",
+      "kcal": 420
+    },
+    {
+      "libelle": "Tartines",
+      "portion": "80 g de pain de boulangerie et 35 g de fromage à tartiner nature",
+      "kcal": 305
+    },
+    {
+      "libelle": "Les garçons",
+      "portion": "Pain au lait, pâte à tartiner cacahuète et cacao ou confiture allégée, fromage en tranches (edam, mimolette) ou Milky, une compote ou une gourde"
+    }
+  ],
+  "rappels": [
+    {
+      "date": "2026-10-11",
+      "moment": "matin",
+      "texte": "Prendre un grand pain de campagne pour les tartines du soir, en plus du pain du matin.",
+      "repas_id": "2026-10-11-soir"
+    },
+    {
+      "date": "2026-10-14",
+      "moment": "matin",
+      "texte": "Cuire le riz du riz cantonais et l'étaler sur une plaque pour qu'il refroidisse.",
+      "repas_id": "2026-10-14-soir"
+    }
+  ],
+  "memo": [
+    "Gamelles : mettre les 2 parts de côté avant de servir, de dimanche midi à jeudi soir.",
+    "Pain : un grand pain de campagne pour dimanche soir, en plus du pain du matin.",
+    "Œufs : 6 pour le riz cantonais, 3 pour la quiche. Il en restera 3.",
+    "Congélateur : steaks pour samedi, poisson pour lundi, boulettes pour jeudi. Tout se cuit sans décongeler.",
+    "Crème : 1 pot pour le gratin de mardi, ½ pot pour la quiche de vendredi.",
+    "Petit plaisir : pains au chocolat surgelés pour un matin du week-end (four à 180 °C, environ 18 min)."
+  ]
+}

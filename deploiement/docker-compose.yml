@@ -1,0 +1,85 @@
+# deploiement/docker-compose.yml
+#
+# Rôle    : service cadre-bff sur le serveur maison (le « M900 »), copié dans ~/cadre/docker-compose.yml par
+#           deploiement/deployer.sh.
+# Entrées : ~/cadre/src/ (sources envoyées par deployer.sh, construites ici), ~/cadre/secrets/ (700, fichiers en 600 :
+#           ha_token de l'utilisateur HA non admin, cle_cadre, cle_clevo, et selon les besoins wifi_invites.json et
+#           immich_cle), ~/cadre/data/menus (menus publiés, lus seulement), ~/cadre/data/etat (écrit par le serveur, à
+#           sauvegarder) et ~/cadre/.env (tout ce qui est propre à la maison : lieu, calendriers, voitures, clims,
+#           garde-fous ACTIONS_*, flux de la sonnette ; voir .env.example).
+# Sorties : http://<serveur>:8020 sur le réseau local (page sans secret, /api protégé par les clés d'appareil).
+# Pièges  :
+#   - Home Assistant, go2rtc et Immich tournent en réseau hôte : on les joint par host.docker.internal (host-gateway).
+#     Le bridge Docker est une adresse privée, donc « local » pour un utilisateur HA en local_only.
+#   - Les quatre garde-fous ACTIONS_REELLES, ACTIONS_MAISON, ACTIONS_VOITURE et ACTIONS_CLIM sont vides par défaut :
+#     tout est SIMULÉ (bandeau « Mode essai »). Les passer à 1 un par un dans ~/cadre/.env, puis redémarrer.
+#     Aucune action d'alarme n'existe, quelle que soit leur valeur.
+#   - GO2RTC_FLUX_SONNETTE : à laisser vide tant que go2rtc écoute le réseau local sans authentification (README,
+#     « Sonnette ») ; la clé du cadre ne protégerait rien.
+#   - VOITURES : les entity_id de l'intégration Renault contiennent souvent la plaque : ~/cadre/.env, jamais le dépôt.
+#   - Tempo et Open-Meteo : le conteneur doit sortir sur Internet en HTTPS (sans compte ni clé).
+#   - user 1000:1000 = l'utilisateur propriétaire de ~/cadre sur le serveur : le conteneur lit les secrets en 600.
+#   - Journaux limités à 3 x 10 Mo : le disque est partagé avec Immich et HA.
+
+services:
+  cadre-bff:
+    build: ./src
+    image: cadre-bff:local
+    container_name: cadre-bff
+    restart: unless-stopped
+    ports:
+      - "8020:8020"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      TZ: Europe/Paris
+      HA_URL: http://host.docker.internal:8123
+      HA_JETON_FICHIER: /run/cadre/ha_token
+      CLE_CADRE_FICHIER: /run/cadre/cle_cadre
+      CLE_CLEVO_FICHIER: /run/cadre/cle_clevo
+      HOTE: 0.0.0.0
+      PORT: "8020"
+      DOSSIER_WEB: web
+      DOSSIER_MENUS: /data/menus
+      DOSSIER_ETAT: /data/etat
+      ACTIONS_REELLES: ${ACTIONS_REELLES:-}
+      ACTIONS_MAISON: ${ACTIONS_MAISON:-}
+      AGENDA_CALENDRIERS: ${AGENDA_CALENDRIERS:-}
+      LIEU_NOM: ${LIEU_NOM:-}
+      LIEU_LATITUDE: ${LIEU_LATITUDE:-}
+      LIEU_LONGITUDE: ${LIEU_LONGITUDE:-}
+      WIFI_INVITES_FICHIER: /run/cadre/wifi_invites.json
+      GO2RTC_URL: http://host.docker.internal:1984
+      GO2RTC_FLUX_SONNETTE: ${GO2RTC_FLUX_SONNETTE:-}
+      IMMICH_URL: http://host.docker.internal:2283
+      IMMICH_CLE_FICHIER: /run/cadre/immich_cle
+      IMMICH_SOURCE: ${IMMICH_SOURCE:-tout}
+      IMMICH_ALBUM_ID: ${IMMICH_ALBUM_ID:-}
+      VOITURES: ${VOITURES:-}
+      ACTIONS_VOITURE: ${ACTIONS_VOITURE:-}
+      CLIMS: ${CLIMS:-}
+      ACTIONS_CLIM: ${ACTIONS_CLIM:-}
+    volumes:
+      - ./secrets:/run/cadre:ro
+      - ./data/menus:/data/menus:ro
+      - ./data/etat:/data/etat
+    user: "1000:1000"
+    read_only: true
+    tmpfs:
+      - /tmp
+    mem_limit: 256m
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8020/api/sante"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"

@@ -1,0 +1,179 @@
+/*
+ * web/styles/ecrans/bourse.css
+ *
+ * Rôle    : la bourse de Timo (ecrans/enfants-bourse.js), colonne de 520 px à droite de sa quête : bourse dessinée et
+ *           minutes en très grand, « Je regarde », minuteur façon Time Timer (disque qui se vide, minutes restantes, Pause,
+ *           Fini), « Fin de la vidéo, puis on éteint » et « À demain ».
+ * Entrées : jetons.css (--piece, --piece-trait, --sauge-piste, --texte-2, --accent) ; base.css (.carte, .chiffres,
+ *           .chiffres-affiche, .bouton-fort, .bouton-doux).
+ * Sorties : .bourse (-bourse, -minuteur, -pause, -fin, -perdues), .bourse-repos, .bourse-dessin, .bourse-nombre,
+ *           .bourse-unite, .bourse-gagnees, .bourse-disque(-svg, -piste, -reste, -centre), .bourse-restant,
+ *           .bourse-boutons, .bourse-regarder, .bourse-fin, .bourse-perdues, .bourse-fin-dessin, .bourse-fin-titre,
+ *           .bourse-fin-texte.
+ * Pièges  :
+ *   - Contenu centré verticalement dans la carte de 888 px : le bas droit reste au geste du mode parent (enfants.css).
+ *   - Nombre en 220 px (lu à 2 m, comme l'heure de l'Accueil), minutes du minuteur en 150 px dans le disque de 400 px ;
+ *     « min » en Nunito Sans à part (en Fraunces d'affichage, un petit signe est un filet à 2 m).
+ *   - Le disque n'est jamais rouge : or des pièces cerné d'or foncé, gris secondaire en pause.
+ *   - « Je regarde » : appui long, barre d'or qui se remplit en bas du bouton pendant la seconde (transform). En pause,
+ *     « Je regarde » et « Fini » l'un sous l'autre : côte à côte, ils dépassaient les 440 px de la carte (mesuré).
+ */
+
+.bourse {
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  grid-row-gap: 32px;
+  padding: 40px;
+  min-height: 0;
+}
+
+.bourse-repos {
+  display: grid;
+  justify-items: center;
+  grid-row-gap: 4px;
+}
+
+.bourse-dessin {
+  font-size: 200px;
+  stroke-width: 1.2;
+  color: var(--piece-trait);
+}
+
+.bourse-nombre {
+  font-size: 220px;
+  line-height: 0.95;
+  color: var(--texte);
+}
+
+.bourse-unite {
+  margin-left: 12px;
+  font-family: "Nunito Sans", sans-serif;
+  font-size: 52px;
+  font-weight: 700;
+  color: var(--texte-2);
+}
+
+.bourse-gagnees {
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--texte-2);
+}
+
+.bourse-disque {
+  position: relative;
+  width: 400px;
+  height: 400px;
+}
+
+.bourse-disque-svg {
+  width: 400px;
+  height: 400px;
+}
+
+.bourse-disque-piste {
+  fill: var(--sauge-piste);
+}
+
+.bourse-disque-reste {
+  fill: var(--piece);
+  stroke: var(--piece-trait);
+  stroke-width: 4;
+}
+
+.bourse-pause .bourse-disque-reste {
+  fill: var(--texte-2);
+  stroke: none;
+}
+
+.bourse-disque-centre {
+  position: absolute;
+  top: 80px;
+  left: 80px;
+  width: 240px;
+  height: 240px;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  border-radius: 50%;
+  background: var(--carte);
+  box-shadow: 0 0 0 4px var(--piece-trait);
+}
+
+.bourse-restant {
+  font-size: 150px;
+  line-height: 0.9;
+  color: var(--texte);
+}
+
+.bourse-restant .bourse-unite {
+  display: block;
+  margin: 4px 0 0;
+  text-align: center;
+  font-size: 36px;
+}
+
+.bourse-boutons {
+  display: grid;
+  grid-auto-flow: column;
+  grid-column-gap: 20px;
+}
+
+.bourse-regarder {
+  position: relative;
+  overflow: hidden;
+  min-height: 120px;
+  padding: 0 48px;
+  font-size: 40px;
+}
+
+.bourse-pause .bourse-boutons {
+  grid-auto-flow: row;
+  grid-row-gap: 16px;
+}
+
+.bourse-regarder::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 12px;
+  background: var(--piece);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+}
+
+.bourse-regarder.appui-long-en-cours::after {
+  transform: scaleX(1);
+  transition: transform 1s linear;
+}
+
+.bourse-fin,
+.bourse-perdues {
+  display: grid;
+  justify-items: center;
+  grid-row-gap: 12px;
+  text-align: center;
+}
+
+.bourse-fin-dessin {
+  font-size: 200px;
+  stroke-width: 1.3;
+  color: var(--accent);
+}
+
+.bourse-fin-titre {
+  font-family: "Fraunces", serif;
+  font-variation-settings: "opsz" 72;
+  font-size: 64px;
+  font-weight: 600;
+  line-height: 1.1;
+  color: var(--texte);
+}
+
+.bourse-fin-texte {
+  font-size: 40px;
+  font-weight: 700;
+  color: var(--texte-2);
+}

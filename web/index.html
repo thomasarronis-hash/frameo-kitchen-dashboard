@@ -1,0 +1,124 @@
+<!doctype html>
+<!--
+  web/index.html
+
+  Rôle    : la page du cadre, scène fixe de 1920x1080 px CSS : menu, écrans (Accueil, Aujourd'hui, Météo, Repas,
+            Courses, Maison, Photos, Agenda, Enfants, Voitures, Recette), vue de nuit, liseré d'un jour Tempo rouge, bandeau hors
+            ligne, bandeau sonnette, et les couches des minuteurs (pastille, tiroir, alerte), du minuteur d'écran de Timo
+            (pastille dans le menu, message de fin) et du « Cadre non appairé ». Servie sans clé (aucun secret) ; les données
+            arrivent par /api/flux (cookie cadre_cle).
+  Entrées : web/src/main.js (module ES) ; feuilles de web/styles ; polices et sprite de web/public, servis à
+            la racine (/polices, /icones.svg) par le serveur comme par Vite.
+  Sorties : la structure vide que les modules remplissent ; un rechargement si le module n'a pas démarré en
+            60 s (idée de Wes ; 10 s au départ, trop court : sur le cadre, la centaine de modules met plus de
+            10 s à se charger et la page se rechargeait en boucle, constat du 14/10).
+  Pièges  :
+    - viewport width=1920 : le kiosque l'applique tel quel (setUseWideViewPort) ; dans un navigateur de
+      développement, web/src/scene.js met la scène à l'échelle par transform.
+    - Modules ES natifs, sans bundler pour l'instant : chemins absolus (/src, /styles, /polices), ceux que
+      Vite gardera ; le JS reste en ES2019 et le CSS suit les règles de compatibilité (conception §3.1).
+    - Le petit script de démarrage est en ES5, hors module : il doit tourner même si le module ne se charge pas
+      (réseau coupé au mauvais moment, module refusé par une vieille WebView). main.js pose window.cadreDemarre.
+      Après 3 essais ratés de suite (compteur en sessionStorage, effacé au premier démarrage réussi), il
+      n'insiste plus que toutes les 5 min : pas de rechargement en boucle serrée qui martèlerait le serveur.
+      Sans sessionStorage (refusé), le compteur reste à 0 : un essai toutes les 60 s. Avant le rechargement
+      différé de 5 min, on revérifie window.cadreDemarre : un module parti lentement mais finalement démarré
+      n'est plus rechargé (défaut corrigé le 14/10).
+    - Préchargement des polices avec crossorigin (obligatoire pour une police, même en même origine),
+      sinon le navigateur les téléchargerait deux fois.
+    - Icône vide (data:,) : sans elle, le navigateur demande /favicon.ico et récolte un 404 à chaque chargement.
+    - tempo.css vient après les feuilles des écrans : sa case de la barre du bas repeint un .bouton-maison d'accueil.css
+      (même spécificité, c'est l'ordre qui décide).
+    - Ordre des couches (z-index dans les feuilles) : liseré Tempo (au-dessus des écrans et du menu, sous le reste),
+      bandeau, « non appairé », pastilles (minuteurs de cuisine, minuteur d'écran), tiroir, bandeau sonnette (par-dessus
+      tous les écrans, recette comprise), fin de la vidéo de Timo, alerte au-dessus de tout, nuit comprise.
+-->
+<html lang="fr" class="theme-jour">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1920, user-scalable=no">
+<title>La cuisine</title>
+<link rel="icon" href="data:,">
+<link rel="preload" href="/polices/fraunces-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/polices/nunito-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/styles/jetons.css">
+<link rel="stylesheet" href="/styles/base.css">
+<link rel="stylesheet" href="/styles/menu.css">
+<link rel="stylesheet" href="/styles/bandeau.css">
+<link rel="stylesheet" href="/styles/minuteurs.css">
+<link rel="stylesheet" href="/styles/non-appaire.css">
+<link rel="stylesheet" href="/styles/rendez-vous.css">
+<link rel="stylesheet" href="/styles/sonnette.css">
+<link rel="stylesheet" href="/styles/telecommande.css">
+<link rel="stylesheet" href="/styles/avatar.css">
+<link rel="stylesheet" href="/styles/anneau.css">
+<link rel="stylesheet" href="/styles/pastille-ecran.css">
+<link rel="stylesheet" href="/styles/fin-video.css">
+<link rel="stylesheet" href="/styles/ecrans/accueil.css">
+<link rel="stylesheet" href="/styles/ecrans/pages.css">
+<link rel="stylesheet" href="/styles/ecrans/aujourdhui.css">
+<link rel="stylesheet" href="/styles/ecrans/meteo.css">
+<link rel="stylesheet" href="/styles/ecrans/repas.css">
+<link rel="stylesheet" href="/styles/ecrans/recette.css">
+<link rel="stylesheet" href="/styles/ecrans/courses.css">
+<link rel="stylesheet" href="/styles/ecrans/agenda.css">
+<link rel="stylesheet" href="/styles/ecrans/maison.css">
+<link rel="stylesheet" href="/styles/ecrans/photos.css">
+<link rel="stylesheet" href="/styles/ecrans/voitures.css">
+<link rel="stylesheet" href="/styles/ecrans/clims.css">
+<link rel="stylesheet" href="/styles/ecrans/enfants.css">
+<link rel="stylesheet" href="/styles/ecrans/quete.css">
+<link rel="stylesheet" href="/styles/ecrans/bourse.css">
+<link rel="stylesheet" href="/styles/ecrans/boutique.css">
+<link rel="stylesheet" href="/styles/ecrans/pablo.css">
+<link rel="stylesheet" href="/styles/ecrans/parent.css">
+<link rel="stylesheet" href="/styles/ecrans/enfants-effets.css">
+<link rel="stylesheet" href="/styles/tempo.css">
+<script>
+  (function () {
+    var CLE = 'cadre.essais_demarrage';
+    function lire() {
+      try { return Number(sessionStorage.getItem(CLE)) || 0; } catch (e) { return 0; }
+    }
+    function ecrire(valeur) {
+      try {
+        if (valeur === 0) sessionStorage.removeItem(CLE);
+        else sessionStorage.setItem(CLE, String(valeur));
+      } catch (e) { return; }
+    }
+    setTimeout(function () {
+      var essais = lire();
+      if (window.cadreDemarre) {
+        ecrire(0);
+        return;
+      }
+      ecrire(essais + 1);
+      setTimeout(function () {
+        if (window.cadreDemarre) {
+          ecrire(0);
+          return;
+        }
+        location.reload();
+      }, essais < 3 ? 0 : 300000);
+    }, 60000);
+  })();
+</script>
+<script type="module" src="/src/main.js"></script>
+</head>
+<body>
+<div id="scene" class="scene">
+  <nav id="menu" class="menu" aria-label="Menu"></nav>
+  <main id="ecran" class="ecran"></main>
+  <div id="nuit" class="nuit" aria-hidden="true"><div class="nuit-heure chiffres chiffres-affiche"></div></div>
+  <div id="liseret" class="liseret" aria-hidden="true" hidden></div>
+  <div id="bandeau" class="bandeau" role="status" hidden></div>
+  <div id="sonnette" class="bandeau-sonnette" role="alert" hidden></div>
+  <div id="pastille" class="pastille" hidden></div>
+  <div id="pastille-ecran" class="pastille-ecran" hidden></div>
+  <div id="tiroir" class="couche-tiroir" hidden></div>
+  <div id="fin-video" class="fin-video" role="alert" hidden></div>
+  <div id="non-appaire" class="non-appaire" role="alert" hidden></div>
+  <div id="alerte" class="alerte" hidden></div>
+</div>
+</body>
+</html>

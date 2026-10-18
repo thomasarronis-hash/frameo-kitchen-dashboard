@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<!--
+  compat.html : diagnostic de la WebView du cadre, à passer le jour J (13/10).
+
+  Rôle : mesurer ce que la WebView sait faire (CSS, JS, Intl, fondu, son, pont Kiosk,
+  clavier, mémoire) pour choisir la cible de build et le réglage « verre » (conception §5, M0).
+  Entrées : rien à fournir, tout est généré dans la page. Pont window.Kiosk s'il existe
+  (appli kiosque fr.arronis.cuisine), repli silencieux sinon.
+  Sorties : résultats à l'écran, rapport texte (copie et zone sélectionnable) et POST /rapport
+  vers la même origine (outils/serveur-compat.py l'enregistre dans docs/releves/).
+
+  Pièges :
+  - Écrit à la main en ES5 strict, sans build ni dépendance : doit tourner sur Chrome 50
+    (Android 6). Pas de const, let, fonctions fléchées, gabarits, ?. ni ?? hors des chaînes
+    passées à new Function. Une Promise n'est utilisée qu'après avoir vérifié qu'elle existe.
+  - CSS limité à Chrome 50 : flex sans gap (marges), pas de grid ni de variables CSS.
+  - « Recharger et tester » recharge la page et efface les mesures manuelles déjà faites :
+    faire ce test juste après le réglage du volume, ou envoyer le rapport avant.
+  - Les tests ?. et ?? passent par new Function : l'erreur de syntaxe attendue sur une vieille
+    WebView est rattrapée et ne casse pas le reste de la page.
+  - Le viewport est fixé à 1920 comme la vraie page : innerWidth vaut 1920 si la WebView
+    respecte useWideViewPort, ce qui est justement vérifié en section 1.
+-->
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1920, user-scalable=no">
+<title>Compatibilité du cadre</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: #eef1ec;
+    color: #22302b;
+    font-family: Roboto, "Noto Sans", sans-serif;
+    font-size: 28px;
+    line-height: 1.35;
+  }
+  h1 { margin: 0 0 8px; font-size: 56px; }
+  h2 { margin: 0 0 16px; font-size: 40px; }
+  p { margin: 0 0 16px; }
+  code { padding: 2px 8px; border-radius: 6px; background: #eef1ec; font-size: 24px; }
+  .entete { padding: 32px 40px 0; }
+  .aide { color: #5d6b65; }
+  .alerte { color: #a3281c; font-weight: 700; }
+  .grille { display: flex; flex-wrap: wrap; padding: 12px 28px 40px; }
+  .carte { width: 50%; padding: 12px; }
+  .carte.large { width: 100%; }
+  .corps { height: 100%; padding: 28px 32px; border-radius: 20px; background: #fff; }
+  .ligne { padding: 8px 0; border-bottom: 1px solid #e3e8e2; word-wrap: break-word; }
+  .libelle { color: #5d6b65; }
+  .valeur { font-weight: 700; }
+  .ok { color: #2f5d50; }
+  .ko { color: #a3281c; }
+  .boutons { margin: 8px 0; }
+  button {
+    min-width: 96px;
+    min-height: 96px;
+    margin: 0 16px 16px 0;
+    padding: 0 36px;
+    border: 0;
+    border-radius: 16px;
+    background: #2f5d50;
+    color: #fff;
+    font: inherit;
+    font-size: 30px;
+    font-weight: 700;
+  }
+  button:active { opacity: 0.7; }
+  button.secondaire { border: 3px solid #2f5d50; background: #fff; color: #2f5d50; }
+  .question { margin-top: 12px; }
+  .question span { display: block; margin-bottom: 8px; }
+  input[type="text"] {
+    width: 100%;
+    height: 96px;
+    padding: 0 24px;
+    border: 3px solid #5d6b65;
+    border-radius: 16px;
+    font: inherit;
+    font-size: 40px;
+  }
+  textarea {
+    width: 100%;
+    height: 480px;
+    padding: 16px;
+    border: 3px solid #5d6b65;
+    border-radius: 16px;
+    font: 22px/1.3 monospace;
+  }
+  .scene { position: fixed; left: 0; top: 0; z-index: 10; width: 100%; height: 100%; overflow: hidden; background: #000; }
+  .scene img { position: absolute; left: 0; top: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; }
+  .pastille { display: none; position: absolute; padding: 24px 40px; border-radius: 28px; color: #fff; font-size: 40px; }
+  .pastille strong { display: block; font-size: 120px; line-height: 1.1; }
+  .p1 { left: 48px; bottom: 48px; }
+  .p2 { right: 48px; top: 48px; }
+  .p3 { right: 48px; bottom: 48px; }
+  .scene.teinte .pastille {
+    display: block;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(20, 28, 26, 0.55);
+  }
+  .scene.flou .pastille {
+    display: block;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(20, 28, 26, 0.3);
+    backdrop-filter: blur(14px);
+  }
+  .etiquette { position: absolute; left: 48px; top: 48px; padding: 16px 28px; border-radius: 16px; background: rgba(0, 0, 0, 0.6); color: #fff; font-size: 32px; }
+  .arreter { position: absolute; right: 48px; top: 48px; }
+</style>
+</head>
+<body>
+
+<div class="entete">
+  <h1>Compatibilité du cadre</h1>
+  <p class="aide">Ordre conseillé : 6. volume 80 %, 5. « Recharger et tester », puis le reste (6. de nouveau, pour qu’il figure au rapport), et enfin « Envoyer le rapport ».</p>
+  <p id="demarrage" class="alerte">Le script de diagnostic n’a pas démarré (erreur de syntaxe ou JavaScript désactivé).</p>
+</div>
+
+<div class="grille">
+
+  <section class="carte"><div class="corps">
+    <h2>1. Identité</h2>
+    <div id="res-identite"></div>
+  </div></section>
+
+  <section class="carte"><div class="corps">
+    <h2>2. CSS</h2>
+    <div id="res-css"></div>
+  </div></section>
+
+  <section class="carte"><div class="corps">
+    <h2>3. JavaScript</h2>
+    <div id="res-js"></div>
+  </div></section>
+
+  <section class="carte"><div class="corps">
+    <h2>4. Fondu (FPS)</h2>
+    <p class="aide">Trois fondus de 2 s entre deux images 1920x1080 : sans pastille, sous 3 pastilles teintées, sous 3 pastilles floutées. Ne pas toucher l’écran pendant la mesure (10 s environ).</p>
+    <div class="boutons"><button id="btn-fondu">Mesurer le fondu</button></div>
+    <div id="res-fondu"></div>
+  </div></section>
+
+  <section class="carte"><div class="corps">
+    <h2>5. Son</h2>
+    <p class="aide">« Recharger et tester » recharge la page puis joue deux bips 3 s après, sans aucun toucher. Les mesures manuelles déjà faites sont effacées.</p>
+    <div class="boutons">
+      <button id="btn-bip-webaudio">Bip WebAudio</button>
+      <button id="btn-bip-audio">Bip &lt;audio&gt;</button>
+      <button id="btn-son-auto" class="secondaire">Recharger et tester</button>
+    </div>
+    <div id="res-son"></div>
+    <div id="questions-son">
+      <div class="question"><span>Bip WebAudio entendu au toucher ?</span>
+        <button class="secondaire" data-question="toucher-webaudio" data-reponse="oui">Oui</button><button class="secondaire" data-question="toucher-webaudio" data-reponse="non">Non</button></div>
+      <div class="question"><span>Bip &lt;audio&gt; entendu au toucher ?</span>
+        <button class="secondaire" data-question="toucher-audio" data-reponse="oui">Oui</button><button class="secondaire" data-question="toucher-audio" data-reponse="non">Non</button></div>
+      <div class="question"><span>Bip automatique WebAudio entendu (sans toucher) ?</span>
+        <button class="secondaire" data-question="auto-webaudio" data-reponse="oui">Oui</button><button class="secondaire" data-question="auto-webaudio" data-reponse="non">Non</button></div>
+      <div class="question"><span>Bip automatique &lt;audio&gt; entendu (sans toucher) ?</span>
+        <button class="secondaire" data-question="auto-audio" data-reponse="oui">Oui</button><button class="secondaire" data-question="auto-audio" data-reponse="non">Non</button></div>
+    </div>
+  </div></section>
+
+  <section class="carte"><div class="corps">
+    <h2>6. Pont Kiosk</h2>
+    <p class="aide">Luminosité : 0, puis 0,05, puis 1, avec 3 s par palier (l’écran revient seul à 1).</p>
+    <div class="boutons">
+      <button id="btn-volume">Volume 80 %</button>
+      <button id="btn-lire-volume" class="secondaire">Lire le volume</button>
+      <button id="btn-luminosite">Luminosité 0 → 0,05 → 1</button>
+    </div>
+    <div id="res-pont"></div>
+  </div></section>
+
+  <section class="carte"><div class="corps">
+    <h2>7. Clavier</h2>
+    <p class="aide">Taper « crème fraîche ». Noter à l’œil ce que le clavier cache : en plein écran, la page ne peut pas le mesurer.</p>
+    <input id="champ" type="text" autocomplete="off" placeholder="crème fraîche">
+    <div id="res-clavier"></div>
+  </div></section>
+
+  <section class="carte"><div class="corps">
+    <h2>8. Diaporama (10 min)</h2>
+    <p class="aide">Une nouvelle image 1920x1080 toutes les 6 s, fondu de 1,5 s. Pendant ce temps, sur le Clevo : surveillance de la mémoire et de logcat (docs/jour-j.md, étape 5).</p>
+    <div class="boutons"><button id="btn-diaporama">Lancer le diaporama</button></div>
+    <div id="res-diaporama"></div>
+  </div></section>
+
+  <section class="carte large"><div class="corps">
+    <h2>Rapport</h2>
+    <div class="boutons">
+      <button id="btn-envoyer">Envoyer le rapport au Clevo</button>
+      <button id="btn-copier" class="secondaire">Copier le rapport</button>
+    </div>
+    <p id="etat-rapport" class="aide"></p>
+    <textarea id="zone-rapport" readonly hidden></textarea>
+    <h2>Erreurs JavaScript</h2>
+    <div id="res-erreurs"></div>
+  </div></section>
+
+</div>
+
+<div id="scene" class="scene" hidden>
+  <img id="image-dessous" alt="">
+  <img id="image-dessus" alt="">
+  <div class="pastille p1"><strong>19:41</strong>Mardi 13 octobre</div>
+  <div class="pastille p2"><strong>14°</strong>Éclaircies</div>
+  <div class="pastille p3">Ce soir<strong>Gratin</strong></div>
+  <div id="etiquette" class="etiquette"></div>
+  <button id="btn-arreter" class="arreter" hidden>Arrêter</button>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  // ------------------------------------------------------------------
+  // Résultats : une table par section, affichée à l'écran et reprise
+  // telle quelle dans le rapport. État : ok (vert), ko (rouge), info.
+  // ------------------------------------------------------------------
+
+  var SECTIONS = [
+    ['identite', '1. Identité'],
+    ['css', '2. CSS'],
+    ['js', '3. JavaScript'],
+    ['fondu', '4. Fondu (FPS)'],
+    ['son', '5. Son'],
+    ['pont', '6. Pont Kiosk'],
+    ['clavier', '7. Clavier'],
+    ['diaporama', '8. Diaporama'],
+    ['erreurs', 'Erreurs JavaScript']
+  ];
+  var resultats = {};
+  var nbErreurs = 0;
+
+  window.onerror = function (message, source, ligne) {
+    nbErreurs += 1;
+    noter('erreurs', 'e' + nbErreurs, 'Erreur ' + nbErreurs, message + ' (ligne ' + ligne + ')', 'ko');
+  };
+
+  /** Enregistre (ou remplace) un résultat et met à jour sa ligne à l'écran. */
+  function noter(section, cle, libelle, valeur, etat) {
+    var table = resultats[section];
+    if (!table) {
+      table = resultats[section] = { ordre: [], lignes: {} };
+    }
+    if (!table.lignes[cle]) {
+      table.ordre.push(cle);
+    }
+    table.lignes[cle] = { libelle: libelle, valeur: String(valeur), etat: etat || 'info' };
+    afficherLigne(section, cle, table.lignes[cle]);
+  }
+
+  function afficherLigne(section, cle, resultat) {
+    var conteneur = document.getElementById('res-' + section);
+    var id = 'r-' + section + '-' + cle;
+    var ligne = document.getElementById(id);
+    if (!conteneur) {
+      return;
+    }
+    if (!ligne) {
+      ligne = document.createElement('div');
+      ligne.id = id;
+      ligne.className = 'ligne';
+      ligne.appendChild(document.createElement('span')).className = 'libelle';
+      ligne.appendChild(document.createElement('span'));
+      conteneur.appendChild(ligne);
+    }
+    ligne.firstChild.textContent = resultat.libelle + ' : ';
+    ligne.lastChild.textContent = resultat.valeur;
+    ligne.lastChild.className = 'valeur ' + resultat.etat;
+  }
+
+  function ouiNon(vrai) {
+    return vrai ? 'oui' : 'non';
+  }
+
+  /** Lance un test sans laisser une exception bloquer les suivants. */
+  function prudemment(section, test) {
+    try {
+      test();
+    } catch (e) {
+      noter(section, 'exception', 'Exception pendant le test', e.message, 'ko');
+    }
+  }
+
+  /** Évite un rejet non traité quand une méthode renvoie une Promise (navigateurs récents). */
+  function sansRejet(promesse) {
+    if (promesse && typeof promesse.then === 'function') {
+      promesse.then(null, function () {});
+    }
+  }
+
+  function minutesSecondes(ms) {
+    var s = Math.max(0, Math.round(ms / 1000));
+    return Math.floor(s / 60) + ' min ' + (s % 60 < 10 ? '0' : '') + (s % 60) + ' s';
+  }
+
+  // ------------------------------------------------------------------
+  // 1. Identité
+  // ------------------------------------------------------------------
+
+  function testerIdentite() {
+    var ua = navigator.userAgent;
+    var chrome = /Chrome\/(\d+)/.exec(ua);
+    var android = /Android ([0-9.]+)/.exec(ua);
+    noter('identite', 'ua', 'userAgent', ua);
+    noter('identite', 'chrome', 'Version de Chrome (seuil 64)', chrome ? chrome[1] : 'introuvable',
+      chrome && Number(chrome[1]) >= 64 ? 'ok' : 'ko');
+    noter('identite', 'android', 'Version d’Android', android ? android[1] : 'pas Android');
+    noter('identite', 'wv', 'WebView d’appli (« wv » dans le userAgent)', ouiNon(/; wv\)/.test(ua)));
+    noter('identite', 'fenetre', 'innerWidth x innerHeight', window.innerWidth + ' x ' + window.innerHeight,
+      window.innerWidth === 1920 ? 'ok' : 'info');
+    noter('identite', 'ecran', 'screen.width x screen.height', screen.width + ' x ' + screen.height);
+    noter('identite', 'dpr', 'devicePixelRatio', window.devicePixelRatio);
+  }
+
+  // ------------------------------------------------------------------
+  // 2. CSS : CSS.supports, sélecteurs, gap en flex mesuré
+  // ------------------------------------------------------------------
+
+  function supporte(propriete, valeur) {
+    try {
+      return !!(window.CSS && CSS.supports && CSS.supports(propriete, valeur));
+    } catch (e) {
+      return false;
+    }
+  }
+
+  /** Un sélecteur inconnu fait lever une SyntaxError à querySelector. */
+  function selecteurConnu(selecteur) {
+    try {
+      document.querySelector(selecteur);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  /** Écart réel entre deux enfants d'une boîte flex avec gap: 10px (0 si gap ignoré). */
+  function mesurerGapFlex() {
+    var boite = document.createElement('div');
+    var a = document.createElement('div');
+    var b = document.createElement('div');
+    var ecart;
+    boite.style.cssText = 'display:flex;gap:10px;position:absolute;left:-9999px;top:0;';
+    a.style.cssText = 'width:10px;height:10px;flex:none;';
+    b.style.cssText = a.style.cssText;
+    boite.appendChild(a);
+    boite.appendChild(b);
+    document.body.appendChild(boite);
+    ecart = b.getBoundingClientRect().left - a.getBoundingClientRect().right;
+    document.body.removeChild(boite);
+    return Math.round(ecart);
+  }
+
+  function testerCss() {
+    var essais = [
+      ['backdrop', 'backdrop-filter', 'backdrop-filter', 'blur(14px)'],
+      ['aspect', 'aspect-ratio', 'aspect-ratio', '16 / 9'],
+      ['inset', 'inset', 'inset', '0'],
+      ['colormix', 'color-mix()', 'color', 'color-mix(in srgb, red 50%, blue)'],
+      ['dvh', 'Unité dvh', 'height', '100dvh'],
+      ['fvs', 'font-variation-settings', 'font-variation-settings', '"opsz" 144']
+    ];
+    var i, oui, gap;
+    noter('css', 'supports', 'CSS.supports disponible', ouiNon(window.CSS && CSS.supports),
+      window.CSS && CSS.supports ? 'ok' : 'ko');
+    for (i = 0; i < essais.length; i += 1) {
+      oui = supporte(essais[i][2], essais[i][3]);
+      noter('css', essais[i][0], essais[i][1], ouiNon(oui), oui ? 'ok' : 'info');
+    }
+    oui = selecteurConnu(':is(body)');
+    noter('css', 'is', 'Sélecteur :is()', ouiNon(oui), oui ? 'ok' : 'info');
+    oui = selecteurConnu(':has(*)');
+    noter('css', 'has', 'Sélecteur :has()', ouiNon(oui), oui ? 'ok' : 'info');
+    gap = mesurerGapFlex();
+    noter('css', 'gap', 'gap en flex (écart mesuré)', ouiNon(gap === 10) + ' (' + gap + ' px pour 10 demandés)',
+      gap === 10 ? 'ok' : 'info');
+  }
+
+  // ------------------------------------------------------------------
+  // 3. JavaScript : syntaxe récente, Intl, EventSource, localStorage
+  // ------------------------------------------------------------------
+
+  /** Vrai si le moteur compile ce code (une syntaxe inconnue lève une SyntaxError). */
+  function syntaxeAcceptee(code) {
+    try {
+      return typeof new Function(code) === 'function';
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function stockageFonctionne() {
+    var ok;
+    try {
+      localStorage.setItem('compat-essai', '1');
+      ok = localStorage.getItem('compat-essai') === '1';
+      localStorage.removeItem('compat-essai');
+      return ok;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function testerIntl() {
+    var format, langue;
+    var fuseau = 'non renseigné';
+    if (typeof Intl !== 'object' || !Intl.DateTimeFormat) {
+      noter('js', 'intl', 'Intl.DateTimeFormat', 'absent', 'ko');
+      return;
+    }
+    try {
+      format = new Intl.DateTimeFormat('fr-FR', {
+        timeZone: 'Europe/Paris', weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit'
+      });
+      noter('js', 'intl', 'Intl, fuseau Europe/Paris', format.format(new Date()), 'ok');
+      langue = format.resolvedOptions().locale;
+      noter('js', 'intl-langue', 'Locale résolue (attendu fr)', langue, /^fr/.test(langue) ? 'ok' : 'ko');
+    } catch (e) {
+      noter('js', 'intl', 'Intl, fuseau Europe/Paris', 'refusé : ' + e.message, 'ko');
+    }
+    try {
+      fuseau = new Intl.DateTimeFormat().resolvedOptions().timeZone || fuseau;
+    } catch (e2) {
+      fuseau = 'illisible';
+    }
+    noter('js', 'fuseau', 'Fuseau de l’appareil', fuseau + ' (décalage ' + (-new Date().getTimezoneOffset()) + ' min)');
+    noter('js', 'heure', 'Heure de l’appareil', new Date().toString());
+  }
+
+  function testerJs() {
+    var chainage = syntaxeAcceptee('var o = {}; return o?.a;');
+    var coalescence = syntaxeAcceptee('return null ?? 1;');
+    var eventSource = typeof window.EventSource !== 'undefined';
+    var stockage = stockageFonctionne();
+    noter('js', 'chainage', 'Chaînage optionnel ?.', ouiNon(chainage), chainage ? 'ok' : 'info');
+    noter('js', 'coalescence', 'Coalescence ??', ouiNon(coalescence), coalescence ? 'ok' : 'info');
+    testerIntl();
+    noter('js', 'eventsource', 'EventSource', ouiNon(eventSource), eventSource ? 'ok' : 'ko');
+    noter('js', 'localstorage', 'localStorage (écriture et relecture)', ouiNon(stockage), stockage ? 'ok' : 'ko');
+  }
+
+  // ------------------------------------------------------------------
+  // Scène plein écran commune au fondu et au diaporama.
+  // L'image du dessous reste opaque ; seule celle du dessus change
+  // d'opacité, ce qui donne un vrai fondu enchaîné.
+  // ------------------------------------------------------------------
+
+  var scene = document.getElementById('scene');
+  var imageDessous = document.getElementById('image-dessous');
+  var imageDessus = document.getElementById('image-dessus');
+  var etiquette = document.getElementById('etiquette');
+  var boutonArreter = document.getElementById('btn-arreter');
+
+  /** Image 1920x1080 générée en canvas (dégradé, disques, numéro), en JPEG data: URL. */
+  function genererImage(numero) {
+    var toile = document.createElement('canvas');
+    var g, degrade, i;
+    var teinte = (numero * 67) % 360;
+    toile.width = 1920;
+    toile.height = 1080;
+    g = toile.getContext('2d');
+    degrade = g.createLinearGradient(0, 0, 1920, 1080);
+    degrade.addColorStop(0, 'hsl(' + teinte + ', 55%, 45%)');
+    degrade.addColorStop(1, 'hsl(' + ((teinte + 140) % 360) + ', 55%, 22%)');
+    g.fillStyle = degrade;
+    g.fillRect(0, 0, 1920, 1080);
+    for (i = 0; i < 60; i += 1) {
+      g.fillStyle = 'hsla(' + ((teinte + i * 23) % 360) + ', 70%, 60%, 0.35)';
+      g.beginPath();
+      g.arc(Math.random() * 1920, Math.random() * 1080, 40 + Math.random() * 220, 0, Math.PI * 2);
+      g.fill();
+    }
+    g.fillStyle = 'rgba(255, 255, 255, 0.85)';
+    g.font = 'bold 160px sans-serif';
+    g.fillText('Image ' + numero, 120, 960);
+    return toile.toDataURL('image/jpeg', 0.85);
+  }
+
+  function chargerImage(image, src, suite) {
+    image.onload = image.onerror = function () {
+      image.onload = image.onerror = null;
+      suite();
+    };
+    image.src = src;
+  }
+
+  /** Force le calcul des styles, pour qu'une transition parte bien de l'état courant. */
+  function forcerStyle(element) {
+    return element.offsetWidth;
+  }
+
+  function montrerScene(classe, transition) {
+    scene.className = 'scene ' + classe;
+    imageDessous.style.opacity = '0';
+    imageDessus.style.opacity = '0';
+    imageDessus.style.transition = 'opacity ' + transition;
+    scene.hidden = false;
+  }
+
+  function cacherScene() {
+    scene.hidden = true;
+    boutonArreter.hidden = true;
+    imageDessous.removeAttribute('src');
+    imageDessus.removeAttribute('src');
+  }
+
+  /** Affiche une nouvelle image par fondu, en la chargeant dans la couche invisible. */
+  function fondreVers(src, suite) {
+    var dessusVisible = imageDessus.style.opacity === '1';
+    chargerImage(dessusVisible ? imageDessous : imageDessus, src, function () {
+      imageDessous.style.opacity = '1';
+      imageDessus.style.opacity = dessusVisible ? '0' : '1';
+      suite();
+    });
+  }
+
+  // ------------------------------------------------------------------
+  // 4. Fondu : FPS pendant 2 s, sans pastille, teintées, floutées
+  // ------------------------------------------------------------------
+
+  var MODES_FONDU = ['aucune', 'teinte', 'flou'];
+  var LIBELLES_FONDU = {
+    aucune: 'Fondu sans pastille',
+    teinte: 'Fondu sous 3 pastilles teintées',
+    flou: 'Fondu sous 3 pastilles floutées'
+  };
+
+  /** Compte les trames pendant 2 s à partir du lancement de la transition. */
+  function mesurerUnFondu(suite) {
+    var debut = null;
+    var precedent = 0;
+    var trames = 0;
+    var pire = 0;
+    function trame(t) {
+      if (debut === null) {
+        debut = precedent = t;
+        imageDessus.style.opacity = imageDessus.style.opacity === '1' ? '0' : '1';
+      } else {
+        trames += 1;
+        pire = Math.max(pire, t - precedent);
+        precedent = t;
+        if (t - debut >= 2000) {
+          suite(trames * 1000 / (t - debut), pire);
+          return;
+        }
+      }
+      requestAnimationFrame(trame);
+    }
+    requestAnimationFrame(trame);
+  }
+
+  function mesurerModes(mesures, i) {
+    var mode;
+    if (i >= MODES_FONDU.length) {
+      cacherScene();
+      conclureFondu(mesures);
+      return;
+    }
+    mode = MODES_FONDU[i];
+    scene.className = 'scene ' + mode;
+    etiquette.textContent = LIBELLES_FONDU[mode] + ', mesure en cours';
+    setTimeout(function () {
+      mesurerUnFondu(function (fps, pire) {
+        mesures[mode] = fps;
+        noter('fondu', mode, LIBELLES_FONDU[mode], Math.round(fps) + ' FPS, pire trame ' + Math.round(pire) + ' ms',
+          fps >= 30 ? 'ok' : 'ko');
+        mesurerModes(mesures, i + 1);
+      });
+    }, 700);
+  }
+
+  function conclureFondu(mesures) {
+    var verdict;
+    if (!supporte('backdrop-filter', 'blur(14px)')) {
+      verdict = 'teinte (backdrop-filter absent : les pastilles « floutées » ne floutent rien)';
+    } else if (mesures.flou >= 30) {
+      verdict = 'flou possible (30 FPS ou plus sous 3 pastilles floutées)';
+    } else {
+      verdict = 'teinte (moins de 30 FPS sous flou)';
+    }
+    noter('fondu', 'verdict', 'Réglage « verre » proposé', verdict);
+  }
+
+  function lancerFondus() {
+    noter('fondu', 'generation', 'Génération de 2 images 1920x1080', 'en cours');
+    setTimeout(function () {
+      var debut = Date.now();
+      var a = genererImage(1);
+      var b = genererImage(2);
+      noter('fondu', 'generation', 'Génération de 2 images 1920x1080', (Date.now() - debut) + ' ms');
+      montrerScene('aucune', '2s linear');
+      chargerImage(imageDessous, a, function () {
+        chargerImage(imageDessus, b, function () {
+          imageDessous.style.opacity = '1';
+          forcerStyle(scene);
+          mesurerModes({}, 0);
+        });
+      });
+    }, 50);
+  }
+
+  // ------------------------------------------------------------------
+  // 5. Son : WebAudio et <audio> (WAV généré), au toucher et sans geste
+  // ------------------------------------------------------------------
+
+  var contexteAudio = null;
+  var urlWav = null;
+
+  function obtenirContexteAudio() {
+    var Constructeur = window.AudioContext || window.webkitAudioContext;
+    if (!contexteAudio && Constructeur) {
+      try {
+        contexteAudio = new Constructeur();
+      } catch (e) {
+        contexteAudio = null;
+      }
+    }
+    return contexteAudio;
+  }
+
+  function noterVolumeSon() {
+    if (pont()) {
+      noter('son', 'volume', 'Volume média au dernier bip', appelPont(function (k) { return k.getVolume() + ' %'; }));
+    }
+  }
+
+  function bipWebAudio(cle, libelle) {
+    var ctx = obtenirContexteAudio();
+    var t, oscillateur, gain;
+    noterVolumeSon();
+    if (!ctx) {
+      noter('son', cle, libelle, 'WebAudio absent', 'ko');
+      return;
+    }
+    if (ctx.resume) {
+      sansRejet(ctx.resume());
+    }
+    t = ctx.currentTime + 0.05;
+    oscillateur = ctx.createOscillator();
+    gain = ctx.createGain();
+    oscillateur.type = 'sine';
+    oscillateur.frequency.value = 880;
+    gain.gain.setValueAtTime(0.0001, t);
+    gain.gain.exponentialRampToValueAtTime(0.6, t + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.5);
+    oscillateur.connect(gain);
+    gain.connect(ctx.destination);
+    oscillateur.start(t);
+    oscillateur.stop(t + 0.55);
+    setTimeout(function () {
+      var etat = ctx.state || 'inconnu';
+      noter('son', cle, libelle, 'contexte ' + etat + (etat === 'running' ? ' (son envoyé à la sortie)' : ' (son bloqué)'),
+        etat === 'running' ? 'ok' : 'ko');
+    }, 400);
+  }
+
+  /** WAV PCM 16 bits mono, 0,5 s à 880 Hz, encodé en data: URL (aucun fichier à servir). */
+  function genererWav() {
+    var taux = 22050;
+    var n = Math.floor(taux * 0.5);
+    var tampon, vue, octets, binaire, i;
+    function ecrireTexte(position, texte) {
+      for (var j = 0; j < texte.length; j += 1) {
+        vue.setUint8(position + j, texte.charCodeAt(j));
+      }
+    }
+    if (urlWav) {
+      return urlWav;
+    }
+    tampon = new ArrayBuffer(44 + n * 2);
+    vue = new DataView(tampon);
+    ecrireTexte(0, 'RIFF');
+    vue.setUint32(4, 36 + n * 2, true);
+    ecrireTexte(8, 'WAVE');
+    ecrireTexte(12, 'fmt ');
+    vue.setUint32(16, 16, true);
+    vue.setUint16(20, 1, true);
+    vue.setUint16(22, 1, true);
+    vue.setUint32(24, taux, true);
+    vue.setUint32(28, taux * 2, true);
+    vue.setUint16(32, 2, true);
+    vue.setUint16(34, 16, true);
+    ecrireTexte(36, 'data');
+    vue.setUint32(40, n * 2, true);
+    for (i = 0; i < n; i += 1) {
+      vue.setInt16(44 + i * 2,
+        Math.round(Math.sin(2 * Math.PI * 880 * i / taux) * Math.min(1, i / 200, (n - i) / 2000) * 0.6 * 32767), true);
+    }
+    octets = new Uint8Array(tampon);
+    binaire = '';
+    for (i = 0; i < octets.length; i += 1) {
+      binaire += String.fromCharCode(octets[i]);
+    }
+    urlWav = 'data:audio/wav;base64,' + btoa(binaire);
+    return urlWav;
+  }
+
+  function bipAudio(cle, libelle) {
+    var audio = new Audio();
+    var conclu = false;
+    var promesse;
+    function conclure(texte, etat) {
+      if (!conclu) {
+        conclu = true;
+        noter('son', cle, libelle, texte, etat);
+      }
+    }
+    noterVolumeSon();
+    audio.addEventListener('playing', function () { conclure('lecture lancée', 'ok'); });
+    audio.addEventListener('error', function () { conclure('WAV illisible', 'ko'); });
+    audio.src = genererWav();
+    try {
+      promesse = audio.play();
+    } catch (e) {
+      conclure('refusé : ' + e.message, 'ko');
+      return;
+    }
+    if (promesse && typeof promesse.then === 'function') {
+      promesse.then(null, function (erreur) {
+        conclure('refusé : ' + (erreur && erreur.name ? erreur.name : erreur), 'ko');
+      });
+    }
+    setTimeout(function () { conclure('aucune lecture constatée en 3 s', 'ko'); }, 3000);
+  }
+
+  function rechargerEtTester() {
+    location.hash = 'son-auto';
+    location.reload();
+  }
+
+  /** Après « Recharger et tester » : deux bips 3 s après le chargement, sans aucun geste. */
+  function sonAutoSiDemande() {
+    if (location.hash !== '#son-auto') {
+      return;
+    }
+    try {
+      history.replaceState(null, '', location.pathname + location.search);
+    } catch (e) {
+      location.hash = '';
+    }
+    noter('son', 'auto', 'Test automatique', 'bips dans 3 s, ne pas toucher l’écran');
+    setTimeout(function () {
+      noter('son', 'auto', 'Test automatique', 'joué 3 s après le rechargement, sans toucher');
+      bipWebAudio('auto-webaudio', 'Bip automatique WebAudio');
+      setTimeout(function () { bipAudio('auto-audio', 'Bip automatique <audio>'); }, 1500);
+    }, 3000);
+  }
+
+  function repondreQuestion(evenement) {
+    var bouton = evenement.target;
+    var question = bouton.getAttribute ? bouton.getAttribute('data-question') : null;
+    var reponse;
+    if (!question) {
+      return;
+    }
+    reponse = bouton.getAttribute('data-reponse');
+    noter('son', 'entendu-' + question, bouton.parentNode.getElementsByTagName('span')[0].textContent,
+      reponse, reponse === 'oui' ? 'ok' : 'ko');
+  }
+
+  // ------------------------------------------------------------------
+  // 6. Pont Kiosk (appli kiosque), repli silencieux s'il est absent
+  // ------------------------------------------------------------------
+
+  function pont() {
+    return window.Kiosk || null;
+  }
+
+  /** Appelle le pont sans jamais lever d'exception : renvoie le résultat ou un texte d'état. */
+  function appelPont(action) {
+    var kiosque = pont();
+    var valeur;
+    if (!kiosque) {
+      return 'pont absent (normal hors du kiosque)';
+    }
+    try {
+      valeur = action(kiosque);
+      return valeur === undefined ? 'appel accepté' : valeur;
+    } catch (e) {
+      return 'erreur : ' + e.message;
+    }
+  }
+
+  function noterPresencePont() {
+    var present = !!pont();
+    noter('pont', 'presence', 'Pont Kiosk', present ? 'présent' : 'absent (normal hors du kiosque)', present ? 'ok' : 'info');
+  }
+
+  function testerLuminosite() {
+    var paliers = [0, 0.05, 1];
+    var i = 0;
+    function palier() {
+      var niveau = paliers[i];
+      var resultat = appelPont(function (k) { k.setBrightness(niveau); });
+      i += 1;
+      noter('pont', 'luminosite', 'setBrightness', niveau + ' : ' + resultat + (i < paliers.length ? ' (palier suivant dans 3 s)' : ''));
+      if (i < paliers.length && pont()) {
+        setTimeout(palier, 3000);
+      }
+    }
+    palier();
+  }
+
+  function lireVolume() {
+    noter('pont', 'getvolume', 'getVolume()', appelPont(function (k) { return k.getVolume() + ' %'; }));
+  }
+
+  function reglerVolume() {
+    noter('pont', 'setvolume', 'setVolume(80)', appelPont(function (k) { k.setVolume(80); }));
+    lireVolume();
+  }
+
+  // ------------------------------------------------------------------
+  // 7. Clavier : accents (ce que le clavier cache se note à l'œil : l'activité
+  // est en plein écran, Android ne redimensionne pas la fenêtre, innerHeight ne bouge pas)
+  // ------------------------------------------------------------------
+
+  var champ = document.getElementById('champ');
+
+  function surSaisie() {
+    var texte = champ.value.normalize ? champ.value.normalize('NFC') : champ.value;
+    var exact = texte.trim().toLowerCase() === 'crème fraîche';
+    noter('clavier', 'saisie', 'Texte saisi', '« ' + texte + ' »');
+    noter('clavier', 'accents', '« crème fraîche » exact (accents)', exact ? 'oui' : 'pas encore', exact ? 'ok' : 'info');
+  }
+
+  // ------------------------------------------------------------------
+  // 8. Diaporama de 10 min (surveillance mémoire depuis le Clevo)
+  // ------------------------------------------------------------------
+
+  var DUREE_DIAPORAMA_MS = 10 * 60 * 1000;
+  var diaporama = null;
+
+  function imageSuivante() {
+    var d = diaporama;
+    if (!d) {
+      return;
+    }
+    if (Date.now() - d.debut >= DUREE_DIAPORAMA_MS) {
+      arreterDiaporama('terminé');
+      return;
+    }
+    fondreVers(genererImage(d.images + 1), function () {
+      if (diaporama !== d) {
+        return;
+      }
+      d.images += 1;
+      etiquette.textContent = 'Diaporama de test : image ' + d.images + ', reste ' +
+        minutesSecondes(DUREE_DIAPORAMA_MS - (Date.now() - d.debut));
+      d.minuterie = setTimeout(imageSuivante, 6000);
+    });
+  }
+
+  function lancerDiaporama() {
+    diaporama = { debut: Date.now(), images: 0, minuterie: null };
+    montrerScene('aucune', '1.5s linear');
+    boutonArreter.hidden = false;
+    etiquette.textContent = 'Diaporama de test : préparation';
+    noter('diaporama', 'resultat', 'Diaporama', 'en cours');
+    imageSuivante();
+  }
+
+  function arreterDiaporama(raison) {
+    var d = diaporama;
+    if (!d) {
+      return;
+    }
+    diaporama = null;
+    clearTimeout(d.minuterie);
+    cacherScene();
+    noter('diaporama', 'resultat', 'Diaporama', d.images + ' images en ' + minutesSecondes(Date.now() - d.debut) + ', ' + raison,
+      raison === 'terminé' ? 'ok' : 'info');
+  }
+
+  // ------------------------------------------------------------------
+  // Rapport : texte reprenant toutes les sections, copié ou envoyé
+  // ------------------------------------------------------------------
+
+  var zoneRapport = document.getElementById('zone-rapport');
+  var etatRapport = document.getElementById('etat-rapport');
+
+  function construireRapport() {
+    var lignes = ['Rapport compat.html du cadre cuisine', 'Date : ' + new Date().toString(), 'Page : ' + location.href, ''];
+    var i, j, table, r;
+    for (i = 0; i < SECTIONS.length; i += 1) {
+      table = resultats[SECTIONS[i][0]];
+      lignes.push('== ' + SECTIONS[i][1]);
+      if (!table) {
+        lignes.push('(rien)');
+      } else {
+        for (j = 0; j < table.ordre.length; j += 1) {
+          r = table.lignes[table.ordre[j]];
+          lignes.push('- ' + r.libelle + ' : ' + r.valeur + (r.etat === 'ok' ? ' [OK]' : '') + (r.etat === 'ko' ? ' [KO]' : ''));
+        }
+      }
+      lignes.push('');
+    }
+    return lignes.join('\n');
+  }
+
+  /** La zone doit être visible et sélectionnée pour execCommand('copy') : elle reste affichée. */
+  function copierRapport() {
+    var copie;
+    zoneRapport.value = construireRapport();
+    zoneRapport.hidden = false;
+    zoneRapport.focus();
+    zoneRapport.select();
+    try {
+      copie = document.execCommand('copy');
+    } catch (e) {
+      copie = false;
+    }
+    etatRapport.textContent = copie ?
+      'Rapport copié dans le presse-papiers (et affiché ci-dessous).' :
+      'Presse-papiers indisponible : le rapport est sélectionné ci-dessous, à copier à la main.';
+  }
+
+  /** POST /rapport sur la même origine ; tout échec se limite à un message. */
+  function envoyerRapport() {
+    var requete = new XMLHttpRequest();
+    var echec = function () {
+      etatRapport.textContent = 'Envoi impossible (serveur arrêté, ou adb reverse perdu sur le cadre ?). Voir docs/jour-j.md, étape 5.';
+    };
+    try {
+      requete.open('POST', '/rapport', true);
+      requete.setRequestHeader('Content-Type', 'text/plain; charset=utf-8');
+      requete.timeout = 10000;
+      requete.onload = function () {
+        etatRapport.textContent = requete.status === 201 ?
+          'Rapport enregistré sur le Clevo : ' + requete.responseText :
+          'Envoi refusé (HTTP ' + requete.status + ').';
+      };
+      requete.onerror = echec;
+      requete.ontimeout = echec;
+      requete.send(construireRapport());
+    } catch (e) {
+      echec();
+    }
+  }
+
+  // ------------------------------------------------------------------
+  // Démarrage
+  // ------------------------------------------------------------------
+
+  function surClic(id, action) {
+    document.getElementById(id).addEventListener('click', action);
+  }
+
+  function brancher() {
+    surClic('btn-fondu', lancerFondus);
+    surClic('btn-bip-webaudio', function () { bipWebAudio('toucher-webaudio', 'Bip WebAudio au toucher'); });
+    surClic('btn-bip-audio', function () { bipAudio('toucher-audio', 'Bip <audio> au toucher'); });
+    surClic('btn-son-auto', rechargerEtTester);
+    surClic('btn-volume', reglerVolume);
+    surClic('btn-lire-volume', lireVolume);
+    surClic('btn-luminosite', testerLuminosite);
+    surClic('btn-diaporama', lancerDiaporama);
+    surClic('btn-arreter', function () { arreterDiaporama('arrêté à la main'); });
+    surClic('btn-envoyer', envoyerRapport);
+    surClic('btn-copier', copierRapport);
+    document.getElementById('questions-son').addEventListener('click', repondreQuestion);
+    champ.addEventListener('input', surSaisie);
+    champ.addEventListener('change', surSaisie);
+  }
+
+  document.getElementById('demarrage').hidden = true;
+  prudemment('identite', testerIdentite);
+  prudemment('css', testerCss);
+  prudemment('js', testerJs);
+  prudemment('pont', noterPresencePont);
+  brancher();
+  sonAutoSiDemande();
+}());
+</script>
+</body>
+</html>

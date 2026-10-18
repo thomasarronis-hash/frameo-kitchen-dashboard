@@ -1,0 +1,280 @@
+/*
+ * web/styles/ecrans/clims.css
+ *
+ * Rôle    : l'écran Clims (choix de Thomas du 16/10) : en-tête avec « Mode essai », un panneau de commande par clim (nom,
+ *           Marche, température de la pièce, consigne pas à pas, modes, ventilation, oscillations et options), côte à côte
+ *           s'il y en a deux, et l'état vide « Clims pas encore reliées ».
+ * Entrées : le DOM de web/src/ecrans/clims.js et clims-panneau.js ; jetons.css ; base.css (.carte, .intitule, .chiffres,
+ *           .chiffres-affiche, .bouton-doux, [disabled]) ; pages.css (.ecran-page, .page-vide, .page-vide-titre).
+ * Sorties : .clims-entete, .clims-essai, .clims-liste, .clims-deux, .clim et ses parties (-tete, -nom, -message, -marche,
+ *           -milieu, -piece, -temperature, -consigne, -pas, -consigne-valeur, -modes, -ventilation, -vitesses, -reglages,
+ *           -choix, -etiquette), .clim-choix-actif, .clim-attente, .clim-consigne-en-cours, .clim-indisponible,
+ *           .clims-vide-icone.
+ * Pièges  :
+ *   - Hauteur utile : 1080 - 2 x 32 (marges) - 46 (en-tête, hauteur fixe qu'il y ait « Mode essai » ou non) - 20 = 950 px.
+ *     Un panneau : 32 + tête 96 + milieu 200 + modes 112 + ventilation 136 + réglages 2 x 96 + 12 + ligne de retour 36
+ *     + 5 x 18 + 32 = 938 px calculés, 944 mesurés dans Chromium le 16/10 (interlignes des étiquettes) : il tient.
+ *     Deux clims (clims-deux) : deux colonnes de 796 px, 732 px de contenu : 5 modes de 137 px, 6 vitesses de 113 px,
+ *     options sur 4 colonnes de 174 px (« Pas sur moi » en 26 px y tient, pictogramme au-dessus).
+ *   - Cibles tactiles de 96 px de haut au moins (conception §1.2), − et + de 96 x 96 ; retour au toucher par :active
+ *     (transform), sans minuterie.
+ *   - Choix actif (mode, vitesse, option allumée, Marche) : fond et texte des boutons forts, paire déjà contrôlée. Une
+ *     option allumée que la clim ne laisse pas changer maintenant ([disabled]) garde un cerne d'accent sur le fond de
+ *     carte : on voit qu'elle est active, et qu'elle ne se touche pas. La règle vient après base.css : elle l'emporte.
+ *   - Valeur en attente (envoyée, pas encore rapportée par HA) : contour en pointillés d'accent à l'intérieur du bouton
+ *     (texte des boutons forts sur un choix actif, l'accent s'y confondrait avec le fond). Consigne en cours de choix
+ *     (pas encore partie) en --accent.
+ *   - Clim indisponible : toute la carte en gris secondaire (clim-indisponible) ; ses boutons sont désactivés par la page.
+ *   - Grilles seulement (grid-gap), jamais de gap en flex (conception §3.1) ; aucune opacité partielle.
+ */
+
+.clims-entete {
+  min-height: 46px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+}
+
+.clims-essai {
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-column-gap: 12px;
+  align-items: center;
+  padding: 6px 20px;
+  border-radius: 999px;
+  background: var(--carte);
+  color: var(--texte-2);
+}
+
+.clims-essai-icone {
+  font-size: 28px;
+}
+
+.clims-liste {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-column-gap: 24px;
+  align-items: start;
+  min-height: 0;
+}
+
+.clims-deux {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.clim {
+  display: grid;
+  grid-row-gap: 18px;
+  min-width: 0;
+  padding: 32px;
+  color: var(--texte);
+}
+
+.clim-tete {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-column-gap: 20px;
+  align-items: center;
+}
+
+.clim-nom {
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-column-gap: 16px;
+  justify-content: start;
+  align-items: center;
+  font-size: 44px;
+  font-weight: 700;
+  line-height: 1.35;
+  white-space: nowrap;
+}
+
+.clim-nom-icone {
+  font-size: 56px;
+  color: var(--accent);
+}
+
+.clim-message {
+  height: 36px;
+  min-width: 0;
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 36px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--texte-2);
+}
+
+.clim-message-alerte {
+  color: var(--alerte);
+}
+
+.clim-marche {
+  min-width: 220px;
+}
+
+.clim-bouton-icone {
+  font-size: 40px;
+}
+
+.clim-milieu {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-column-gap: 24px;
+  align-items: end;
+  min-height: 200px;
+}
+
+.clim-etiquette {
+  display: grid;
+  grid-auto-flow: column;
+  grid-column-gap: 10px;
+  justify-content: start;
+  align-items: center;
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--texte-2);
+}
+
+.clim-etiquette-icone {
+  font-size: 32px;
+}
+
+.clim-temperature {
+  font-size: 150px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.clim-consigne {
+  display: grid;
+  grid-row-gap: 10px;
+  justify-items: center;
+}
+
+.clim-pas {
+  display: grid;
+  grid-template-columns: 96px 150px 96px;
+  grid-column-gap: 12px;
+  align-items: center;
+}
+
+.clim-pas-bouton {
+  padding: 0;
+}
+
+.clim-pas-bouton .clim-bouton-icone {
+  font-size: 44px;
+}
+
+.clim-consigne-valeur {
+  font-size: 64px;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.clim-consigne-en-cours .clim-consigne-valeur {
+  color: var(--accent);
+}
+
+.clim-modes {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  grid-column-gap: 12px;
+}
+
+.clim-choix {
+  min-width: 0;
+  padding: 0 8px;
+  font-size: 28px;
+}
+
+.clim-mode,
+.clim-bascule {
+  grid-auto-flow: row;
+  grid-row-gap: 4px;
+  justify-items: center;
+  align-content: center;
+}
+
+.clim-mode {
+  min-height: 112px;
+}
+
+.clim-bascule {
+  font-size: 26px;
+}
+
+.clim-bascule .clim-bouton-icone {
+  font-size: 34px;
+}
+
+.clim-ventilation {
+  display: grid;
+  grid-row-gap: 12px;
+}
+
+.clim-vitesses {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  grid-column-gap: 10px;
+}
+
+.clim-vitesse {
+  font-size: 26px;
+}
+
+.clim-reglages {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-column-gap: 12px;
+  grid-row-gap: 12px;
+}
+
+.clim-choix:active,
+.clim-marche:active,
+.clim-pas-bouton:active {
+  transform: scale(0.94);
+}
+
+.clim-choix-actif {
+  background: var(--bouton-fort);
+  color: var(--texte-bouton-fort);
+}
+
+.clim-choix-actif[disabled] {
+  background: var(--carte);
+  color: var(--texte);
+  box-shadow: inset 0 0 0 4px var(--accent);
+}
+
+.clim-attente {
+  outline: 4px dashed var(--accent);
+  outline-offset: -10px;
+}
+
+.clim-choix-actif.clim-attente {
+  outline-color: var(--texte-bouton-fort);
+}
+
+/* Clim injoignable : toute la carte en gris secondaire. */
+
+.clim.clim-indisponible {
+  color: var(--texte-2);
+}
+
+.clim.clim-indisponible .clim-nom-icone {
+  color: var(--texte-2);
+}
+
+/* Sans clim configurée */
+
+.clims-vide-icone {
+  font-size: 160px;
+  color: var(--texte-2);
+}

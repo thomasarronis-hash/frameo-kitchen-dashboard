@@ -1,0 +1,108 @@
+/*
+ * web/styles/sonnette.css
+ *
+ * Rôle    : le bandeau sonnette (conception §1.6, piste 5), couche commune de la scène, en haut au centre,
+ *           par-dessus tous les écrans ; et la photo de la sonnette qui se recharge sans clignoter (bandeau et section
+ *           Sonnette de l'écran Maison).
+ * Entrées : le DOM de web/src/composants/bandeau-sonnette.js et photo-sonnette.js ; jetons.css ; base.css
+ *           (.bouton-fort).
+ * Sorties : classes .bandeau-sonnette, .sonnette-photo, .sonnette-textes, .sonnette-icone, .sonnette-titre,
+ *           .sonnette-legende, .sonnette-consigne, .sonnette-voir, .photo-sonnette*.
+ * Pièges  :
+ *   - Verre « teinte » seulement : fond --verre-sonnette semi-opaque, filet --verre-bord, AUCUN backdrop-filter (le
+ *     flou fait tomber les fondus à 16 FPS sur le cadre, docs/cadre-ave948.md). Les textes posés dessus sont
+ *     contrôlés au pire cas, verre sur noir et sur blanc (tests/contraste.test.js).
+ *   - Couches : bandeau hors ligne (10), « non appairé » (15), pastille (20), tiroir (30), bandeau sonnette (40),
+ *     alerte des minuteurs (50) : une fin de minuteur reste au-dessus de tout.
+ *   - Centré sur la scène de 1920 px : 1 280 px de large, donc 320 px à gauche. Photo en 4:3 (320 x 240) ; la
+ *     colonne du texte garde 512 px, assez pour « On a sonné · 19:41 » en 48 px sur une ligne (mesuré sur capture).
+ *   - Photo : deux images superposées (position absolue), object-fit: contain ; à la place de l'image, un message
+ *     centré (« Photo en cours… », « Photo indisponible »).
+ */
+
+.bandeau-sonnette {
+  position: absolute;
+  top: 24px;
+  left: 320px;
+  width: 1280px;
+  z-index: 40;
+  display: grid;
+  grid-template-columns: 320px minmax(0, 1fr) auto;
+  grid-column-gap: 28px;
+  align-items: center;
+  padding: 20px 28px 20px 20px;
+  border: 2px solid var(--verre-bord);
+  border-radius: 32px;
+  background: var(--verre-sonnette);
+  box-shadow: 0 6px 0 var(--carte-ombre);
+  color: var(--texte);
+}
+
+.sonnette-photo {
+  width: 320px;
+  height: 240px;
+  border-radius: 20px;
+}
+
+.sonnette-textes {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-column-gap: 14px;
+  align-items: center;
+  min-width: 0;
+}
+
+.sonnette-icone {
+  font-size: 52px;
+  color: var(--accent);
+}
+
+.sonnette-titre {
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 1.15;
+  white-space: nowrap;
+}
+
+.sonnette-legende {
+  grid-column: 1 / 3;
+  margin-top: 8px;
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.sonnette-consigne {
+  grid-column: 1 / 3;
+  margin-top: 12px;
+  color: var(--texte-2);
+}
+
+.sonnette-voir {
+  padding: 0 36px;
+}
+
+.photo-sonnette {
+  position: relative;
+  overflow: hidden;
+  background: var(--carte);
+}
+
+.photo-sonnette-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.photo-sonnette-message {
+  position: absolute;
+  top: 45%;
+  left: 0;
+  right: 0;
+  padding: 0 16px;
+  text-align: center;
+  font-weight: 700;
+  color: var(--texte-2);
+}

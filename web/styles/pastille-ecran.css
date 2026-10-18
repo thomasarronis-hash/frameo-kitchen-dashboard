@@ -1,0 +1,61 @@
+/*
+ * web/styles/pastille-ecran.css
+ *
+ * Rôle    : la pastille du minuteur d'écran de Timo (composants/pastille-ecran.js) : son visage et les minutes qui restent,
+ *           posés sur la marque « La cuisine » en haut du menu, visibles sur tous les écrans qui ont le menu.
+ * Entrées : jetons.css ; base.css (.chiffres) ; avatar.css.
+ * Sorties : .pastille-ecran, .pastille-ecran-avatar, .pastille-ecran-temps, .pastille-ecran-unite.
+ * Pièges  :
+ *   - Place mesurée : la marque occupe 36 + 35 px en haut du menu, la première entrée commence à 95 px ; la pastille pend
+ *     du haut de la scène sur 95 px (une cible, conception §1.2), sur la largeur du menu (224 px) : elle ne cache aucune
+ *     entrée.
+ *   - Masquée sans menu (recette, mode Photos, mode enfant, nuit) : couches d'écran de minuteurs.css (z-index 20, comme la
+ *     pastille des minuteurs de cuisine).
+ *   - Le signe « min » en Nunito Sans à part : en Fraunces, un petit signe se lit mal à 2 m.
+ */
+
+.pastille-ecran {
+  position: absolute;
+  left: 8px;
+  top: 0;
+  width: 224px;
+  height: 95px;
+  z-index: 20;
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr);
+  grid-column-gap: 14px;
+  align-items: center;
+  padding: 0 16px;
+  border-radius: 0 0 24px 24px;
+  background: var(--carte);
+  box-shadow: 0 2px 0 var(--carte-ombre);
+  color: var(--texte);
+  cursor: pointer;
+}
+
+.pastille-ecran-avatar {
+  width: 56px;
+  height: 56px;
+}
+
+.pastille-ecran-temps {
+  font-size: 48px;
+  line-height: 1;
+  white-space: nowrap;
+  color: var(--chaud);
+}
+
+.pastille-ecran-unite {
+  margin-left: 6px;
+  font-family: "Nunito Sans", sans-serif;
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--texte-2);
+}
+
+.scene-plein .pastille-ecran,
+.scene-photos .pastille-ecran,
+.scene-enfant .pastille-ecran,
+.theme-nuit .pastille-ecran {
+  display: none;
+}

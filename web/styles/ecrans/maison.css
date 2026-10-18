@@ -1,0 +1,640 @@
+/*
+ * web/styles/ecrans/maison.css
+ *
+ * Rôle    : l'écran Maison (conception §1.5) : en-tête avec « Mode essai », six onglets, et les sections Alarme (état
+ *           et ouvertures, lecture seule), Sonnette (photo, direct), Wi-Fi invités (QR, nom, mot de passe) et
+ *           Entretien (draps depuis le 14/10, encres, piles). Les télécommandes sont dans telecommande.css.
+ * Entrées : le DOM construit par web/src/ecrans/maison*.js ; jetons.css ; base.css (.carte, .intitule, .bouton-*) ;
+ *           pages.css (.ecran-page, .page-entete).
+ * Sorties : classes .maison*, .alarme-*, .ouverture*, .sonnette-*, .wifi-*, .qr-*, .draps*, .encre*, .pile*, .piles*.
+ * Pièges  :
+ *   - Hauteur utile : 1080 - 2 x 32 (marges) - 46 (en-tête, hauteur fixe qu'il y ait « Mode essai » ou non : rien
+ *     ne bouge au passage en réel) - 20 - 96 (onglets) - 20 = 834 px pour la section.
+ *   - Onglets de 96 px, icône au-dessus du nom : « Wi-Fi invités » en 26 px ne tient pas à côté d'une icône dans
+ *     les 256 px d'un sixième de largeur.
+ *   - Ouvertures lisibles à 2 m : état en 36 px gras avec son icône ; une ouverte a fond teinté, filet et texte
+ *     d'alerte, jamais la couleur seule. 9 lignes de 82 px tiennent dans la carte (mesuré sur capture).
+ *   - Photo de la sonnette en 4:3 (1024 x 768 relevé le 13/10) : cadre de 1024 x 768, object-fit: contain.
+ *   - QR en SVG (couleurs --qr-*, noir sur blanc dans tous les thèmes), 520 px de côté, marge de 4 modules comprise ;
+ *     shape-rendering: crispEdges pour des modules nets.
+ *   - Mot de passe du Wi-Fi invités en chasse fixe (Droid Sans Mono sur Android : l, I et 1 distincts), chiffres en
+ *     --accent (0 et O ne se confondent plus) : un invité le tape parfois à la main.
+ *   - Barres d'encre et jauges des draps en transform: scaleX (seule animation permise avec opacity), posé par
+ *     maison-entretien.js et maison-draps.js.
+ *   - Entretien (834 px) : rangée des draps en haut (trois cartes de 507 px, bouton de 96 px), encres et piles en bas ;
+ *     la carte des piles montre 5 lignes au plus (mesuré sur capture, pire cas). Appui long sur « Changés aujourd'hui » :
+ *     une barre claire se remplit en bas du bouton pendant la seconde (classe appui-long-en-cours d'appui.js).
+ *   - Grilles seulement (grid-gap), jamais de gap en flex (conception §3.1) ; aucune opacité partielle.
+ */
+
+.maison {
+  grid-template-rows: auto 96px minmax(0, 1fr);
+}
+
+.maison-entete {
+  min-height: 46px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+}
+
+.maison-essai {
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-column-gap: 12px;
+  align-items: center;
+  padding: 6px 20px;
+  border-radius: 999px;
+  background: var(--carte);
+  color: var(--texte-2);
+}
+
+.maison-essai-icone {
+  font-size: 28px;
+}
+
+/* Onglets */
+
+.maison-onglets {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-column-gap: 16px;
+}
+
+.maison-onglet {
+  display: grid;
+  grid-template-rows: auto auto;
+  justify-items: center;
+  align-content: center;
+  grid-row-gap: 4px;
+  height: 96px;
+  border-radius: 24px;
+  background: var(--carte);
+  box-shadow: 0 2px 0 var(--carte-ombre);
+  color: var(--texte);
+  font-weight: 700;
+}
+
+.maison-onglet-icone {
+  font-size: 36px;
+  color: var(--accent);
+}
+
+.maison-onglet-actif {
+  background: var(--bouton-fort);
+  color: var(--texte-bouton-fort);
+}
+
+.maison-onglet-actif .maison-onglet-icone {
+  color: var(--texte-bouton-fort);
+}
+
+.maison-corps {
+  min-height: 0;
+}
+
+.maison-section {
+  height: 100%;
+  display: grid;
+  grid-column-gap: 32px;
+  min-height: 0;
+}
+
+/* Alarme (lecture seule) */
+
+.maison-alarme {
+  grid-template-columns: 560px minmax(0, 1fr);
+}
+
+.alarme-etat {
+  display: grid;
+  grid-template-rows: auto auto auto auto auto minmax(0, 1fr);
+  padding: 32px;
+}
+
+.alarme-libelle {
+  margin-top: 16px;
+  font-family: "Fraunces", serif;
+  font-size: 96px;
+  font-weight: 600;
+  font-variation-settings: "opsz" 72;
+  line-height: 1.05;
+  color: var(--texte);
+}
+
+.alarme-arme {
+  color: var(--accent);
+}
+
+.alarme-alerte {
+  color: var(--alerte);
+}
+
+.alarme-desarme,
+.alarme-neutre {
+  color: var(--texte);
+}
+
+.alarme-depuis {
+  margin-top: 8px;
+  font-size: 32px;
+  color: var(--texte-2);
+}
+
+.alarme-resume {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-column-gap: 16px;
+  align-items: center;
+  margin-top: 40px;
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--accent);
+}
+
+.alarme-resume-ouvert {
+  color: var(--alerte);
+}
+
+.alarme-resume-icone {
+  font-size: 48px;
+}
+
+.alarme-detail {
+  margin-top: 8px;
+  color: var(--texte-2);
+}
+
+.alarme-note {
+  grid-row: 6;
+  align-self: end;
+  color: var(--texte-2);
+}
+
+.alarme-ouvertures {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  grid-row-gap: 8px;
+  padding: 24px 24px 16px;
+  min-height: 0;
+}
+
+.alarme-ouvertures .intitule {
+  padding-left: 8px;
+}
+
+.ouvertures {
+  display: grid;
+  grid-template-rows: repeat(9, minmax(0, 1fr));
+  grid-row-gap: 4px;
+  min-height: 0;
+}
+
+.ouverture {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr) auto;
+  grid-column-gap: 18px;
+  align-items: center;
+  padding: 0 24px 0 14px;
+  border-left: 8px solid transparent;
+  border-radius: 18px;
+  min-height: 0;
+}
+
+.ouverture-ouverte {
+  background: var(--ouvert-fond);
+  border-left-color: var(--alerte);
+}
+
+.ouverture-icone {
+  font-size: 44px;
+  color: var(--accent);
+}
+
+.ouverture-ouverte .ouverture-icone,
+.ouverture-ouverte .ouverture-etat {
+  color: var(--alerte);
+}
+
+.ouverture-inconnue .ouverture-icone,
+.ouverture-inconnue .ouverture-etat {
+  color: var(--texte-2);
+}
+
+.ouverture-textes {
+  min-width: 0;
+  line-height: 1.15;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ouverture-nom {
+  display: block;
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--texte);
+}
+
+.ouverture-depuis {
+  color: var(--texte-2);
+}
+
+.ouverture-pile {
+  margin-left: 16px;
+  font-weight: 700;
+  color: var(--alerte);
+}
+
+.ouverture-pile-icone {
+  margin-right: 6px;
+  font-size: 28px;
+  vertical-align: -5px;
+}
+
+.ouverture-etat {
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+/* Sonnette */
+
+.maison-sonnette {
+  grid-template-columns: 1024px minmax(0, 1fr);
+  align-items: start;
+}
+
+.sonnette-cadre {
+  position: relative;
+  height: 768px;
+  overflow: hidden;
+}
+
+.sonnette-grande {
+  width: 1024px;
+  height: 768px;
+}
+
+.sonnette-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: var(--carte);
+}
+
+.sonnette-indisponible {
+  position: absolute;
+  left: 24px;
+  bottom: 24px;
+  padding: 12px 24px;
+  border-radius: 20px;
+  background: var(--carte);
+  font-weight: 700;
+  color: var(--alerte);
+}
+
+.sonnette-cote {
+  display: grid;
+  grid-row-gap: 24px;
+  align-content: start;
+  padding: 32px;
+}
+
+.sonnette-dernier {
+  font-size: 32px;
+  line-height: 1.25;
+  color: var(--texte);
+}
+
+.sonnette-legende-photo {
+  font-size: 28px;
+  line-height: 1.3;
+  color: var(--texte-2);
+}
+
+.sonnette-en-cours {
+  display: grid;
+  grid-row-gap: 16px;
+}
+
+.sonnette-restant {
+  font-size: 40px;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.sonnette-mode {
+  color: var(--texte-2);
+}
+
+.sonnette-message {
+  font-weight: 700;
+  color: var(--alerte);
+}
+
+/* Wi-Fi invités */
+
+.maison-wifi {
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+}
+
+.wifi-accueil,
+.wifi-configurer {
+  justify-self: center;
+  display: grid;
+  grid-row-gap: 24px;
+  justify-items: center;
+  width: 1100px;
+  margin-top: 40px;
+  padding: 48px;
+  text-align: center;
+}
+
+.wifi-grande-icone {
+  font-size: 96px;
+  color: var(--accent);
+}
+
+.wifi-titre {
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--texte);
+}
+
+.wifi-texte {
+  font-size: 32px;
+  color: var(--texte-2);
+}
+
+.wifi-afficher {
+  padding: 0 56px;
+}
+
+.wifi-erreur {
+  font-weight: 700;
+  color: var(--alerte);
+}
+
+.wifi-fiche {
+  display: grid;
+  grid-template-columns: 568px minmax(0, 1fr);
+  grid-column-gap: 48px;
+  align-items: center;
+  padding: 24px 48px 24px 24px;
+}
+
+.wifi-qr {
+  width: 520px;
+  height: 520px;
+  margin: 0 24px;
+  shape-rendering: crispEdges;
+}
+
+.qr-fond {
+  fill: var(--qr-fond);
+}
+
+.qr-modules {
+  fill: var(--qr-module);
+}
+
+.wifi-trop-long {
+  font-size: 32px;
+  color: var(--texte-2);
+}
+
+.wifi-infos {
+  display: grid;
+  grid-row-gap: 12px;
+  justify-items: start;
+  min-width: 0;
+}
+
+.wifi-ssid {
+  margin-bottom: 28px;
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 1.15;
+  word-wrap: break-word;
+  max-width: 100%;
+  color: var(--texte);
+}
+
+.wifi-mdp {
+  margin-bottom: 28px;
+  font-family: "Droid Sans Mono", "DejaVu Sans Mono", monospace;
+  font-size: 60px;
+  font-weight: 700;
+  line-height: 1.15;
+  word-break: break-all;
+  max-width: 100%;
+  color: var(--texte);
+}
+
+.wifi-mdp-chiffres {
+  color: var(--accent);
+}
+
+.wifi-mdp-ouvert {
+  font-family: "Nunito Sans", sans-serif;
+  font-size: 48px;
+}
+
+.wifi-compte {
+  color: var(--texte-2);
+}
+
+/* Entretien : draps en haut, encres et piles en bas */
+
+.maison-entretien {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: auto minmax(0, 1fr);
+  grid-row-gap: 24px;
+  align-items: start;
+}
+
+.draps {
+  grid-column: 1 / 3;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-column-gap: 24px;
+}
+
+.draps-carte {
+  display: grid;
+  grid-row-gap: 12px;
+  padding: 26px 28px 28px;
+}
+
+.draps-carte .carte-titre {
+  margin-bottom: 0;
+}
+
+.draps-depuis {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--texte);
+}
+
+.draps-inconnu .draps-depuis {
+  color: var(--texte-2);
+}
+
+.draps-piste {
+  display: block;
+  height: 20px;
+  border-radius: 10px;
+  background: var(--separateur);
+  overflow: hidden;
+}
+
+.draps-remplissage {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+  transform-origin: 0 50%;
+}
+
+.draps-alerte .draps-remplissage {
+  background: var(--alerte);
+}
+
+.draps-prochain {
+  color: var(--texte-2);
+}
+
+.draps-bientot .draps-prochain,
+.draps-alerte .draps-prochain {
+  font-weight: 700;
+  color: var(--alerte);
+}
+
+.draps-changer,
+.draps-annuler,
+.draps-choix {
+  margin-top: 6px;
+}
+
+.draps-changer {
+  position: relative;
+  overflow: hidden;
+}
+
+.draps-changer::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 8px;
+  background: var(--texte-bouton-fort);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+}
+
+.draps-changer.appui-long-en-cours::after {
+  transform: scaleX(1);
+  transition: transform 1s linear;
+}
+
+.draps-choix {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-column-gap: 16px;
+}
+
+.draps-message {
+  font-weight: 700;
+  color: var(--alerte);
+}
+
+.entretien-encres,
+.entretien-piles {
+  display: grid;
+  grid-row-gap: 28px;
+  padding: 32px;
+}
+
+.encre {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-row-gap: 12px;
+  align-items: center;
+}
+
+.encre-nom {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--texte);
+}
+
+.encre-niveau {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.encre-alerte .encre-niveau {
+  color: var(--alerte);
+}
+
+.encre-piste {
+  grid-column: 1 / 3;
+  height: 28px;
+  border-radius: 14px;
+  background: var(--separateur);
+  overflow: hidden;
+}
+
+.encre-remplissage {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+  transform-origin: 0 50%;
+}
+
+.encre-alerte .encre-remplissage {
+  background: var(--alerte);
+}
+
+.piles-aucune {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.piles-alerte {
+  color: var(--alerte);
+}
+
+.piles {
+  display: grid;
+  grid-row-gap: 12px;
+}
+
+.pile {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-column-gap: 14px;
+  align-items: center;
+  font-size: 32px;
+  color: var(--texte);
+}
+
+.pile-icone {
+  font-size: 36px;
+  color: var(--alerte);
+}
+
+.piles-autres {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--texte-2);
+}

@@ -1,0 +1,48 @@
+/*
+ * web/styles/ecrans/pages.css
+ *
+ * Rôle    : le cadre commun des écrans en pleine page à côté du menu (Repas, Courses) : marges, en-tête (intitulé
+ *           et titre en 40 px) et état vide centré.
+ * Entrées : les classes posées par web/src/ecrans/repas.js et courses.js ; jetons.css ; base.css (.intitule).
+ * Sorties : classes .ecran-page, .page-entete, .page-titre, .page-vide, .page-vide-titre, .page-vide-texte.
+ * Pièges  :
+ *   - Scène fixe : 1680 px de large à côté du menu, 32 px de marge, soit 1 616 x 1 016 px utiles.
+ *   - Le coin en haut à droite n'est pas réservé : sur ces écrans, la pastille des minuteurs est dans le menu.
+ *   - Grilles seulement (grid-gap), jamais de gap en flex (conception §3.1).
+ */
+
+.ecran-page {
+  height: 1080px;
+  padding: 32px;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  grid-row-gap: 20px;
+}
+
+.page-titre {
+  margin-top: 2px;
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--texte);
+}
+
+.page-vide {
+  align-self: center;
+  justify-self: center;
+  max-width: 1100px;
+  text-align: center;
+}
+
+.page-vide-titre {
+  font-size: 56px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--texte);
+}
+
+.page-vide-texte {
+  margin-top: 16px;
+  font-size: 32px;
+  color: var(--texte-2);
+}

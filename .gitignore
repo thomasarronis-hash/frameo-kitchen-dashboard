@@ -1,0 +1,24 @@
+# Fichiers à ne jamais versionner dans cadre-cuisine (conception §3.2).
+
+# Dépendances et constructions (web/dist est produit par Vite à partir de M2)
+node_modules/
+web/dist/
+kiosque/build/
+__pycache__/
+
+# Secrets, clés et paquets Android
+secrets/
+.env
+*.keystore
+*.jks
+*.apk
+
+# Relevés bruts du cadre (sorties ADB, rapports compat) : la synthèse va dans docs/cadre-ave948.md
+docs/releves/
+
+# Fixtures privées (états HA non anonymisés) ; seules les fixtures anonymisées sont versionnées
+tests/fixtures/prive/
+
+# Données locales du serveur : menus publiés (data/menus) et drapeau du drive (data/etat). En Docker, montées
+# depuis ~/cadre/data du M900 ; en développement, créées dans le projet.
+data/

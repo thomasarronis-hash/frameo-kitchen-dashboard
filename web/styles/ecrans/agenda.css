@@ -1,0 +1,525 @@
+/*
+ * web/styles/ecrans/agenda.css
+ *
+ * Rôle    : l'écran Agenda, la semaine en grille (décision de Thomas du 14/10) : en-tête (semaine montrée, légende
+ *           des personnes, alerte, boutons de semaine), puis une carte : en-têtes des jours, rangée « journée
+ *           entière », graduation des heures et zone des heures avec ses lignes, les blocs des rendez-vous et la ligne
+ *           de l'heure actuelle ; et la fiche d'un rendez-vous par-dessus l'écran.
+ * Entrées : le DOM construit par web/src/ecrans/agenda.js ; jetons.css ; base.css (.carte, .bouton-fort, .bouton-doux,
+ *           .bouton-fort-icone) ; pages.css (.ecran-page, .page-titre, état vide) ; rendez-vous.css
+ *           (.pastille-personne, .personne-1 à 4, qui donnent aussi leur fond et leur texte aux blocs et aux barres,
+ *           et leur couleur aux pastilles des blocs « +N »).
+ * Sorties : classes .agenda-* .
+ * Pièges  :
+ *   - Hauteurs (1 016 px utiles) : en-tête de 96 px (les boutons), 20 d'écart, carte de 900 px : 10 + 56 (jours) +
+ *     828 (rangée journée et heures) + 6. La rangée journée ne prend que ses lignes de barres : 0 (masquée), 50
+ *     (3 + 42 + 3 et un filet de 2 px) ou 96 (3 + 42 + 4 + 42 + 3 et le filet), classes agenda-journee-lignes-N de la
+ *     carte ; la zone des heures a le reste (828, 778 ou 732 px), que hauteurHeures de web/src/ecrans/agenda-grille.js
+ *     suit pour placer les blocs en px : changer l'un, c'est changer l'autre. Les cases de la carte sont placées
+ *     explicitement (rangée journée masquée sans barre). Barres sur les rangs de grille 2 et 4.
+ *   - Largeurs : 1 616 px utiles, moins 12 + 20 de marge de carte et 64 de graduation : 7 colonnes de 217 px.
+ *   - Blocs : position absolue dans la colonne de leur jour, top, hauteur, gauche et largeur posés par agenda.js ;
+ *     fond et texte de la personne (.personne-N : 6,21:1 au moins), l'initiale dans un rond aux couleurs inversées
+ *     (même rapport, 20 px) ; texte de 26 px sur des lignes de 27 px, 2 px de marge en haut et en bas
+ *     (agenda-grille.js le suit), au fil du texte : initiale et heure (insécables : l'initiale ne reste jamais seule sur
+ *     sa ligne), puis le titre en gras. Une seule ligne (.agenda-bloc-une-ligne) : ellipse sur la ligne, pour que
+ *     l'heure et le début du titre restent visibles ; plusieurs : -webkit-line-clamp (posé par agenda.js sur le texte,
+ *     pas sur le bloc : sur le bloc, le haut de la ligne cachée dépassait sous la dernière), un mot trop long se coupe
+ *     où il faut (overflow-wrap: anywhere). 1 px de marge de chaque côté d'un bloc (2 px de jour entre deux blocs côte à côte), posé par
+ *     agenda.js. Coupé au bord de la plage (.agenda-bloc-coupe-haut, -bas) : coins carrés de ce côté.
+ *   - « +N » de la zone des heures (plus de deux rendez-vous à la fois) : fond de carte cerné de --texte-2, comme
+ *     celui de la rangée journée, avec les pastilles des personnes (.personne-N de rendez-vous.css).
+ *   - « +N » de la rangée journée : fond de carte cerné de --texte-2, visible aussi sur la surbrillance d'aujourd'hui
+ *     (le fond des boutons doux du jour a la même couleur qu'elle).
+ *   - Ordre d'empilement dans la zone des heures : fond d'aujourd'hui, lignes des heures, colonnes et leurs blocs,
+ *     ligne de l'heure actuelle (tous positionnés, peints dans l'ordre du DOM).
+ *   - Lignes des heures discrètes : filet de 1 px en --separateur. Ligne de l'heure actuelle et son point en --alerte
+ *     (objet graphique, 3:1 au moins sur le fond d'aujourd'hui, tests/contraste.test.js).
+ *   - Aucune opacité ni couleur en dur (tests/contraste.test.js) ; grilles seulement (grid-gap), jamais de gap en
+ *     flex (conception §3.1).
+ */
+
+.agenda {
+  position: relative;
+}
+
+/* En-tête : la semaine (40 px), légende et alerte dessous ; boutons de 96 px à droite. */
+.agenda-entete {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-column-gap: 32px;
+  align-items: center;
+  min-height: 96px;
+}
+
+.agenda-entete-textes {
+  min-width: 0;
+}
+
+.agenda-titre {
+  margin-top: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.agenda-sous-titre {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-column-gap: 28px;
+  align-items: center;
+  margin-top: 4px;
+}
+
+.agenda-legende {
+  display: grid;
+  grid-auto-flow: column;
+  grid-column-gap: 24px;
+  justify-content: start;
+  align-items: center;
+}
+
+.agenda-legende-personne {
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-column-gap: 10px;
+  align-items: center;
+}
+
+.agenda-pastille {
+  width: 36px;
+  height: 36px;
+  line-height: 36px;
+  font-size: 21px;
+}
+
+.agenda-legende-nom {
+  font-size: 26px;
+  font-weight: 700;
+  white-space: nowrap;
+  color: var(--texte);
+}
+
+.agenda-alerte {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--alerte);
+}
+
+.agenda-navigation {
+  display: grid;
+  grid-auto-flow: column;
+  grid-column-gap: 16px;
+}
+
+.agenda-fleche {
+  width: 96px;
+  padding: 0;
+}
+
+/* La carte de la semaine : jours, rangée journée (0, 50 ou 96 px), heures (le reste des 828 px). */
+.agenda-semaine {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr);
+  grid-template-rows: 56px 0 828px;
+  padding: 10px 20px 6px 12px;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.agenda-journee-lignes-1 {
+  grid-template-rows: 56px 50px 778px;
+}
+
+.agenda-journee-lignes-2 {
+  grid-template-rows: 56px 96px 732px;
+}
+
+.agenda-jours {
+  grid-row: 1;
+  grid-column: 2;
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  align-items: center;
+}
+
+.agenda-jour {
+  display: grid;
+  grid-auto-flow: column;
+  grid-column-gap: 10px;
+  justify-content: center;
+  align-items: center;
+}
+
+.agenda-jour-nom {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--texte-2);
+}
+
+.agenda-jour-numero {
+  min-width: 50px;
+  height: 50px;
+  padding: 0 8px;
+  border-radius: 25px;
+  text-align: center;
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 50px;
+  color: var(--texte);
+}
+
+.agenda-jour-auj .agenda-jour-nom {
+  color: var(--accent);
+}
+
+.agenda-jour-auj .agenda-jour-numero {
+  background: var(--bouton-fort);
+  color: var(--texte-bouton-fort);
+}
+
+/* Rangée « journée entière » : une ou deux lignes de barres (rangs 2 et 4), un fond par jour sur toute la hauteur. */
+.agenda-journee {
+  grid-row: 2;
+  grid-column: 2;
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  grid-template-rows: 3px 42px 4px 42px 3px;
+  border-bottom: 2px solid var(--separateur);
+}
+
+.agenda-journee-lignes-1 .agenda-journee {
+  grid-template-rows: 3px 42px 3px;
+}
+
+.agenda-fond-jour {
+  grid-row: 1 / -1;
+  border-left: 1px solid var(--separateur);
+}
+
+.agenda-fond-auj {
+  background: var(--surbrillance);
+}
+
+.agenda-barre {
+  min-width: 0;
+  margin: 0 3px;
+  padding: 0 10px;
+  border-radius: 10px;
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 42px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.agenda-barre-coupe-avant {
+  margin-left: 0;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.agenda-barre-coupe-apres {
+  margin-right: 0;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.agenda-barre-plus {
+  background: var(--carte);
+  color: var(--texte);
+  box-shadow: inset 0 0 0 2px var(--texte-2);
+  text-align: center;
+}
+
+/* Initiale de la personne dans un bloc ou une barre : rond aux couleurs inversées de la personne (une pilule pour
+   deux lettres, « Th »). */
+.agenda-initiale {
+  display: inline-block;
+  min-width: 28px;
+  height: 28px;
+  margin-right: 8px;
+  padding: 0 4px;
+  border-radius: 14px;
+  text-align: center;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 28px;
+  vertical-align: 2px;
+}
+
+.personne-1 .agenda-initiale { background: var(--texte-pastille); color: var(--personne-1); }
+.personne-2 .agenda-initiale { background: var(--texte-pastille); color: var(--personne-2); }
+.personne-3 .agenda-initiale { background: var(--texte-pastille); color: var(--personne-3); }
+.personne-4 .agenda-initiale { background: var(--texte-pastille); color: var(--personne-4); }
+
+/* Graduation et zone des heures (828, 778 ou 732 px : hauteurHeures de agenda-grille.js). */
+.agenda-graduation {
+  grid-row: 3;
+  grid-column: 1;
+  position: relative;
+}
+
+.agenda-graduation-heure {
+  position: absolute;
+  right: 10px;
+  margin-top: 3px;
+  font-size: 26px;
+  line-height: 1;
+  white-space: nowrap;
+  color: var(--texte-2);
+}
+
+.agenda-heures {
+  grid-row: 3;
+  grid-column: 2;
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+
+.agenda-heures-auj {
+  position: absolute;
+  top: 0;
+  width: 14.2857%;
+  height: 100%;
+  background: var(--surbrillance);
+}
+
+.agenda-lignes {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.agenda-ligne-heure {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  border-top: 1px solid var(--separateur);
+}
+
+.agenda-colonne {
+  position: relative;
+  border-left: 1px solid var(--separateur);
+}
+
+/* Un bloc (hauteur posée par agenda.js) : son texte, initiale et heure insécables puis titre, sur -webkit-line-clamp
+   lignes (posé par agenda.js sur .agenda-bloc-texte, dont la hauteur suit ses lignes : rien ne dépasse dessous). */
+.agenda-bloc {
+  position: absolute;
+  overflow: hidden;
+  padding: 2px 5px;
+  border-radius: 10px;
+  font-size: 26px;
+  line-height: 27px;
+}
+
+.agenda-bloc-texte {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+}
+
+.agenda-bloc-une-ligne .agenda-bloc-texte {
+  display: block;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.agenda-bloc-tete {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.agenda-bloc-coupe-haut {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.agenda-bloc-coupe-bas {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.agenda-bloc .agenda-initiale {
+  min-width: 26px;
+  height: 26px;
+  margin-right: 6px;
+  padding: 0 3px;
+  border-radius: 13px;
+  line-height: 26px;
+  vertical-align: top;
+}
+
+.agenda-bloc-heure {
+  margin-right: 8px;
+}
+
+/* Bloc d'une demi-colonne (100 px de texte) : initiale et heure serrées pour tenir sur la ligne (24 + 4 + 68 px,
+   « Th » 27 + 4 + 68). */
+.agenda-bloc-etroit {
+  padding: 2px 3px;
+}
+
+.agenda-bloc-etroit .agenda-initiale {
+  min-width: 24px;
+  height: 24px;
+  margin-right: 4px;
+  padding: 0 2px;
+  border-radius: 12px;
+  line-height: 24px;
+  vertical-align: 1px;
+}
+
+.agenda-bloc-etroit .agenda-bloc-heure {
+  margin-right: 6px;
+}
+
+.agenda-bloc-titre {
+  font-weight: 700;
+}
+
+.agenda-bloc-plus {
+  background: var(--carte);
+  color: var(--texte);
+  box-shadow: inset 0 0 0 2px var(--texte-2);
+}
+
+.agenda-plus-personne {
+  min-width: 26px;
+  height: 26px;
+  margin-left: 6px;
+  padding: 0 3px;
+  border-radius: 13px;
+  font-size: 20px;
+  line-height: 26px;
+  vertical-align: top;
+}
+
+.agenda-maintenant {
+  position: absolute;
+  width: 14.2857%;
+  height: 3px;
+  margin-top: -1px;
+  background: var(--alerte);
+}
+
+.agenda-maintenant::before {
+  content: "";
+  position: absolute;
+  top: -6px;
+  left: -7px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--alerte);
+}
+
+/* Fiche d'un rendez-vous : voile sur tout l'écran Agenda, carte au centre ; un toucher n'importe où la referme. */
+.agenda-fiche-couche {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 5;
+  display: grid;
+  align-items: center;
+  justify-items: center;
+}
+
+.agenda-voile {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--voile);
+}
+
+.agenda-fiche {
+  position: relative;
+  width: 900px;
+  padding: 36px 96px 36px 44px;
+  display: grid;
+  grid-row-gap: 28px;
+}
+
+.agenda-fiche-fermer {
+  position: absolute;
+  top: 32px;
+  right: 32px;
+  font-size: 48px;
+  color: var(--texte-2);
+}
+
+.agenda-fiche-entree {
+  display: grid;
+  grid-row-gap: 10px;
+}
+
+.agenda-fiche-entree + .agenda-fiche-entree {
+  padding-top: 26px;
+  border-top: 2px solid var(--separateur);
+}
+
+.agenda-fiche-qui {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-column-gap: 14px;
+  align-items: center;
+}
+
+.agenda-fiche-pastille {
+  width: 48px;
+  height: 48px;
+  line-height: 48px;
+  font-size: 26px;
+}
+
+.agenda-fiche-nom {
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--texte);
+}
+
+.agenda-fiche-titre {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+  font-size: 44px;
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--texte);
+}
+
+.agenda-fiche-horaire {
+  font-size: 32px;
+  color: var(--texte);
+}
+
+.agenda-fiche-lieu {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-column-gap: 12px;
+  align-items: center;
+  font-size: 30px;
+  color: var(--texte-2);
+}
+
+.agenda-fiche-lieu-icone {
+  font-size: 36px;
+}
+
+.agenda-fiche-plus {
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--texte-2);
+}

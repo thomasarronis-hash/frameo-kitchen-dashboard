@@ -1,0 +1,297 @@
+/*
+ * web/styles/tempo.css
+ *
+ * Rôle    : EDF Tempo sur la page : la pastille éclair (bleu, blanc cerclé, rouge, « ? » gris ; pointillés si pré-annoncée),
+ *           sa zone de toucher dans « La semaine », la case de la barre du bas de l'Accueil (veille d'un jour rouge ou
+ *           blanc, puis heures creuses à 22 h), la pastille de l'entrée Tempo de la page Aujourd'hui, la fiche, et le
+ *           liseré rouge d'un jour rouge en haut de la scène.
+ * Entrées : le DOM de web/src/composants/tempo.js, web/src/ecrans/accueil.js et aujourdhui.js ; #liseret de index.html ; jetons.css
+ *           (--tempo-*, --texte-tempo*) ; base.css (.carte, .intitule, .chiffres) ; accueil.css (.bouton-maison,
+ *           .bouton-icone, .carte-titre, .carte-icone).
+ * Sorties : classes .tempo-*, .case-tempo*, .liseret.
+ * Pièges  :
+ *   - Pastille de 36 px dans « La semaine », dans une colonne de 40 px ; sa zone de toucher (.tempo-zone) fait 96 x 96 px
+ *     et déborde de 28 px de chaque côté et de 30 px en haut et en bas (marges négatives) : la cible fait 96 px sans
+ *     pousser le jour, le ciel ni la ligne du repas (mesuré : lignes de jour inchangées). La ligne du repas, posée
+ *     par-dessus, laisse passer le toucher (pointer-events: none dans accueil.css).
+ *   - Blanc cerclé (filet intérieur --tempo-bord) : sinon une pastille blanche disparaît sur une carte blanche ;
+ *     pré-annonce : contour en pointillés décalé de 3 px (outline suit l'arrondi depuis Chrome 94, le cadre a Chrome 125).
+ *   - Éclair et « ? » en --texte-tempo (ou --texte-tempo-blanc sur le blanc) : 4,5:1 au moins sur leur pastille, dans
+ *     chaque thème (tests/contraste.test.js) ; les pastilles se détachent à 3:1 des cartes (test dédié).
+ *   - Case Tempo : même place et même taille qu'un gros bouton (386 x 96 px) ; « Demain rouge » en 32 px sur une ligne,
+ *     « Heures creuses, / les machines ! » sur deux lignes de 26 px (interligne 1,2 : 63 px dans les 96) ; rouge plein
+ *     la veille d'un rouge, vert (bouton fort) aux heures creuses, fond de carte avec un filet pour un blanc (plus
+ *     discret, choix de Thomas).
+ *   - Chargée APRÈS accueil.css (index.html) : .case-tempo-rouge repeint un .bouton-maison de même spécificité.
+ *   - Liseré : 8 px de --tempo-rouge en haut de toute la scène (menu compris), sous les bandeaux et les alertes, au-dessus
+ *     des écrans ; il ne capte pas le toucher ; masqué la nuit (de toute façon hors de 6 h à 22 h).
+ *   - Grilles seulement (grid-gap), jamais de gap en flex (conception §3.1) ; aucune opacité partielle.
+ */
+
+.tempo-pastille {
+  display: inline-grid;
+  align-items: center;
+  justify-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+}
+
+.tempo-eclair {
+  font-size: 24px;
+  stroke-width: 2.2;
+}
+
+.tempo-inconnu-texte {
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.tempo-bleu {
+  background: var(--tempo-bleu);
+  color: var(--texte-tempo);
+}
+
+.tempo-rouge {
+  background: var(--tempo-rouge);
+  color: var(--texte-tempo);
+}
+
+.tempo-blanc {
+  background: var(--tempo-blanc);
+  color: var(--texte-tempo-blanc);
+  box-shadow: inset 0 0 0 3px var(--tempo-bord);
+}
+
+.tempo-inconnu {
+  background: var(--tempo-inconnu);
+  color: var(--texte-tempo);
+}
+
+.tempo-provisoire {
+  outline: 3px dashed var(--tempo-bord);
+  outline-offset: 3px;
+}
+
+/* Zone de toucher de la pastille de « La semaine » : 96 x 96 px, centrée sur sa colonne de 40 px ; ses marges négatives
+   la ramènent à 40 x 36 px pour la grille, la ligne du jour garde sa hauteur. */
+.tempo-zone {
+  display: grid;
+  align-items: center;
+  justify-items: center;
+  width: 96px;
+  height: 96px;
+  margin: -30px -28px;
+  padding: 0;
+  background: transparent;
+}
+
+.tempo-pastille-grande {
+  width: 72px;
+  height: 72px;
+}
+
+.tempo-pastille-grande .tempo-eclair {
+  font-size: 46px;
+}
+
+.tempo-pastille-grande .tempo-inconnu-texte {
+  font-size: 44px;
+}
+
+.tempo-pastille-entree {
+  width: 56px;
+  height: 56px;
+}
+
+.tempo-pastille-entree .tempo-eclair {
+  font-size: 36px;
+}
+
+.tempo-pastille-entree .tempo-inconnu-texte {
+  font-size: 34px;
+}
+
+.tempo-pastille-petite {
+  width: 40px;
+  height: 40px;
+}
+
+.tempo-pastille-petite .tempo-eclair {
+  font-size: 26px;
+}
+
+/* Case de la barre du bas (à la place du bouton Wi-Fi invités) */
+
+.case-tempo .bouton-nom {
+  font-size: 32px;
+  line-height: 1.2;
+}
+
+.case-tempo-creuses .bouton-nom {
+  font-size: 26px;
+}
+
+.case-tempo-rouge {
+  background: var(--tempo-rouge);
+  color: var(--texte-tempo);
+}
+
+.case-tempo-rouge .bouton-icone {
+  color: var(--texte-tempo);
+}
+
+.case-tempo-rouge.case-tempo-creuses {
+  background: var(--bouton-fort);
+  color: var(--texte-bouton-fort);
+}
+
+.case-tempo-rouge.case-tempo-creuses .bouton-icone {
+  color: var(--texte-bouton-fort);
+}
+
+.case-tempo-blanc {
+  box-shadow: inset 0 0 0 3px var(--tempo-bord);
+}
+
+/* Fiche : voile sur tout l'écran (Accueil ou page Aujourd'hui), carte au centre ; un toucher n'importe où la referme. */
+.tempo-fiche-couche {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 5;
+  display: grid;
+  align-items: center;
+  justify-items: center;
+}
+
+.tempo-voile {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--voile);
+}
+
+.tempo-fiche {
+  position: relative;
+  width: 900px;
+  padding: 36px 96px 36px 44px;
+  display: grid;
+  grid-row-gap: 26px;
+}
+
+.tempo-fiche-fermer {
+  position: absolute;
+  top: 32px;
+  right: 32px;
+  font-size: 48px;
+  color: var(--texte-2);
+}
+
+.tempo-fiche-jour {
+  display: grid;
+  grid-template-columns: 72px 220px minmax(0, 1fr);
+  grid-column-gap: 24px;
+  align-items: center;
+}
+
+.tempo-fiche-nom {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--texte-2);
+}
+
+.tempo-fiche-valeur {
+  display: grid;
+  grid-row-gap: 2px;
+}
+
+.tempo-fiche-couleur {
+  font-family: "Fraunces", serif;
+  font-size: 56px;
+  font-weight: 600;
+  font-variation-settings: "opsz" 72;
+  line-height: 1.1;
+  color: var(--texte);
+}
+
+.tempo-fiche-note {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--texte-2);
+}
+
+.tempo-fiche-fin {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--alerte);
+}
+
+.tempo-fiche-restants {
+  display: grid;
+  grid-template-columns: 220px repeat(3, auto);
+  grid-column-gap: 40px;
+  justify-content: start;
+  align-items: center;
+  padding-top: 22px;
+  border-top: 2px solid var(--separateur);
+}
+
+.tempo-fiche-legende {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--texte-2);
+}
+
+.tempo-compteur {
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-column-gap: 14px;
+  align-items: center;
+}
+
+.tempo-compteur-nombre {
+  font-size: 56px;
+  line-height: 1;
+  color: var(--texte);
+}
+
+.tempo-fiche-creuses {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-column-gap: 14px;
+  align-items: center;
+  font-size: 30px;
+  color: var(--texte);
+}
+
+.tempo-fiche-lune {
+  font-size: 40px;
+  color: var(--accent);
+}
+
+.tempo-fiche-credit {
+  font-size: 26px;
+  color: var(--texte-2);
+}
+
+/* Liseré d'un jour rouge, de 6 h à 22 h, en haut de toute la scène. */
+.liseret {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1920px;
+  height: 8px;
+  background: var(--tempo-rouge);
+  pointer-events: none;
+  z-index: 9;
+}
+
+.theme-nuit .liseret {
+  display: none;
+}

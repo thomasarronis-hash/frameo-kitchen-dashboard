@@ -1,0 +1,38 @@
+/*
+ * web/styles/bandeau.css
+ *
+ * Rôle    : le bandeau « hors ligne » (conception §1.6), posé en bas de la scène, à la place des trois gros
+ *           boutons qui passent par le serveur (Alarme, Wi-Fi invités, Télé).
+ * Entrées : le DOM de index.html (#bandeau) rempli par web/src/composants/bandeau-hors-ligne.js ; jetons.css.
+ * Sorties : classe .bandeau.
+ * Pièges  :
+ *   - Jamais sur l'horloge : hors ligne, l'heure est la seule information encore fiable (elle tourne sur
+ *     l'horloge du cadre). Les trois boutons recouverts, eux, ne peuvent rien faire sans le serveur et
+ *     l'état de l'alarme qu'ils montrent date d'avant la coupure. Le Minuteur (local à la page) reste visible.
+ *   - Place calculée sur la barre de l'Accueil (ecrans/accueil.css), dans la scène fixe de 1920x1080 :
+ *     barre de 1616 px (1920 - 240 de menu - 2 x 32 de marge), 4 boutons de 386 px séparés de 24 px. Le
+ *     bandeau commence donc au 2e bouton : 240 + 32 + 386 + 24 = 682 px, et finit à la marge droite. À revoir
+ *     si la barre change ou quand un autre écran existera.
+ *   - Fond opaque (--bandeau) : son contraste avec le texte est contrôlé par tests/contraste.test.js.
+ *   - Il ne capte pas le toucher (pointer-events: none).
+ *   - Masqué la nuit par base.css.
+ */
+
+.bandeau {
+  position: absolute;
+  left: 682px;
+  right: 32px;
+  bottom: 32px;
+  height: 96px;
+  display: grid;
+  align-items: center;
+  justify-items: center;
+  padding: 0 32px;
+  border-radius: 24px;
+  background: var(--bandeau);
+  color: var(--texte-bandeau);
+  font-weight: 700;
+  text-align: center;
+  pointer-events: none;
+  z-index: 10;
+}

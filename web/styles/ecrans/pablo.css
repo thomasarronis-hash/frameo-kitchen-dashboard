@@ -1,0 +1,159 @@
+/*
+ * web/styles/ecrans/pablo.css
+ *
+ * Rôle    : « D'abord, ensuite » de Pablo (ecrans/enfants-pablo.js) : trois grandes cartes-pictogrammes, une flèche, la case
+ *           « Ensuite » (pointillés, puis pleine de sa couleur quand tout est fait), et son bocal d'étoiles en dessous, avec
+ *           le bouton retour des 5 s.
+ * Entrées : jetons.css (--accent, --carte, --texte-2, --enfant-pablo, --texte-pastille, --piece, --piece-trait) ; base.css
+ *           (.carte, .bouton-doux).
+ * Sorties : .pablo, .pablo-rangee, .pablo-case(-faite, -passee), .pablo-picto, .pablo-coche(-icone), .pablo-fleche(-dessin), .pablo-ensuite
+ *           (-ouverte), .pablo-bas, .pablo-bocal(-dessin), .pablo-etoiles, .pablo-etoile(-gagnee), .pablo-annuler(-icone).
+ * Pièges  :
+ *   - Pictogrammes de 280 px dans des cartes de 380 x 560 : lisibles et touchables par un enfant de 3 ans.
+ *   - Aucun texte : rien à lire pour lui ; une case faite prend l'accent et une coche (jamais seulement la couleur) ; une
+ *     case pas faite à la fin de la routine du matin passe simplement en gris.
+ *   - Grilles seulement (grid-gap) ; colonnes à la taille de leur contenu (nombre d'étapes variable, barème). Rangée du
+ *     bas posée explicitement (grid-row: 1) : le bouton retour vient avant le bocal dans le DOM, mais à sa droite ; sans
+ *     cela, le placement automatique ouvrait une seconde rangée et poussait le bocal hors de la scène (vu sur capture).
+ */
+
+.pablo {
+  display: grid;
+  grid-template-rows: 560px minmax(0, 1fr);
+  grid-row-gap: 24px;
+  min-height: 0;
+}
+
+.pablo-rangee {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: auto;
+  grid-column-gap: 32px;
+  justify-content: center;
+  align-items: stretch;
+}
+
+.pablo-case {
+  position: relative;
+  width: 380px;
+  display: grid;
+  align-items: center;
+  justify-items: center;
+  padding: 0;
+  color: var(--accent);
+}
+
+.pablo-picto {
+  font-size: 280px;
+  stroke-width: 1.3;
+}
+
+.pablo-case-faite {
+  background: var(--accent);
+  color: var(--carte);
+}
+
+.pablo-case-passee {
+  color: var(--texte-2);
+}
+
+.pablo-coche {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  width: 84px;
+  height: 84px;
+  display: grid;
+  align-items: center;
+  justify-items: center;
+  border-radius: 50%;
+  background: var(--carte);
+  color: var(--accent);
+}
+
+.pablo-coche-icone {
+  font-size: 60px;
+}
+
+.pablo-fleche {
+  align-self: center;
+  width: 110px;
+  font-size: 110px;
+  line-height: 1;
+  color: var(--texte-2);
+}
+
+.pablo-ensuite {
+  width: 400px;
+  display: grid;
+  align-items: center;
+  justify-items: center;
+  border: 6px dashed var(--texte-2);
+  box-shadow: none;
+  color: var(--texte-2);
+}
+
+.pablo-ensuite-ouverte {
+  border-style: solid;
+  border-color: var(--enfant-pablo);
+  background: var(--enfant-pablo);
+  color: var(--texte-pastille);
+}
+
+.pablo-bas {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+}
+
+.pablo-bocal {
+  grid-column: 2;
+  grid-row: 1;
+  position: relative;
+  width: 300px;
+  height: 300px;
+  color: var(--texte-2);
+}
+
+.pablo-bocal-dessin {
+  width: 300px;
+  height: 300px;
+  stroke-width: 0.9;
+}
+
+.pablo-etoiles {
+  position: absolute;
+  left: 60px;
+  right: 60px;
+  bottom: 52px;
+  display: grid;
+  grid-template-columns: repeat(3, 48px);
+  grid-gap: 8px;
+  justify-content: center;
+  align-content: end;
+}
+
+.pablo-etoile {
+  width: 48px;
+  height: 48px;
+  stroke-width: 1.4;
+  color: var(--texte-2);
+}
+
+.pablo-etoile-gagnee {
+  color: var(--piece-trait);
+  fill: var(--piece);
+}
+
+.pablo-annuler {
+  grid-column: 3;
+  grid-row: 1;
+  justify-self: start;
+  width: 120px;
+  margin-left: 64px;
+  padding: 0;
+}
+
+.pablo-annuler-icone {
+  font-size: 52px;
+}

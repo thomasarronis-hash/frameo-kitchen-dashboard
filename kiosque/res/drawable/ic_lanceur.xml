@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Icône du kiosque : un cadran d'horloge blanc sur un disque vert (#2F5D50, accent de la charte).
+  Vectorielle : prise en charge native dès l'API 21 (minSdk), aucune image PNG à générer.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    <path
+        android:fillColor="#2F5D50"
+        android:pathData="M2,24 A22,22 0 1,1 46,24 A22,22 0 1,1 2,24 Z" />
+    <path
+        android:pathData="M10,24 A14,14 0 1,1 38,24 A14,14 0 1,1 10,24 Z"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="3" />
+    <path
+        android:pathData="M24,15 L24,24 L30,28"
+        android:strokeColor="#FFFFFF"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:strokeWidth="3" />
+</vector>

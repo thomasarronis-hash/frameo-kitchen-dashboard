@@ -1,0 +1,53 @@
+{
+  "version": 1,
+  "depart": "08:10",
+  "fin_routine": "09:00",
+  "minutes_perdues": "20:00",
+  "enfants": [
+    {
+      "id": "timo",
+      "prenom": "Timo",
+      "couleur": "enfant-timo",
+      "avatar": "i-renard",
+      "type": "minutes",
+      "plafond": 32,
+      "points": true,
+      "etapes": [
+        { "id": "leve", "libelle": "Levé", "picto": "i-reveil", "valeur": 10, "validation": "enfant", "apres": "06:30" },
+        { "id": "dejeuner", "libelle": "Déjeuner au calme", "picto": "i-bol", "valeur": 5, "validation": "enfant" },
+        { "id": "dents", "libelle": "Dents", "picto": "i-brosse", "valeur": 3, "validation": "enfant" },
+        { "id": "habille", "libelle": "Habillé", "picto": "i-habits", "valeur": 5, "validation": "enfant" },
+        { "id": "cartable", "libelle": "Cartable", "picto": "i-cartable", "valeur": 5, "validation": "enfant" },
+        { "id": "calme", "libelle": "N'excite pas Pablo", "picto": "i-coeur", "valeur": 4, "validation": "enfant" }
+      ]
+    },
+    {
+      "id": "pablo",
+      "prenom": "Pablo",
+      "couleur": "enfant-pablo",
+      "avatar": "i-ourson",
+      "type": "etoiles",
+      "points": false,
+      "etapes": [
+        { "id": "petit-dejeuner", "libelle": "Petit déjeuner", "picto": "i-bol", "valeur": 1, "validation": "enfant" },
+        { "id": "dents", "libelle": "Dents", "picto": "i-brosse", "valeur": 1, "validation": "enfant" },
+        { "id": "chaussures", "libelle": "Chaussures", "picto": "i-chaussure", "valeur": 1, "validation": "enfant" }
+      ],
+      "ensuite": { "libelle": "Une histoire", "picto": "i-livre" }
+    }
+  ],
+  "points": {
+    "par_action": 1,
+    "plafond_libre": 10,
+    "motifs": [
+      { "id": "range", "libelle": "A rangé", "picto": "i-caisse" },
+      { "id": "table", "libelle": "A mis la table", "picto": "i-fork" },
+      { "id": "aide", "libelle": "A aidé", "picto": "i-main" }
+    ]
+  },
+  "boutique": [
+    { "id": "petit", "libelle": "Petit cadeau", "picto": "i-cadeau", "prix": 30 },
+    { "id": "moyen", "libelle": "Moyen cadeau", "picto": "i-cadeau", "prix": 60 },
+    { "id": "gros", "libelle": "Gros cadeau", "picto": "i-cadeau", "prix": 90 }
+  ]
+}

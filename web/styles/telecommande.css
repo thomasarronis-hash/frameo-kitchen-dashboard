@@ -1,0 +1,200 @@
+/*
+ * web/styles/telecommande.css
+ *
+ * Rôle    : les télécommandes de l'écran Maison (Apple TV, télé TCL) : carte du pavé à gauche (état, pavé en
+ *           grid-template-areas, ligne de message), carte des applis ou des conseils à droite.
+ * Entrées : le DOM construit par web/src/ecrans/maison-telecommandes.js ; jetons.css ; base.css (.carte,
+ *           .bouton-doux, .intitule) ; maison.css (.maison-section).
+ * Sorties : classes .telecommande*, .pave, .touche, .touche-<zone>, .applis, .applis-consigne, .appli, .conseils,
+ *           .conseil.
+ * Pièges  :
+ *   - Cibles larges, lisibles en touchant : touches de 160 x 124 px pour le pavé (au-delà des 96 px de la conception
+ *     §1.2), 96 px pour le reste ; OK en rond, plein (bouton fort).
+ *   - Les zones qu'une télécommande n'a pas (muet pour l'Apple TV, allumer et veille pour la télé) restent vides : la
+ *     dernière rangée, auto, se réduit à rien pour la télé.
+ *   - Flèches : i-prev et i-next tournées d'un quart de tour pour le haut et le bas (transform).
+ *   - Icône AU-DESSUS du texte dans une touche (grid-auto-flow: row) : côte à côte, « Accueil » ou « Allumer » en
+ *     28 px touchaient les bords des 160 px.
+ *   - Retour visuel au toucher par :active (transform), sans minuterie. Appui long (Veille, applis) : une barre se
+ *     remplit en bas du bouton pendant la seconde (transform: scaleX, classe appui-long-en-cours d'appui.js).
+ *   - UNE ligne de message sous le pavé (alerte « injoignable » et message d'un geste dans la même case, l'un ou
+ *     l'autre) : 48 px réservés, texte d'une ligne coupé par une ellipse ; la carte tient ainsi dans les 834 px de la
+ *     section (avant : deux messages de 2 lignes empilés sortaient de l'écran).
+ *   - Grilles seulement (grid-gap), jamais de gap en flex (conception §3.1).
+ */
+
+.telecommande {
+  grid-template-columns: 560px minmax(0, 1fr);
+  align-items: start;
+}
+
+.telecommande-gauche {
+  display: grid;
+  grid-row-gap: 16px;
+  padding: 24px;
+  border-radius: 28px;
+  background: var(--carte);
+  box-shadow: 0 2px 0 var(--carte-ombre);
+}
+
+.telecommande-etat {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--texte);
+}
+
+.telecommande-ligne {
+  display: grid;
+  height: 48px;
+  align-items: center;
+  min-width: 0;
+}
+
+.telecommande-alerte,
+.telecommande-message {
+  grid-area: 1 / 1;
+  min-width: 0;
+  font-size: 26px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--alerte);
+}
+
+.pave {
+  display: grid;
+  grid-template-columns: repeat(3, 160px);
+  grid-template-rows: 124px 124px 124px 96px auto;
+  grid-gap: 16px;
+  grid-template-areas:
+    "retour haut accueil"
+    "gauche ok droite"
+    "lecture bas vide"
+    "volmoins muet volplus"
+    "allumer veille vide2";
+}
+
+.touche {
+  grid-auto-flow: row;
+  grid-row-gap: 4px;
+  justify-items: center;
+  align-content: center;
+  min-height: 0;
+  height: 100%;
+  padding: 0 8px;
+  font-size: 28px;
+}
+
+.touche:active {
+  transform: scale(0.94);
+}
+
+.touche-icone {
+  font-size: 38px;
+}
+
+.touche-retour { grid-area: retour; }
+.touche-haut { grid-area: haut; }
+.touche-accueil { grid-area: accueil; }
+.touche-gauche { grid-area: gauche; }
+.touche-droite { grid-area: droite; }
+.touche-lecture { grid-area: lecture; }
+.touche-bas { grid-area: bas; }
+.touche-volmoins { grid-area: volmoins; }
+.touche-muet { grid-area: muet; }
+.touche-volplus { grid-area: volplus; }
+.touche-allumer { grid-area: allumer; height: 96px; }
+.touche-veille { grid-area: veille; height: 96px; }
+
+/* Appui long (Veille, applis) : barre qui se remplit en une seconde. */
+.touche-veille,
+.appli {
+  position: relative;
+  overflow: hidden;
+}
+
+.touche-veille::after,
+.appli::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 8px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+}
+
+.touche-veille.appui-long-en-cours::after,
+.appli.appui-long-en-cours::after {
+  transform: scaleX(1);
+  transition: transform 1s linear;
+}
+
+.touche-haut .touche-icone,
+.touche-bas .touche-icone {
+  transform: rotate(90deg);
+}
+
+.touche-haut .touche-icone,
+.touche-bas .touche-icone,
+.touche-gauche .touche-icone,
+.touche-droite .touche-icone {
+  font-size: 64px;
+}
+
+.touche-ok {
+  grid-area: ok;
+  justify-self: center;
+  width: 124px;
+  height: 124px;
+  padding: 0;
+  border-radius: 50%;
+  background: var(--bouton-fort);
+  color: var(--texte-bouton-fort);
+  font-size: 36px;
+}
+
+.telecommande-droite {
+  display: grid;
+  grid-row-gap: 16px;
+  align-content: start;
+  padding: 24px;
+}
+
+.applis {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-auto-rows: 96px;
+  grid-gap: 16px;
+}
+
+.appli {
+  min-height: 0;
+  padding: 0 12px;
+  font-size: 26px;
+  white-space: normal;
+  text-align: center;
+}
+
+.appli:active {
+  transform: scale(0.96);
+}
+
+.applis-vide,
+.applis-consigne {
+  color: var(--texte-2);
+}
+
+.conseils {
+  display: grid;
+  grid-row-gap: 20px;
+}
+
+.conseil {
+  font-size: 32px;
+  line-height: 1.3;
+  color: var(--texte);
+}

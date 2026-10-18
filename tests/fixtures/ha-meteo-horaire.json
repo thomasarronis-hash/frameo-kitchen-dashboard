@@ -1,0 +1,388 @@
+{
+ "horaire": [
+  {
+   "datetime": "2026-10-13T16:00:00+00:00",
+   "condition": "partlycloudy",
+   "temperature": 18.7,
+   "precipitation": 0,
+   "wind_speed": 6.8,
+   "wind_bearing": 346.7
+  },
+  {
+   "datetime": "2026-10-13T17:00:00+00:00",
+   "condition": "partlycloudy",
+   "temperature": 16.5,
+   "precipitation": 0,
+   "wind_speed": 7.2,
+   "wind_bearing": 342.5
+  },
+  {
+   "datetime": "2026-10-13T18:00:00+00:00",
+   "condition": "clear-night",
+   "temperature": 16.1,
+   "precipitation": 0,
+   "wind_speed": 7.6,
+   "wind_bearing": 339.1
+  },
+  {
+   "datetime": "2026-10-13T19:00:00+00:00",
+   "condition": "partlycloudy",
+   "temperature": 15.6,
+   "precipitation": 0,
+   "wind_speed": 6.8,
+   "wind_bearing": 318.2
+  },
+  {
+   "datetime": "2026-10-13T20:00:00+00:00",
+   "condition": "partlycloudy",
+   "temperature": 15.5,
+   "precipitation": 0,
+   "wind_speed": 7.6,
+   "wind_bearing": 322.3
+  },
+  {
+   "datetime": "2026-10-13T21:00:00+00:00",
+   "condition": "partlycloudy",
+   "temperature": 15.8,
+   "precipitation": 0,
+   "wind_speed": 7.6,
+   "wind_bearing": 301.5
+  },
+  {
+   "datetime": "2026-10-13T22:00:00+00:00",
+   "condition": "partlycloudy",
+   "temperature": 15.8,
+   "precipitation": 0,
+   "wind_speed": 8.3,
+   "wind_bearing": 314.2
+  },
+  {
+   "datetime": "2026-10-13T23:00:00+00:00",
+   "condition": "cloudy",
+   "temperature": 14.9,
+   "precipitation": 0,
+   "wind_speed": 8.3,
+   "wind_bearing": 312.1
+  },
+  {
+   "datetime": "2026-10-14T00:00:00+00:00",
+   "condition": "partlycloudy",
+   "temperature": 14.6,
+   "precipitation": 0,
+   "wind_speed": 7.9,
+   "wind_bearing": 311.2
+  },
+  {
+   "datetime": "2026-10-14T01:00:00+00:00",
+   "condition": "partlycloudy",
+   "temperature": 14.4,
+   "precipitation": 0,
+   "wind_speed": 7.9,
+   "wind_bearing": 305.4
+  },
+  {
+   "datetime": "2026-10-14T02:00:00+00:00",
+   "condition": "partlycloudy",
+   "temperature": 14.4,
+   "precipitation": 0,
+   "wind_speed": 8.3,
+   "wind_bearing": 311.6
+  },
+  {
+   "datetime": "2026-10-14T03:00:00+00:00",
+   "condition": "cloudy",
+   "temperature": 14.3,
+   "precipitation": 0,
+   "wind_speed": 9.7,
+   "wind_bearing": 310.2
+  },
+  {
+   "datetime": "2026-10-14T04:00:00+00:00",
+   "condition": "cloudy",
+   "temperature": 14.3,
+   "precipitation": 0,
+   "wind_speed": 9.7,
+   "wind_bearing": 305.9
+  },
+  {
+   "datetime": "2026-10-14T05:00:00+00:00",
+   "condition": "fog",
+   "temperature": 13.9,
+   "precipitation": 0,
+   "wind_speed": 10.4,
+   "wind_bearing": 311.9
+  },
+  {
+   "datetime": "2026-10-14T06:00:00+00:00",
+   "condition": "fog",
+   "temperature": 14.2,
+   "precipitation": 0,
+   "wind_speed": 10.4,
+   "wind_bearing": 299.7
+  },
+  {
+   "datetime": "2026-10-14T07:00:00+00:00",
+   "condition": "fog",
+   "temperature": 15.2,
+   "precipitation": 0,
+   "wind_speed": 8.6,
+   "wind_bearing": 302
+  },
+  {
+   "datetime": "2026-10-14T08:00:00+00:00",
+   "condition": "fog",
+   "temperature": 16,
+   "precipitation": 0,
+   "wind_speed": 9,
+   "wind_bearing": 343.5
+  },
+  {
+   "datetime": "2026-10-14T09:00:00+00:00",
+   "condition": "fog",
+   "temperature": 16.6,
+   "precipitation": 0,
+   "wind_speed": 10.8,
+   "wind_bearing": 340.7
+  },
+  {
+   "datetime": "2026-10-14T10:00:00+00:00",
+   "condition": "cloudy",
+   "temperature": 18.2,
+   "precipitation": 0,
+   "wind_speed": 10.8,
+   "wind_bearing": 338.4
+  },
+  {
+   "datetime": "2026-10-14T11:00:00+00:00",
+   "condition": "cloudy",
+   "temperature": 19.2,
+   "precipitation": 0,
+   "wind_speed": 12.2,
+   "wind_bearing": 335.9
+  },
+  {
+   "datetime": "2026-10-14T12:00:00+00:00",
+   "condition": "cloudy",
+   "temperature": 19.4,
+   "precipitation": 0,
+   "wind_speed": 11.5,
+   "wind_bearing": 329.2
+  },
+  {
+   "datetime": "2026-10-14T13:00:00+00:00",
+   "condition": "cloudy",
+   "temperature": 19.9,
+   "precipitation": 0,
+   "wind_speed": 11.5,
+   "wind_bearing": 331
+  },
+  {
+   "datetime": "2026-10-14T14:00:00+00:00",
+   "condition": "partlycloudy",
+   "temperature": 20.1,
+   "precipitation": 0,
+   "wind_speed": 11.2,
+   "wind_bearing": 333.8
+  },
+  {
+   "datetime": "2026-10-14T15:00:00+00:00",
+   "condition": "partlycloudy",
+   "temperature": 20.3,
+   "precipitation": 0,
+   "wind_speed": 11.5,
+   "wind_bearing": 333
+  },
+  {
+   "datetime": "2026-10-14T16:00:00+00:00",
+   "condition": "partlycloudy",
+   "temperature": 19.5,
+   "precipitation": 0,
+   "wind_speed": 9.4,
+   "wind_bearing": 327.9
+  },
+  {
+   "datetime": "2026-10-14T17:00:00+00:00",
+   "condition": "clear-night",
+   "temperature": 17.1,
+   "precipitation": 0,
+   "wind_speed": 7.9,
+   "wind_bearing": 320.2
+  },
+  {
+   "datetime": "2026-10-14T18:00:00+00:00",
+   "condition": "clear-night",
+   "temperature": 16.2,
+   "precipitation": 0,
+   "wind_speed": 7.6,
+   "wind_bearing": 318.3
+  },
+  {
+   "datetime": "2026-10-14T19:00:00+00:00",
+   "condition": "clear-night",
+   "temperature": 15.5,
+   "precipitation": 0,
+   "wind_speed": 5.4,
+   "wind_bearing": 302.4
+  },
+  {
+   "datetime": "2026-10-14T20:00:00+00:00",
+   "condition": "clear-night",
+   "temperature": 15,
+   "precipitation": 0,
+   "wind_speed": 4.3,
+   "wind_bearing": 281.2
+  },
+  {
+   "datetime": "2026-10-14T21:00:00+00:00",
+   "condition": "clear-night",
+   "temperature": 14.5,
+   "precipitation": 0,
+   "wind_speed": 4,
+   "wind_bearing": 263.3
+  },
+  {
+   "datetime": "2026-10-14T22:00:00+00:00",
+   "condition": "fog",
+   "temperature": 14.1,
+   "precipitation": 0,
+   "wind_speed": 4.3,
+   "wind_bearing": 266.9
+  },
+  {
+   "datetime": "2026-10-14T23:00:00+00:00",
+   "condition": "fog",
+   "temperature": 13.7,
+   "precipitation": 0,
+   "wind_speed": 4,
+   "wind_bearing": 237.7
+  },
+  {
+   "datetime": "2026-10-15T00:00:00+00:00",
+   "condition": "fog",
+   "temperature": 14.2,
+   "precipitation": 0,
+   "wind_speed": 4,
+   "wind_bearing": 171.5
+  },
+  {
+   "datetime": "2026-10-15T01:00:00+00:00",
+   "condition": "fog",
+   "temperature": 14.4,
+   "precipitation": 0,
+   "wind_speed": 4.3,
+   "wind_bearing": 156.9
+  },
+  {
+   "datetime": "2026-10-15T02:00:00+00:00",
+   "condition": "fog",
+   "temperature": 14.6,
+   "precipitation": 0,
+   "wind_speed": 4.3,
+   "wind_bearing": 143.7
+  },
+  {
+   "datetime": "2026-10-15T03:00:00+00:00",
+   "condition": "fog",
+   "temperature": 14.8,
+   "precipitation": 0,
+   "wind_speed": 4.3,
+   "wind_bearing": 121.6
+  },
+  {
+   "datetime": "2026-10-15T04:00:00+00:00",
+   "condition": "fog",
+   "temperature": 14.8,
+   "precipitation": 0,
+   "wind_speed": 4.3,
+   "wind_bearing": 129.8
+  },
+  {
+   "datetime": "2026-10-15T05:00:00+00:00",
+   "condition": "fog",
+   "temperature": 14.7,
+   "precipitation": 0,
+   "wind_speed": 4.3,
+   "wind_bearing": 133.4
+  },
+  {
+   "datetime": "2026-10-15T06:00:00+00:00",
+   "condition": "fog",
+   "temperature": 14.6,
+   "precipitation": 0,
+   "wind_speed": 5,
+   "wind_bearing": 132.6
+  },
+  {
+   "datetime": "2026-10-15T07:00:00+00:00",
+   "condition": "fog",
+   "temperature": 14.8,
+   "precipitation": 0,
+   "wind_speed": 5,
+   "wind_bearing": 126.2
+  },
+  {
+   "datetime": "2026-10-15T08:00:00+00:00",
+   "condition": "fog",
+   "temperature": 15.2,
+   "precipitation": 0,
+   "wind_speed": 5,
+   "wind_bearing": 122.1
+  },
+  {
+   "datetime": "2026-10-15T09:00:00+00:00",
+   "condition": "fog",
+   "temperature": 15.9,
+   "precipitation": 0,
+   "wind_speed": 5.8,
+   "wind_bearing": 120.9
+  },
+  {
+   "datetime": "2026-10-15T10:00:00+00:00",
+   "condition": "partlycloudy",
+   "temperature": 17.7,
+   "precipitation": 0,
+   "wind_speed": 5.4,
+   "wind_bearing": 114.3
+  },
+  {
+   "datetime": "2026-10-15T11:00:00+00:00",
+   "condition": "partlycloudy",
+   "temperature": 19.5,
+   "precipitation": 0,
+   "wind_speed": 4.3,
+   "wind_bearing": 95.8
+  },
+  {
+   "datetime": "2026-10-15T12:00:00+00:00",
+   "condition": "sunny",
+   "temperature": 20.7,
+   "precipitation": 0,
+   "wind_speed": 2.5,
+   "wind_bearing": 33.9
+  },
+  {
+   "datetime": "2026-10-15T13:00:00+00:00",
+   "condition": "partlycloudy",
+   "temperature": 21.4,
+   "precipitation": 0,
+   "wind_speed": 2.5,
+   "wind_bearing": 351.9
+  },
+  {
+   "datetime": "2026-10-15T14:00:00+00:00",
+   "condition": "partlycloudy",
+   "temperature": 21.7,
+   "precipitation": 0,
+   "wind_speed": 2.5,
+   "wind_bearing": 353.9
+  },
+  {
+   "datetime": "2026-10-15T15:00:00+00:00",
+   "condition": "partlycloudy",
+   "temperature": 21.5,
+   "precipitation": 0,
+   "wind_speed": 2.9,
+   "wind_bearing": 356.6
+  }
+ ]
+}

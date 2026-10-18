@@ -1,0 +1,81 @@
+/*
+ * web/styles/anneau.css
+ *
+ * Rôle    : l'anneau qui se remplit pendant l'appui long d'une seconde sur une case ronde de la quête de Timo
+ *           (composants/anneau.js). Le geste parent, lui, n'a volontairement aucun retour (composants/geste-parent.js).
+ * Entrées : la classe appui-long-en-cours posée sur la cible par composants/appui.js ; jetons.css (--piece-trait).
+ * Sorties : .anneau, .anneau-moitie, .anneau-droite, .anneau-gauche, .anneau-arc.
+ * Pièges  :
+ *   - Deux moitiés coupées (overflow hidden) ; dans chacune, un rond dont deux bords sont colorés tourne de -135° à 45° :
+ *     la droite pendant la première moitié du geste, la gauche pendant la seconde (délai). Transform seulement
+ *     (conception §3.1), aucune @keyframes : une transition posée par la classe du geste, retirée d'un coup (transition:
+ *     none) au lever du doigt.
+ *   - Durée liée à celle du geste (appui.js : 1 s) : les changer ensemble.
+ *   - Décoratif : aucun texte, couleur de bord seulement (pas de paire de contraste à contrôler).
+ */
+
+.anneau {
+  position: absolute;
+  top: -16px;
+  left: -16px;
+  right: -16px;
+  bottom: -16px;
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.appui-long-en-cours > .anneau {
+  opacity: 1;
+}
+
+.anneau-moitie {
+  position: absolute;
+  top: 0;
+  width: 50%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.anneau-droite {
+  left: 50%;
+}
+
+.anneau-gauche {
+  left: 0;
+}
+
+.anneau-arc {
+  position: absolute;
+  top: 0;
+  width: 200%;
+  height: 100%;
+  border: 12px solid transparent;
+  border-radius: 50%;
+  transform: rotate(-135deg);
+  transition: none;
+}
+
+.anneau-droite .anneau-arc {
+  left: -100%;
+  border-top-color: var(--piece-trait);
+  border-right-color: var(--piece-trait);
+}
+
+.anneau-gauche .anneau-arc {
+  left: 0;
+  border-bottom-color: var(--piece-trait);
+  border-left-color: var(--piece-trait);
+}
+
+.appui-long-en-cours > .anneau .anneau-arc {
+  transform: rotate(45deg);
+}
+
+.appui-long-en-cours > .anneau .anneau-droite .anneau-arc {
+  transition: transform 0.5s linear;
+}
+
+.appui-long-en-cours > .anneau .anneau-gauche .anneau-arc {
+  transition: transform 0.5s linear 0.5s;
+}

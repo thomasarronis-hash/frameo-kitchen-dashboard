@@ -1,0 +1,94 @@
+/*
+ * web/styles/menu.css
+ *
+ * Rôle    : le menu large de 240 px (piste 2) : marque « La cuisine », 9 entrées de 86 px avec icône et nom,
+ *           état de la connexion en pied.
+ * Entrées : le DOM construit par web/src/composants/menu.js ; jetons.css.
+ * Sorties : classes .menu, .menu-marque, .menu-entree(-active), .menu-pied, .menu-pastille(-ko).
+ * Pièges  :
+ *   - Cibles de 96 px de haut au moins (conception §1.2), SAUF les entrées du menu depuis le 16/10 : 86 px, sur toute la
+ *     largeur utile (208 px), pour loger la 9e entrée (Clims, choix de Thomas).
+ *   - Texte lu en touchant en 26 px au moins (§1.2), pied compris : le pied est le seul
+ *     endroit qui dit « maison injoignable » (aucun bandeau pour ce cas). Il passe sur 2 ou 3 lignes.
+ *   - opsz de Fraunces fixé sur la marque (base.css explique pourquoi).
+ *   - Masqué la nuit par base.css (theme-nuit), en mode Photos par photos.css (scene-photos) et en mode enfant par
+ *     ecrans/enfants.css (scene-enfant).
+ *   - Hauteur (mesurée le 14/10 dans Chromium, pied sur 3 lignes, pire cas « hors ligne depuis 12 min ») : 36 + marque 35
+ *     + 24 + 8 entrées (8 x 96 + 7 x 6 = 810) + 24 + pied 94 + 32 = 1 055 px sur 1 080. Une 9e entrée (Photos) en
+ *     demandait 102 de plus : elle n'est plus au menu (conception §1.4). Le 16/10, la 9e entrée Clims : 9 x 86 + 8 x 6
+ *     = 822 au lieu de 810, soit 1 067 px au pire cas (calcul, à remesurer sur capture).
+ *   - Entrée désactivée (écran pas encore là ; Enfants jusqu'à la partie 4) : texte secondaire du menu (6,52:1 le jour) et contour en
+ *     pointillés de la même couleur, jamais d'opacité.
+ */
+
+.menu {
+  grid-column: 1;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  grid-row-gap: 24px;
+  padding: 36px 16px 32px;
+  background: var(--menu);
+  border-right: 2px solid var(--menu-bordure);
+}
+
+.menu-marque {
+  padding: 0 12px;
+  font-family: "Fraunces", serif;
+  font-size: 32px;
+  font-weight: 600;
+  font-variation-settings: "opsz" 32;
+  line-height: 1.1;
+  color: var(--accent);
+}
+
+.menu-entrees {
+  display: grid;
+  grid-auto-rows: 86px;
+  grid-row-gap: 6px;
+  align-content: start;
+}
+
+.menu-entree {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr);
+  grid-column-gap: 16px;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 0 16px;
+  border-radius: 20px;
+  background: transparent;
+  color: var(--texte-menu);
+  text-align: left;
+  font-weight: 700;
+}
+
+.menu-entree .ico {
+  font-size: 38px;
+}
+
+.menu-entree-active {
+  background: var(--menu-actif);
+  color: var(--texte-menu-actif);
+}
+
+.menu-pied {
+  display: grid;
+  grid-template-columns: 16px minmax(0, 1fr);
+  grid-column-gap: 12px;
+  align-items: center;
+  padding: 0 8px;
+  line-height: 1.2;
+  color: var(--texte-menu-2);
+}
+
+.menu-pastille {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.menu-pastille-ko {
+  background: var(--alerte);
+}

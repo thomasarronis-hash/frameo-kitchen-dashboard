@@ -1,0 +1,64 @@
+/*
+ * web/styles/avatar.css
+ *
+ * Rôle    : le visage d'un enfant (composants/avatar.js) : un rond de sa couleur, son petit personnage dessiné au trait, et
+ *           l'étoile dorée posée dessus quand sa routine du matin est finie ; les couleurs des enfants par classe.
+ * Entrées : jetons.css (--enfant-timo, --enfant-pablo, --texte-pastille, --piece, --piece-trait, --carte).
+ * Sorties : .avatar, .avatar-dessin, .avatar-etoile(-dessin), .couleur-enfant-timo, .couleur-enfant-pablo ; les tailles sont posées
+ *           par chaque usage (accueil.css, enfants.css, quete.css, pastille-ecran.css, fin-video.css).
+ * Pièges  :
+ *   - Une règle couleur-<couleur> par couleur du barème (config/enfants.json) : un enfant ajouté demande la sienne
+ *     (tests/enfants-page.test.js). Le dessin est en --texte-pastille sur la couleur (contraste testé, comme l'initiale des
+ *     pastilles de l'agenda).
+ *   - L'étoile est posée sur un rond de --carte cerné : sur la couleur de l'enfant, l'or ne se verrait pas le soir.
+ *   - Tailles en pourcentage du rond : le même composant sert de 56 px (pastille) à 380 px (écran d'entrée) ; trait du
+ *     dessin affiné dans les grandes tailles (enfants.css).
+ */
+
+.avatar {
+  position: relative;
+  display: inline-grid;
+  align-items: center;
+  justify-items: center;
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+}
+
+.avatar-dessin {
+  width: 76%;
+  height: 76%;
+  stroke-width: 1.6;
+}
+
+.couleur-enfant-timo {
+  background: var(--enfant-timo);
+  color: var(--texte-pastille);
+}
+
+.couleur-enfant-pablo {
+  background: var(--enfant-pablo);
+  color: var(--texte-pastille);
+}
+
+.avatar-etoile {
+  position: absolute;
+  top: -12%;
+  right: -14%;
+  width: 52%;
+  height: 52%;
+  display: grid;
+  align-items: center;
+  justify-items: center;
+  border-radius: 50%;
+  background: var(--carte);
+  color: var(--piece-trait);
+  box-shadow: 0 2px 0 var(--carte-ombre);
+}
+
+.avatar-etoile-dessin {
+  width: 80%;
+  height: 80%;
+  fill: var(--piece);
+  stroke-width: 1.6;
+}
