@@ -97,7 +97,7 @@
 //   - HA_DEMO=1 : faux Home Assistant de démonstration (serveur/sources/ha-demo.js, lancé par outils/demo.mjs), seulement
 //     avec NODE_ENV=development, et jamais avec un garde-fou ACTIONS_* à 1 : la démo ne peut rien écrire nulle part.
 //   - DOSSIER_WEB, DOSSIER_MENUS et DOSSIER_ETAT : relatifs à la racine du projet, ou absolus. Par défaut
-//     web/ en développement (sources servies telles quelles) et web/dist en production ; data/menus et
+//     web/ en développement comme en production (sources servies telles quelles, sans étape de construction) ; data/menus et
 //     data/etat (ignorés par git ; montés depuis ~/cadre/data en Docker).
 
 import { randomBytes } from 'node:crypto';
@@ -137,7 +137,7 @@ const PAR_DEFAUT = {
   GO2RTC_URL: 'http://192.168.1.187:1984',
   IMMICH_URL: 'http://192.168.1.187:2283',
 };
-const DOSSIER_WEB_PAR_DEFAUT = { dev: 'web', production: join('web', 'dist') };
+const DOSSIER_WEB_PAR_DEFAUT = { dev: 'web', production: 'web' };
 
 function valeur(env, nom) {
   const brute = env[nom];

@@ -3,16 +3,16 @@
 #
 # Rôle    : interroger le cadre branché en USB (getprop, dumpsys, wm, pm list, settings get...)
 #           et tout consigner, pour remplir docs/cadre-ave948.md et décider GO ou RETOUR.
-# Entrées : un seul appareil ADB branché et autorisé (clé RSA du Clevo acceptée sur le cadre).
+# Entrées : un seul appareil ADB branché et autorisé (clé RSA du PC acceptée sur le cadre).
 # Sorties : docs/releves/identifier-cadre-AAAAMMJJ-HHMMSS.txt, et la même chose à l'écran.
 #           Le numéro de série n'est pas écrit dans le relevé.
 # Pièges  :
 #   - Lecture seule : n'ajouter ici AUCUNE commande qui modifie le cadre. Celles-là sont dans
-#     docs/jour-j.md, chacune avec l'accord de Thomas. Tout nouvel appel à lire() doit aussi
+#     docs/jour-j.md, chacune lancée à la main, une par une. Tout nouvel appel à lire() doit aussi
 #     entrer dans la liste blanche de docs/jour-j.md (étape 0, « Lecture seule prouvée »).
 #   - Vieil Android (6) : certaines commandes n'existent pas (cmd, dumpsys webviewupdate).
 #     Chaque appel est protégé (|| true) : un message d'erreur dans le relevé est normal.
-#   - Les filtres (grep, head) tournent sur le Clevo : la boîte à outils d'un vieil Android
+#   - Les filtres (grep, head) tournent sur le PC : la boîte à outils d'un vieil Android
 #     n'a pas toujours grep ni head.
 #   - Avant Android 7, adb shell renvoie des fins de ligne CRLF : les \r sont retirés.
 #   - Chaque appel est borné à 20 s (timeout) pour ne jamais rester bloqué.
@@ -45,7 +45,7 @@ etat="${appareils#* }"
 case "$etat" in
   device) ;;
   unauthorized)
-    echo "Cadre non autorisé : accepter la clé du Clevo sur l'écran du cadre" >&2
+    echo "Cadre non autorisé : accepter la clé de ton PC sur l'écran du cadre" >&2
     echo "(sinon couper puis remettre la bêta Frameo), puis relancer ce script." >&2
     exit 1
     ;;

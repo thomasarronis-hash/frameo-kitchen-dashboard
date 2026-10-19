@@ -3,7 +3,7 @@
 > **À lire d'abord.** Ce document est le journal de conception d'origine, écrit au fil du projet entre Thomas et Claude
 > (d'où le tutoiement, les questions numérotées et les décisions datées). Il est gardé presque tel quel parce que les
 > commentaires du code y renvoient (« conception §6.0 »...). Les prénoms de la famille y sont remplacés par des prénoms
-> d'exemple. Pour installer le projet chez soi, le README suffit.
+> d'exemple. Pour installer le projet chez soi, suivre le README (« Installer chez soi »).
 >
 > **Geste parent, 14/10 au soir (décision de Thomas, essai sur le vrai cadre)** : appui long de 3 s sur le visage d'un enfant (en haut du mode enfant, ou sur sa carte d'entrée), mode parent de cet enfant ; remplace les trois doigts, impossibles sur ce cadre (contrôleur tactile à deux doigts au plus, relevé du 14/10 ; README, « Le mode parent »).
 >

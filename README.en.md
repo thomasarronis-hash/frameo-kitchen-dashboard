@@ -51,19 +51,32 @@
 > remotes, car, air conditioners) are **disabled by default**: only enable them one at a time, knowing what you are doing.
 
 > [!TIP]
-> The code, its comments and the docs in `docs/` are in French. Environment variables, files and API routes keep their
-> French names (`LIEU_NOM` = place name, `ACTIONS_REELLES` = real actions, `serveur/` = server...): this README gives
-> the meaning of each one.
+> **The dashboard's interface is in French and runs on Paris time** (dates, Tempo, timers). The code, its comments and
+> the docs in `docs/` are in French too. Environment variables, files and API routes keep their French names
+> (`LIEU_NOM` = place name, `ACTIONS_REELLES` = real actions, `serveur/` = server...): this README gives the meaning of
+> each one.
 
 ---
 
 ## 💡 The idea
 
 A 15.6" Frameo photo frame (Rockchip RK3326 chip, Android 9) recycled as a kitchen screen. A small **kiosk** app shows,
-full screen, a web page served by a **backend** on the home server (a Lenovo M900). That backend is the only one talking
+full screen, a web page served by a **backend** on the home server. That backend is the only one talking
 to **Home Assistant** and **Immich**: the frame knows no token, no password, no internal address.
 
 Everything is designed to be read from 2 meters away, touched with wet fingers, and understood by a 3-year-old.
+
+> [!IMPORTANT]
+> **Three names show up everywhere, in the docs and in the code**, because the project was written for one specific
+> home:
+> - **M900**: the **home server**, a second-hand Lenovo ThinkCentre M900 Tiny (an office mini PC) recycled as a Debian
+>   server. It runs Home Assistant, Immich and this project in Docker. At your place, any always-on Linux machine will
+>   do ([Hardware](#hardware)).
+> - **Clevo**: the **admin PC**, a Linux laptop used to develop, connect the frame over USB and run the tools. Its
+>   device key opens a few restricted routes (`/api/etat`).
+> - **Mur** ("wall"): the frame's **Home Assistant user**, without admin rights.
+>
+> Dates in the comments ("choice of 14/10") refer to the design log [docs/conception.md](docs/conception.md).
 
 ## 🖼️ The screens
 
@@ -90,7 +103,7 @@ Everything is designed to be read from 2 meters away, touched with wet fingers, 
   </tr>
 </table>
 
-Also: **Photos mode** (Immich slideshow after 3 minutes without touch), **EDF Tempo** (French electricity tariff: color of
+Also: **Photos mode** (Immich slideshow after 3 minutes without a touch), **EDF Tempo** (French electricity tariff: color of
 today and tomorrow, warning the day before a red day), **bed sheets** to change, **day, evening and night themes**
 following the sun, a **doorbell banner** above any screen.
 
@@ -117,7 +130,7 @@ flowchart LR
   B -- "doorbell live view" --> G
   B --> OM
   B --> RTE
-  HA --- C["Bosch AC · Renault · Eufy · Apple TV"]
+  HA --- C["Bosch AC · Renault Mégane · Eufy · Apple TV"]
 ```
 
 | Part | Role |
@@ -125,7 +138,7 @@ flowchart LR
 | `kiosque/` | home-made Android app: full-screen WebView, launcher, brightness, Wi-Fi watchdog |
 | `serveur/` | the backend: entity allow-list, SSE stream to the page, actions behind safeguards |
 | `web/` | the page: native ES modules without a bundler (ES2019 to be safe), CSS grids, icon sprite |
-| `deploiement/` | `deployer.sh` (tests, upload, Docker build on the M900, health check) and `docker-compose.yml` |
+| `deploiement/` | `deployer.sh` (tests, upload, Docker build on the server, health check) and `docker-compose.yml` |
 | `tests/` | 64 `node --test` files, home-made fake DOM, WCAG contrast computed from the stylesheets |
 
 ## 🔒 Security first
@@ -153,52 +166,81 @@ window. The real server runs on a **fake Home Assistant** (`HA_DEMO=1`) and a fa
 the current week; the weather is Paris's (Open-Meteo, if the Internet answers). Everything is in trial mode: the demo
 cannot write anything. The screenshots in this README come from it.
 
-## 🛠️ Start developing
+<a name="hardware"></a>
 
-```bash
-npm ci
-npm test
-PORT=8027 npm run dev
-```
+## 🧰 Hardware
 
-Then open in Chrome the pairing address printed in the log at startup. All the details are in the technical
-documentation below.
+| What | What works | The original one |
+|---|---|---|
+| **The frame** | An **Android** photo frame where **ADB** can be enabled (many Frameo frames: Settings, About, beta program). Android 7 or later, WebView 64 or later, a touch screen. The same product name does not mean the same board: **check yours before mounting it**, with [docs/jour-j.md](docs/jour-j.md). | 15.6" Frameo "AVE-V5 Max" (Rockchip RK3326, Android 9, 2 GB), about €130: [sheet](docs/cadre-ave948.md) |
+| **The home server** | Any always-on Linux machine with **Docker**: a second-hand mini PC (Lenovo Tiny, Dell Micro, HP Mini, NUC), an old laptop, a Raspberry Pi 4 or 5. The frame's backend itself is light (256 MB of memory at most). | Second-hand Lenovo ThinkCentre M900 Tiny, on Debian |
+| **Home Assistant** | A working installation, on the same server or elsewhere (HA OS on a Pi, HA Green...). | In Docker on the M900 |
+| **A PC** | Linux or macOS with Node 22, to develop, build the app and connect the frame over USB. | Clevo laptop on Kubuntu |
+| **Optional** | Immich (photos), go2rtc (doorbell live view), Renault and Bosch HomeCom integrations (car, air conditioners): each screen says "not linked yet" as long as its variable is empty. | All of it |
 
 <a name="install"></a>
 
 ## 🏠 Install it at home
 
-You need:
+> [!NOTE]
+> Count one evening for the server and another for the frame. Want to look first? `npm run demo` is enough
+> ([Demo](#demo)).
 
-- **an Android photo frame** where ADB can be enabled (many Frameo frames allow it: About, beta program). The same
-  product name does not mean the same board: identify yours first with `outils/identifier-cadre.sh` (read only) and
-  `web/compat/compat.html`, following [docs/jour-j.md](docs/jour-j.md) (in French). The sheet of the frame used here is
-  [docs/cadre-ave948.md](docs/cadre-ave948.md);
-- **a small home server** with Docker and **Home Assistant** (Immich, go2rtc and the car or air conditioner integrations
-  are optional: each screen says "not linked yet" as long as its variable is empty);
-- Node 22 and, for the kiosk app, JDK 17 and the Android SDK (no Gradle).
+**On your PC you need**: `git`, Node 22, `adb` (the `adb` package or Android platform-tools), `ssh`, `rsync`, `curl`,
+Python 3 and Chrome; for the kiosk app, JDK 17, `zip` and the Android SDK (build-tools 34.0.0 and platform android-34,
+no Gradle). **On the server**: Docker with Compose v2 usable without `sudo` (`docker` group), `rsync` and SSH access with
+a key.
 
-The steps:
+1. **Get the project** (a real git clone: the deployment script refuses a ZIP archive).
 
-1. In Home Assistant, create a dedicated **non-admin user** (here "Mur", the wall) and a long-lived token for it.
-   `npm run verif-ha` refuses an admin token and lists what is missing.
-2. Copy `.env.example` to `.env` and fill in what changes: `HA_URL`, the weather location (`LIEU_*`), the calendars,
-   and only if needed the cars, air conditioners, photos. The entity names for the alarm, openings and remotes are in
-   the allow-list `serveur/ha/entites.js`: adapt them to your home.
-3. Adapt `config/enfants.json` (sample names Timo and Pablo, steps, scoring) or ignore the Kids screen.
-4. Run in development (`npm run dev`) and look at the page in Chrome at 1920 x 1080.
-5. Prepare the server and deploy: see [Deploying](#deploying-to-the-home-server).
-   **The server stays on the local network**: never open its port to the Internet or to a shared network.
-6. Build the kiosk app with the server address, install it over ADB, send it the frame key: see
-   [The frame and the kiosk](#the-frame-and-the-kiosk) and [docs/recuperation.md](docs/recuperation.md).
+   ```bash
+   git clone https://github.com/thomasarronis-hash/frameo-kitchen-dashboard.git
+   cd frameo-kitchen-dashboard
+   npm ci
+   npm test
+   ```
+
+2. **Check your frame** before keeping it: [docs/jour-j.md](docs/jour-j.md) (in French), with
+   `outils/identifier-cadre.sh` (read only) and `web/compat/compat.html`. If the frame does not fit, there is still
+   time to return it.
+
+3. **Create the frame's Home Assistant user.** In HA: Settings, People, Add person (here "Mur"), allow login, do
+   **not** make it an administrator, and enable the option that restricts login to the local network. Then log in to
+   HA with that account, open its profile, Security tab, and create a **long-lived access token**.
+
+4. **Run in development on your PC.** The device key and the token are files, never values in the code:
+
+   ```bash
+   mkdir -p ~/.config/cadre
+   (umask 077 && node -e "process.stdout.write(require('node:crypto').randomBytes(32).toString('hex'))" > ~/.config/cadre/cle_dev)
+   (umask 077 && read -rsp "HA token: " T && printf %s "$T" > ~/.config/cadre/ha_token_dev)
+   cp .env.example .env
+   ```
+
+   In `.env`, fill in at least `HA_URL` (for example `http://192.168.1.50:8123`) and the weather location
+   (`LIEU_NOM`, `LIEU_LATITUDE`, `LIEU_LONGITUDE`). Then:
+
+   ```bash
+   npm run verif-ha
+   PORT=8027 npm run dev
+   ```
+
+   `verif-ha` (read only) refuses an admin token and lists the expected entities missing at your place. Open in Chrome
+   the pairing address printed in the log (`/dev/appairer?code=...`), with a 1920 x 1080 window. Port 8027 is just an
+   example: any free port works, 8020 being the production one.
+
+5. **Adapt it to your home**: entity names (alarm, openings, remotes, doorbell...), screens to hide, the kids. This is
+   the longest step: [Adapting it to your home](#adapt).
+
+6. **Prepare the server and deploy**: [Deploying](#deploying). **The server stays on the local network**: never open
+   its port to the Internet or to a shared network.
+
+7. **Install the app on the frame**: [Installing the kiosk](#kiosk).
+
+8. **The week's menu**: a JSON file to write or generate, then publish to the server ([The week's menu](#menu)).
 
 All write safeguards are **disabled by default**: as long as you don't set `ACTIONS_*=1`, nothing is sent to the
 house, and the screen says so (trial mode).
-
-**Code vocabulary.** The project was written for one specific home, and the comments keep its names: the **M900** is
-the home server (a Lenovo M900 Tiny), the **Clevo** the admin PC (its device key opens the restricted routes, like
-`/api/etat`), **Mur** the frame's Home Assistant user, **Thomas** the author. Dates ("choice of 14/10") refer to the
-design log [docs/conception.md](docs/conception.md) (in French).
 
 ---
 
@@ -215,17 +257,20 @@ design log [docs/conception.md](docs/conception.md) (in French).
 4. [Writes and safeguards](#writes-and-safeguards)
 5. [API routes](#api-routes)
 6. [Screens](#screens) · [Home and Today](#home-and-today) · [Weather](#weather) · [Meals](#meals) · [Shopping](#shopping) · [Calendar](#calendar) · [House](#house) · [Photos](#photos) · [EDF Tempo](#edf-tempo) · [Cars](#cars) · [Air conditioners](#air-conditioners) · [Kids board](#kids-board)
-7. [Development](#development)
-8. [Deploying to the home server](#deploying-to-the-home-server)
-9. [The frame and the kiosk](#the-frame-and-the-kiosk)
-10. [Repository rules](#repository-rules)
-11. [Disclaimer and liability](#disclaimer)
-12. [License and credits](#license)
+7. [Adapting it to your home](#adapt)
+8. [The week's menu](#menu)
+9. [Development](#development)
+10. [Deploying to the home server](#deploying)
+11. [The frame and the kiosk](#kiosk)
+12. [Repository rules](#repository-rules)
+13. [Disclaimer and liability](#disclaimer)
+14. [License and credits](#license)
 
 </details>
 
-Original design: [docs/conception.md](docs/conception.md). Frame sheet: [docs/cadre-ave948.md](docs/cadre-ave948.md).
-Recovery when something goes wrong: [docs/recuperation.md](docs/recuperation.md). (All in French.)
+Identifying your frame: [docs/jour-j.md](docs/jour-j.md). Recovery when something goes wrong:
+[docs/recuperation.md](docs/recuperation.md). Original frame sheet: [docs/cadre-ave948.md](docs/cadre-ave948.md). Design
+log: [docs/conception.md](docs/conception.md). (All in French.)
 
 ---
 
@@ -233,7 +278,7 @@ Recovery when something goes wrong: [docs/recuperation.md](docs/recuperation.md)
 
 ## 📍 What runs at our place
 
-The server runs in a `cadre-bff` container on the M900 and the frame has been on the kitchen wall since 14 October
+The server runs in a `cadre-bff` container on the M900 (the home server) and the frame has been on the kitchen wall since 14 October
 2026. Shopping list, car and air conditioners are live; remotes and the doorbell live view stay in trial mode (go2rtc
 listens without a password on the local network, see "Doorbell").
 
@@ -242,7 +287,7 @@ listens without a password on the local network, see "Doorbell").
 ## Architecture
 
 Three parts: the frame's **kiosk** app (Android, full-screen WebView), the **page** (HTML, CSS and native ES modules,
-no bundler) and the **backend** `cadre-bff` (Node 22, Fastify 5) on the M900, the only one talking to Home Assistant
+no bundler) and the **backend** `cadre-bff` (Node 22, Fastify 5) on the home server, the only one talking to Home Assistant
 (WebSocket, non-admin user "Mur"), Immich (read-only key), go2rtc, Open-Meteo and RTE. The server pushes the whole state
 to the page over an SSE stream and only accepts actions from an allow-list.
 
@@ -300,32 +345,32 @@ avoids anything beyond ES2019 (`?.`, `??`, private fields, dynamic import, top-l
 | `outils/` | `cadre.mjs` (menus and shopping list), `verif-ha.mjs`, `verif-immich.mjs`, `apercu.mjs`, `demo.mjs`, day-one tools |
 | `deploiement/` | `deployer.sh` and `docker-compose.yml` |
 | `tests/` | 64 `node --test` files, home-made fake DOM, anonymized fixtures |
-| `docs/` | design log, frame sheet, recovery, README screenshots |
+| `docs/` | design log, day one (identifying your frame), frame sheet, recovery, README screenshots |
 
 ---
 
 ## Configuration
 
 Everything goes through environment variables (`.env.example` describes them one by one, in French). In development,
-the defaults are those of the original home (to adapt); in production, the compose file sets its own and reads
-`~/cadre/.env` for what must not go into the repository.
+the defaults are those of the original home (to adapt in `.env`); in production, the compose file sets its own and
+reads `~/cadre/.env` on the server for everything specific to the home.
 
 | Variable | Default | Production | Role |
 |---|---|---|---|
-| `HA_URL`, `HA_JETON_FICHIER` | M900, `~/.config/cadre/ha_token_dev` | `host.docker.internal:8123`, `/run/cadre/ha_token` | Home Assistant and the token file of the **Mur** user (never an admin token: `verif-ha` refuses it) |
+| `HA_URL`, `HA_JETON_FICHIER` | `http://192.168.1.187:8123` (original home, to change), `~/.config/cadre/ha_token_dev` | `host.docker.internal:8123` (or `~/cadre/.env`), `/run/cadre/ha_token` | Home Assistant and the token file of the **Mur** user (never an admin token: `verif-ha` refuses it) |
 | `CLE_CADRE_FICHIER`, `CLE_CLEVO_FICHIER` | `~/.config/cadre/cle_dev`, `cle_clevo_dev` | `/run/cadre/cle_cadre`, `cle_clevo` | the two device key files (frame, admin PC), different, revocable separately |
 | `PORT`, `HOTE` | 8020, 127.0.0.1 | 8020, 0.0.0.0 | listening port and host |
-| `DOSSIER_WEB`, `DOSSIER_MENUS`, `DOSSIER_ETAT` | `web/`, `data/menus`, `data/etat` | `web`, `/data/menus`, `/data/etat` | served page, published menus, local state |
+| `DOSSIER_WEB`, `DOSSIER_MENUS`, `DOSSIER_ETAT` | `web`, `data/menus`, `data/etat` | `web`, `/data/menus`, `/data/etat` | served page, published menus, local state |
 | `ACTIONS_REELLES`, `ACTIONS_MAISON`, `ACTIONS_VOITURE`, `ACTIONS_CLIM` | empty | in `~/cadre/.env` | the four write safeguards, to set to `1` one at a time |
 | `AGENDA_CALENDRIERS` | empty | in `~/cadre/.env` | see "Calendar" |
 | `LIEU_NOM`, `LIEU_LATITUDE`, `LIEU_LONGITUDE` | Paris | in `~/cadre/.env` | place for the Open-Meteo forecasts and name shown after the date; all three together |
 | `VOITURES`, `CLIMS` | empty | in `~/cadre/.env` | see "Cars" and "Air conditioners" |
 | `WIFI_INVITES_FICHIER` | empty | `/run/cadre/wifi_invites.json` | see "Guest Wi-Fi" |
-| `GO2RTC_URL`, `GO2RTC_FLUX_SONNETTE` | M900, empty | empty | see "Doorbell" |
-| `IMMICH_URL`, `IMMICH_CLE_FICHIER`, `IMMICH_SOURCE`, `IMMICH_ALBUM_ID` | M900, empty, `tout` | `/run/cadre/immich_cle`, `tout` or `~/cadre/.env` | see "Photos" |
+| `GO2RTC_URL`, `GO2RTC_FLUX_SONNETTE` | `http://192.168.1.187:1984` (to change), empty | `host.docker.internal:1984` (or `~/cadre/.env`), empty | see "Doorbell" |
+| `IMMICH_URL`, `IMMICH_CLE_FICHIER`, `IMMICH_SOURCE`, `IMMICH_ALBUM_ID` | `http://192.168.1.187:2283` (to change), empty, `tout` | `host.docker.internal:2283` (or `~/cadre/.env`), `/run/cadre/immich_cle`, `tout` or `~/cadre/.env` | see "Photos" |
 | `IMMICH_DEMO`, `HA_DEMO`, `NODE_ENV` | empty | empty | fake Immich, fake Home Assistant (`npm run demo`) and `/dev` routes, development only (refused elsewhere) |
 
-Secrets are files with mode 600, never values in the environment: `~/cadre/secrets/` (700) on the M900, mounted read
+Secrets are files with mode 600, never values in the environment: `~/cadre/secrets/` (700) on the server, mounted read
 only under `/run/cadre`.
 
 ---
@@ -389,7 +434,7 @@ details only go to the log.
 
 The menu on the left has 9 entries of 86 px: Home, Weather, Meals, Shopping, House, Calendar, Kids, Cars, Air
 conditioning. Navigation reacts on finger contact (`pointerdown`), actions on lift (20 px tolerance, 300 ms
-anti-repeat). Each screen goes back to Home after 60 s without touch (90 s for the kids), except for a recipe, an alert,
+anti-repeat). Each screen goes back to Home after 60 s without a touch (90 s for the kids), except for a recipe, an alert,
 a live view or a displayed Wi-Fi. The menu footer says "up to date", "offline for..." or "house unreachable".
 
 ### Home and Today
@@ -403,7 +448,7 @@ a live view or a displayed Wi-Fi. The menu footer says "up to date", "offline fo
   "nothing planned" otherwise; a touch opens the page.
 - **Today page**: four fixed cards, Weather (morning, afternoon, evening), Meals (lunchbox or lunch, dinner, Recipe),
   Appointments (timed, then "All day"), To prepare (menu reminders), and a strip of **alerts** when there are any: day
-  before a red or white Tempo day, open openings, car to plug in, bed sheets, air from "degraded", high pollen, ink
+  before a red or white Tempo day, openings left open, car to plug in, bed sheets, air from "degraded", high pollen, ink
   below 15 %, low batteries. Top right, the Tempo entry, all year round.
 - **Offline** (stream silent for 45 s): a banner replaces the bottom bar of Home, never the time.
 
@@ -418,15 +463,14 @@ CAMS/Copernicus.
 
 ### Meals
 
-The week's menu (Saturday to Friday) is prepared by a Claude Code skill (`/menu`), validated against
-`partage/schema-menu-v1.json` then published to the M900 by `outils/cadre.mjs publier`; it arrives through the stream,
-without reloading.
+The week's menu (Saturday to Friday) is a JSON file validated against `partage/schema-menu-v1.json` and dropped on the
+server ([The week's menu](#menu)); it arrives through the stream, without reloading.
 
 - **Meals screen**: 7 rows, lunch and dinner; weekday lunches are lunchboxes of the previous evening's dish. Tags, time,
   side dish; touching a card opens the recipe.
 - **Step-by-step recipe** (full screen): checkable ingredients on the left (kept per recipe until the next cycle), step
   in 44 px, oven or grill badge, a "Start Sausage 35 min" button, Previous and Next, tips at the end. It stays open until
-  closed (closed automatically after 2 h without touch and without timers).
+  closed (closed automatically after 2 h without a touch and without timers).
 - **Timers**: drawer opened by the Timer button, the badge or a step timer; -1, +1, +5 min, 5 timers at most; Cancel can
   be undone for 5 s. End time kept in server-corrected time: a reload loses nothing. 3 beeps per second until touched,
   full-screen alert above everything (night included), volume raised to 80 % if lower, "5 more min" or "1 more min".
@@ -492,7 +536,7 @@ is home".
 
 - Secret file `wifi_invites.json` (600): `{ "ssid": "...", "mot_de_passe": "...", "securite": "WPA2" }` (`WPA`, `WPA2`,
   `WPA3` or `nopass`), read again on each request. To drop it without pasting it anywhere:
-  `ssh -t user@server 'umask 077 && nano ~/cadre/secrets/wifi_invites.json'`.
+  `ssh -t me@192.168.1.50 'umask 077 && nano ~/cadre/secrets/wifi_invites.json'`.
 - Nothing secret on screen before touching "Show": QR, name and password in large type (monospace, digits in another
   color), hidden after 2 min. The password never goes through the stream.
 - QR written without a library (`web/src/qr.js`, byte mode, M correction, versions 1 to 10), checked against OpenCV.
@@ -501,9 +545,9 @@ is home".
 #### Bed sheets
 
 Three cards at the top of the Maintenance tab (Timo's bed, Pablo's bed, Our room): "changed 3 days ago", the 15-day
-cycle gauge, the due date. "Changed today" (can be undone for 5 s), or on long press "Yesterday" and "The day before".
+cycle gauge, the due date. "Changed today" (can be undone for 5 s), or on long press "Yesterday" and "The day before yesterday".
 Reminder from 2 days before the due date in the Today page alerts only. `POST /api/draps/:lit` (`timo`, `pablo`,
-`parents`), body `{ "quand": "aujourdhui" | "hier" | "avant-hier" }` (today, yesterday, the day before): the server
+`parents`), body `{ "quand": "aujourdhui" | "hier" | "avant-hier" }` (today, yesterday, the day before yesterday): the server
 computes the date and writes `data/etat/draps.json`. Nothing in HA.
 
 ### Photos
@@ -529,9 +573,9 @@ view, Timo's screen timer or while offline.
 For subscribers to EDF's Tempo tariff (France). Read only, no account or key, nothing in HA.
 
 - **Sources**: RTE's public JSON (`tempoLight` and the season), fallback `api-couleur-tempo.fr` if RTE fails, safety net
-  `data/etat/tempo.json`. Fixed rules reject an absurd color (Sunday blue, no red on weekends, nor on winter public
+  `data/etat/tempo.json`. Fixed rules reject an absurd color (Sunday always blue, no red on weekends, nor on winter public
   holidays, nor from April to October). Read at 6:05 am, every 30 min while tomorrow is missing, at 10:45 am, 11:15 am
-  and 12:30 pm. A Tempo day runs from 6 am to 6 am; a color read the day before before 10:40 am is a pre-announcement.
+  and 12:30 pm. A Tempo day runs from 6 am to 6 am; a color read on the previous day, before 10:40 am, is a pre-announcement.
 - **On Home, from 1 November to 31 March only**: dots in "The week" (dotted if pre-announced), the "Tomorrow red" (or
   white) tile instead of guest Wi-Fi from the pre-announcement, then "Off-peak hours, start the machines!" at 10 pm
   (visible when waking the screen: night starts at 8:30 pm), and an 8 px red line at the top of every screen on a red
@@ -586,7 +630,7 @@ commands per sliding hour** at most, all cars together (`429 trop_tot` beyond). 
 ### Air conditioners
 
 Two Bosch air conditioners (Living room, Upstairs) linked to HA through the HACS integration **Bosch HomeCom** (Bosch
-cloud; the Wi-Fi modules have nothing to control locally). Fully controlled from the "Clims" menu entry, **with no child
+cloud; the Wi-Fi modules have nothing to control locally). Fully controlled from the "Air conditioning" menu entry ("Clims" on screen), **with no child
 lock**.
 
 - **Screen**: one panel per unit, side by side: name and On / Off button, room temperature, "− 25° +" setpoint, modes
@@ -627,7 +671,7 @@ every 2 s, 120 commands per sliding hour), `502 action_echouee`.
 The routines of two children, an older one earning screen minutes and a younger one earning stars (Timo and Pablo are
 sample names: change them in `config/enfants.json`, and the bed names in `web/src/ecrans/draps-donnees.js`). Visual,
 little text, **nothing punitive** (no crosses, no red, minutes and points are never taken away as punishment), never the
-two brothers side by side. Nothing in Home Assistant: everything stays in `data/etat/enfants`, and the frame does not
+two children side by side. Nothing in Home Assistant: everything stays in `data/etat/enfants`, and the frame does not
 control the tablet.
 
 #### Screens
@@ -672,7 +716,7 @@ measure**, nothing dangerous depends on it.
   check within 5 s, a parent without delay; screen timer bounded by the minutes earned and 8 pm; 20 point gains at most
   per day; only one pending exchange request; the balance never goes below 0.
 - **The files**: `data/etat/enfants/journees/YYYY-MM-DD.json` (one day, 16 KB max) and `registre.json` (the points,
-  256 KB max); no names, no labels, only identifiers, times and numbers. 90 days kept, old points folded into a carry
+  256 KB max); no names, no labels, only identifiers, times and numbers. 90 days kept, old points folded into a carry-over
   (the balance does not change).
 - **The routes** `/api/enfants/*`: `parent`, `:enfant/etapes/:etape` (and `annuler`, `decision`), `:enfant/points` (and
   `retirer`, `libre`, `libre/annuler`), `:enfant/echanges` (and `decision`), `:enfant/minuteur`, `historique`. The page
@@ -683,18 +727,90 @@ measure**, nothing dangerous depends on it.
 
 ---
 
+<a name="adapt"></a>
+
+## Adapting it to your home
+
+The project reads an **allow-list** of Home Assistant entities named after the original home. An entity missing at
+your place is not an error: it is ignored and the matching tile stays empty; `npm run verif-ha` lists the missing ones.
+
+**The easiest way: rename your entities in Home Assistant** so they carry the expected names (Settings, Devices &
+services, Entities, an entity, cog icon, "Entity ID"). Nothing to touch in the code, and the tests stay valid. Example:
+an English HA installation creates `weather.forecast_home`, the project expects `weather.forecast_maison`.
+
+| Expected entities | For | At our place |
+|---|---|---|
+| `weather.forecast_maison`, `sun.sun` | current and hourly weather; day and evening themes | met.no (default integration), Sun |
+| `alarm_control_panel.alarme_maison` | alarm, read only | Eufy alarm (eufy-security integration) |
+| `binary_sensor.<opening>_sensor_open` (9) and `binary_sensor.<device>_battery_low` | openings, low batteries | Eufy sensors |
+| `todo.shopping_list` | shopping list | HA's built-in shopping list |
+| `binary_sensor.doorbell_ringing`, `camera.sonnette_derniere_photo`, `script.sonnette_direct` | doorbell banner and photo, live view | Eufy doorbell; the camera and the script are created by hand in HA |
+| `sensor.hp_deskjet_2800_series_*` | inks | printer (IPP integration) |
+| `media_player.sejour_sejour`, `remote.sejour_sejour` | Apple TV remote | Apple TV integration |
+| `media_player.smart_tv_pro_2_2`, `remote.smart_tv_pro_2` | TV remote | Android TV Remote (TCL TV) |
+| `calendar.*` | calendar | those of `AGENDA_CALENDRIERS` |
+
+**If you change the names in the code** rather than in HA, they live in: `serveur/ha/entites.js` (allow-list, including
+the `OUVERTURES` (openings) and `PILES` (batteries) lists), `serveur/ha/actions-maison.js` and `serveur/ha/connexion.js`
+(house writes), `web/src/ecrans/maison-donnees.js` (displayed names of openings and batteries),
+`web/src/ecrans/maison-telecommandes.js`, `web/src/ecrans/accueil.js`, `web/src/ciel.js`, `web/src/sonnette.js` and
+`web/src/ecrans/courses.js`. The tests pin these names (`tests/entites.test.js`, `tests/actions-maison.test.js`,
+`tests/fixtures/ha_states.json`): update them, because the deployment script refuses to run if `npm test` fails.
+
+**Other settings:**
+
+- **Hide a screen**: remove its line from `ENTREES` in `web/src/composants/menu.js`, and adjust it in
+  `tests/voitures-page.test.js`, which checks the list.
+- **The kids**: in `config/enfants.json`, change `prenom` (first name), the steps' `libelle` (label; "N'excite pas
+  Pablo" contains a name), the values and the shop. Keep the `timo` and `pablo` `id`s: they are also used by the colors
+  (`enfant-timo`...) and the bed sheets (`serveur/sources/draps.js`, `web/src/ecrans/draps-donnees.js`). The board is
+  designed for two children: an older one earning screen minutes, a younger one earning stars. The scoring tests check
+  the original values (`tests/enfants-bareme.test.js`): update them too.
+- **Car and air conditioners**: the roles follow the Renault integration and the Bosch HomeCom HACS integration.
+  Another brand means adapting `ROLES` in `serveur/ha/voitures.js` or `serveur/ha/clims.js`.
+
+<a name="menu"></a>
+
+## The week's menu
+
+The Meals, Recipe, "Tonight" and Today screens read a **menu in JSON**, one file per week, Saturday to Friday: 9 meals
+(Saturday and Sunday lunch and dinner, Monday to Friday dinners; weekday lunches are the previous evening's
+lunchboxes), each with recipe, ingredients, steps and timers.
+
+- **The format**: `partage/schema-menu-v1.json`, and a full example in `tests/fixtures/menu-2026-10-10.json`. You can
+  write it by hand or have it generated by the assistant of your choice, giving it the schema and the example. At our
+  place it is a personal Claude Code skill (`/menu`), not included in this repository.
+- **Check it**: `node outils/cadre.mjs verifier my-menu.json` (the same validator as the server).
+- **Publish it, the simple way**: copy it into `~/cadre/data/menus/` on the server, named after its first day. The
+  server picks it up within a minute, without a restart.
+
+  ```bash
+  scp my-menu.json me@192.168.1.50:cadre/data/menus/2026-10-17.json
+  ```
+
+- **Publish it with the tool** (a dedicated SSH key that can only write to that folder, never delete):
+
+  ```bash
+  ssh-keygen -t ed25519 -N '' -f ~/.ssh/cadre_menus
+  ```
+
+  then, in the server's `~/.ssh/authorized_keys`, a line `restrict,command="/usr/bin/rrsync -no-del /home/me/cadre/data/menus" `
+  followed by the content of `~/.ssh/cadre_menus.pub` (absolute path of the folder; `rrsync` ships with the `rsync`
+  package). Then:
+
+  ```bash
+  CADRE_DEST=me@192.168.1.50: node outils/cadre.mjs publier my-menu.json
+  ```
+
+---
+
 ## Development
 
 ### Install
 
-```bash
-npm ci
-mkdir -p ~/.config/cadre data/menus
-[ -e ~/.config/cadre/cle_dev ] || (umask 077 && node -e "process.stdout.write(require('node:crypto').randomBytes(32).toString('hex'))" > ~/.config/cadre/cle_dev)
-```
-
-The development HA token (Mur user) goes in `~/.config/cadre/ha_token_dev` (600); never use an admin token. The
-development Clevo key is created on first launch. To change a value, copy `.env.example` to `.env` (not versioned).
+The commands are in step 4 of [Install it at home](#install): key `~/.config/cadre/cle_dev`, HA token of the Mur user
+in `~/.config/cadre/ha_token_dev` (files with mode 600; **never an admin token**), `.env` copied from `.env.example`.
+The development admin PC key (`cle_clevo_dev`) is created on first launch.
 
 ### Run and look at the page
 
@@ -716,7 +832,7 @@ redirects to the page. It only exists in development, from the loopback, with a 
 ### Tests and checks
 
 ```bash
-npm test               # 727 tests, no network, no HA, no Immich, no RTE
+npm test               # 727 passing tests (1 skipped), no network, no HA, no Immich, no RTE
 npm run verif-ha       # read only: allow-listed entities, action targets, VOITURES and CLIMS
 npm run verif-immich   # read only: Immich version, a batch and a photo
 ```
@@ -730,18 +846,60 @@ or if the token is an admin one: run it again after each HA update.
 | Command | Role |
 |---|---|
 | `node outils/cadre.mjs verifier <menu.json>` | validates a menu (exit code 1 and reasons otherwise) |
-| `node outils/cadre.mjs publier <menu.json>` | publishes to the M900 over rsync (key `~/.ssh/cadre_menus`, no passphrase, restricted by rrsync) |
-| `node outils/cadre.mjs liste` | menus published on the M900 |
+| `node outils/cadre.mjs publier <menu.json>` | publishes to the `CADRE_DEST` server over rsync (key `~/.ssh/cadre_menus`, no passphrase, restricted by rrsync: see "The week's menu") |
+| `node outils/cadre.mjs liste` | menus published on the server |
+| `CADRE_URL` | server address for `etat`, `cocher` and `apercu.mjs` (for example `http://192.168.1.50:8020`; default: the original home) |
 | `node outils/cadre.mjs etat`, `cocher <uid>...` | drive date and shopping list; check items with confirmation (invisible characters written out) |
 | `npm run demo` (`outils/demo.mjs`) | the dashboard on a fake Home Assistant, without a smart home; see "Try it without a smart home" |
 | `node outils/apercu.mjs` | relay on `http://127.0.0.1:8021` to the real dashboard, with the Clevo key (`~/.config/cadre/cle`, a copy of `secrets/cle_clevo`). **Actions there are real.** |
 
 ---
 
+<a name="deploying"></a>
+
 ## Deploying to the home server
 
-The commands below target the original server (`thomas@192.168.1.187`): replace it with yours. The script reads
-`HOTE_M900` (host) and `URL_SANTE` (health URL):
+In the examples, `me@192.168.1.50` is your account on the server: replace it everywhere. The server receives the
+sources over `rsync`, builds the Docker image on the spot and runs it with `deploiement/docker-compose.yml`.
+
+### Preparing the server (once)
+
+1. **Folders and secrets**: two random device keys (the frame's, your PC's), then the token of the HA user **Mur**
+   (step 3 of [Install it at home](#install)), typed on the keyboard without going through the shell history:
+
+   ```bash
+   ssh me@192.168.1.50 'umask 077 && mkdir -p ~/cadre/secrets ~/cadre/src ~/cadre/data/menus ~/cadre/data/etat \
+     && for c in cle_cadre cle_clevo; do [ -f ~/cadre/secrets/$c ] || head -c 32 /dev/urandom | od -An -tx1 | tr -d " \n" > ~/cadre/secrets/$c; done'
+   read -rsp "HA token: " T && ssh me@192.168.1.50 'umask 077 && cat > ~/cadre/secrets/ha_token' <<< "$T" && unset T
+   ```
+
+   The Immich key (optional) is dropped the same way in `secrets/immich_cle`.
+
+2. **Your home's settings** in `~/cadre/.env` (read by docker compose, never overwritten by a deployment): location
+   (`LIEU_*`), calendars, cars and air conditioners, the `ACTIONS_*` safeguards. If Home Assistant, Immich or go2rtc
+   run **on another machine** than the server, add `HA_URL`, `IMMICH_URL` or `GO2RTC_URL` (`http://ip:port`);
+   otherwise the compose file reaches them on the server itself. Each variable is described in
+   [`.env.example`](.env.example) (in French).
+
+   ```bash
+   ssh -t me@192.168.1.50 'umask 077 && nano ~/cadre/.env'
+   ```
+
+3. **The user**: the container runs under the uid and gid of your account on the server, to read the secrets (mode 600).
+   Default 1000:1000; if `ssh me@192.168.1.50 id` says otherwise, add `UID_CADRE=...` and `GID_CADRE=...` to
+   `~/cadre/.env`, and run the deployment with `UID_CADRE=...` in front.
+
+4. **Your PC's key** for the tools (`outils/cadre.mjs etat`, `cocher`, `outils/apercu.mjs`):
+
+   ```bash
+   ssh me@192.168.1.50 cat cadre/secrets/cle_clevo > ~/.config/cadre/cle && chmod 600 ~/.config/cadre/cle
+   ```
+
+   These tools target the server given by `CADRE_URL`: add `CADRE_URL=http://192.168.1.50:8020` to your `.env` or in
+   front of the command.
+
+Check: `ssh me@192.168.1.50 'stat -c "%u %a %n" ~/cadre/secrets ~/cadre/secrets/*'` must show your uid with `700` for
+the folder and `600` for each file.
 
 ### Deploy
 
@@ -749,22 +907,27 @@ The commands below target the original server (`thomas@192.168.1.187`): replace 
 HOTE_M900=me@192.168.1.50 URL_SANTE=http://192.168.1.50:8020/api/sante bash deploiement/deployer.sh
 ```
 
-Clean git tree required; local tests, check of `~/cadre` (secrets readable by uid 1000), upload of the sources to
-`~/cadre/src`, `docker compose build` and `up -d` on the server, success only when `/api/sante` answers `"ha":"ok"`.
-The previous image is kept as `cadre-bff:precedent`. Rollback:
+The script requires a clean git tree (commit your changes first) and passing tests. It checks `~/cadre`, uploads the
+sources to `~/cadre/src`, runs `docker compose build` and `up -d`, and only succeeds when `/api/sante` answers
+`"ha":"ok"`. The previous image is kept as `cadre-bff:precedent`. Rollback:
 
 ```bash
 ssh me@192.168.1.50 'cd ~/cadre && docker tag cadre-bff:precedent cadre-bff:local && docker compose up -d'
 ```
 
-Changing a line of `~/cadre/.env` (`VOITURES`, `CLIMS`, a flag): edit it on the server (backup copy first), then
-redeploy or run `docker compose up -d` in `~/cadre`.
+Changing a line of `~/cadre/.env`: edit it on the server (backup copy first), then redeploy or run
+`docker compose up -d` in `~/cadre`.
+
+### Backing up
+
+`~/cadre/secrets` and `~/cadre/data/etat` (kids' points, bed sheets, Tempo) belong in the server's backup (restic,
+borg, or a simple `rsync` to another machine). Everything else is rebuilt by redeploying.
 
 ### The page reloads itself
 
 At startup the server computes the fingerprint of the served content and puts it in the stream and in `/api/sante`.
 When a reconnection announces another one, the page reloads, but not during a timer, a recipe, the kids' screen or the
-doorbell banner, nor before 60 s without touch. The icon sprite is fetched fresh at each load.
+doorbell banner, nor before 60 s without a touch. The icon sprite is fetched fresh at each load.
 
 ### Damaged state file
 
@@ -774,41 +937,59 @@ damaged file (broken JSON, extra field, too large) is **never overwritten**: it 
 points for example): fix the set-aside file, stop the container, give it back its name, restart. To find them:
 `ssh me@192.168.1.50 'find ~/cadre/data/etat -name "*.abime-*"'`.
 
-### Preparing a new server (once)
-
-```bash
-ssh me@192.168.1.50 'umask 077 && mkdir -p ~/cadre/secrets ~/cadre/src ~/cadre/data/menus ~/cadre/data/etat \
-  && for c in cle_cadre cle_clevo; do [ -f ~/cadre/secrets/$c ] || head -c 32 /dev/urandom | od -An -tx1 | tr -d " \n" > ~/cadre/secrets/$c; done'
-read -rs T && ssh me@192.168.1.50 'umask 077 && cat > ~/cadre/secrets/ha_token' <<< "$T" && unset T
-```
-
-The token is the one of the HA user **Mur** (profile, Security, Long-lived access tokens). The Immich key is dropped the
-same way in `secrets/immich_cle`. Check: `stat -c "%u %a %n" ~/cadre/secrets ~/cadre/secrets/*` must show `1000 700`
-for the folder and `1000 600` for each file.
-
 ---
+
+<a name="kiosk"></a>
 
 ## The frame and the kiosk
 
-**The frame**: Apveelveer 15.6" Frameo "AVE-V5 Max", Rockchip RK3326, 2 GB, Android 9, WebView Chrome 125, 1920x1080
-screen, two-finger touch, no root, mains power required. Frameo and its update tool are disabled; the kiosk app is the
-home screen. Full sheet: [docs/cadre-ave948.md](docs/cadre-ave948.md) (in French).
+**The kiosk app** (`kiosque/`, `fr.arronis.cuisine`): full-screen WebView on your server, embedded fallback page (time
+and timers if the server does not answer), bridge to the page (brightness, volume), sound without a user gesture, exit
+by holding two fingers for 1.5 s (Android Settings), and a **Wi-Fi watchdog**: the original frame's RK915 chip loses
+large packets in episodes; a 4 KiB probe every 30 s, and after two failures Wi-Fi is turned off and on again.
 
-**The kiosk app** (`kiosque/`, `fr.arronis.cuisine`): full-screen WebView on the server, embedded fallback page, bridge
-to the page (brightness, volume), sound without a user gesture, exit by holding two fingers for 1.5 s (Android
-Settings), and a **Wi-Fi watchdog**: the frame's RK915 chip loses large packets in episodes; a 4 KiB probe every 30 s,
-and after two failures Wi-Fi is turned off and on again.
+### Installing the kiosk (first time)
 
-Build the APK (JDK 17, `zip`, build-tools 34.0.0 and platform android-34 in `~/Android/Sdk`):
+The server must be deployed and reachable, and the frame connected to your PC over USB with ADB authorized
+([docs/jour-j.md](docs/jour-j.md)). Steps 3 to 7 **modify the frame**: read them before running them.
 
-```bash
-kiosque/build.sh http://192.168.1.50:8020
-```
+1. Check that the server serves the Wi-Fi watchdog probe (expected: `200 4096`):
 
-Output: `kiosque/build/cuisine-debug.apk`. **Back up `~/.android/debug.keystore`**: without it, a new version will no
-longer install over the old one. Installation, leaving the kiosk, lost Wi-Fi, going back to Frameo:
-[docs/recuperation.md](docs/recuperation.md). The day-one tools (`web/compat/compat.html`, `outils/serveur-compat.py`,
-`outils/identifier-cadre.sh`, `docs/jour-j.md`) are there for another frame.
+   ```bash
+   curl -s -o /dev/null -w '%{http_code} %{size_download}\n' http://192.168.1.50:8020/sonde.bin
+   ```
+
+2. Build the APK with the server address (JDK 17, `zip`, build-tools 34.0.0 and platform android-34 in
+   `~/Android/Sdk`, or `ANDROID_HOME`):
+
+   ```bash
+   bash kiosque/build.sh http://192.168.1.50:8020
+   ```
+
+3. Install it: `adb install kiosque/build/cuisine-debug.apk`
+4. Send it the frame key, read straight from the server:
+
+   ```bash
+   adb shell am start -n fr.arronis.cuisine/.ReglageAdb --es cle "$(ssh me@192.168.1.50 cat cadre/secrets/cle_cadre)"
+   ```
+
+5. Make it the home screen, then check that it restarts on its own:
+
+   ```bash
+   adb shell cmd package set-home-activity fr.arronis.cuisine/.MainActivity
+   adb reboot
+   ```
+
+6. Optional: disable Frameo so it does not take over again (reversible, [docs/recuperation.md](docs/recuperation.md)
+   §3): `adb shell pm disable-user --user 0 net.frameo.frame`. On a Rockchip frame, do the same with the manufacturer's
+   update package (`android.rockchip.update.service` at our place).
+7. Connect the frame to the home Wi-Fi (two-finger gesture, Settings, Wi-Fi) and plug it **into mains power**.
+
+**Back up `~/.android/debug.keystore`**: without it, a new version will no longer install over the old one. Updates,
+leaving the kiosk, lost Wi-Fi, going back to Frameo: [docs/recuperation.md](docs/recuperation.md) (in French).
+
+**The original frame**: 15.6" Frameo "AVE-V5 Max", Rockchip RK3326, 2 GB, Android 9, WebView Chrome 125, 1920x1080
+screen, two-finger touch, no root, mains power required: [docs/cadre-ave948.md](docs/cadre-ave948.md) (in French).
 
 ---
 
@@ -863,4 +1044,4 @@ Code under the [MIT license](LICENSE): free to reuse, modify and share, keeping 
 - **Fraunces** and **Nunito Sans** fonts, self-hosted, under the SIL Open Font License 1.1 ([`web/public/polices/OFL.txt`](web/public/polices/OFL.txt)).
 - Weather, air quality and pollen: [Open-Meteo](https://open-meteo.com/) (data under CC BY 4.0, free for non-commercial use).
 - Tempo colors: RTE public data, fallback [api-couleur-tempo.fr](https://www.api-couleur-tempo.fr/).
-- Written hand in hand with [Claude Code](https://claude.com/claude-code).
+- Written four-handed with [Claude Code](https://claude.com/claude-code).

@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 # deploiement/deployer.sh
 #
-# Rôle    : envoyer le serveur sur le M900, le construire là-bas et (re)démarrer le conteneur cadre-bff.
-#           Chaque lancement est une écriture en prod : seulement avec l'accord de Thomas.
+# Rôle    : envoyer le serveur sur le serveur maison, le construire là-bas et (re)démarrer le conteneur cadre-bff.
+#           Chaque lancement modifie le serveur en service : relire avant de lancer.
 # Entrées : le projet local (package*.json, Dockerfile, .dockerignore, serveur/, partage/, config/, web/), et
-#           deploiement/docker-compose.yml ; variables HOTE_M900 (défaut thomas@192.168.1.187) et URL_SANTE
-#           (défaut http://192.168.1.187:8020/api/sante).
+#           deploiement/docker-compose.yml ; variables HOTE_M900 (compte SSH sur le serveur, par exemple
+#           moi@192.168.1.50) et URL_SANTE (par exemple http://192.168.1.50:8020/api/sante), obligatoires ;
+#           UID_CADRE (uid du compte sur le serveur, défaut 1000).
 # Sorties : ~/cadre/src/ (miroir des sources, --delete), ~/cadre/docker-compose.yml, image cadre-bff:local
 #           (l'ancienne est gardée sous cadre-bff:precedent), conteneur démarré ; réussit seulement quand
 #           /api/sante répond "ha":"ok".
@@ -16,13 +17,18 @@
 #     dans serveur/, partage/, config/ ou web/.
 #   - config/ (barème des enfants) est indispensable : sans lui, le Dockerfile échoue (COPY config/) et le serveur
 #     refuserait de démarrer.
-#   - Le build se fait sur le M900 (npm ci y télécharge les dépendances figées par package-lock.json).
-#   - Retour arrière : ssh M900 'cd ~/cadre && docker tag cadre-bff:precedent cadre-bff:local && docker compose up -d'
+#   - Le build se fait sur le serveur (npm ci y télécharge les dépendances figées par package-lock.json).
+#   - Retour arrière : ssh "$HOTE_M900" 'cd ~/cadre && docker tag cadre-bff:precedent cadre-bff:local && docker compose up -d'
 
 set -euo pipefail
 
-HOTE_M900="${HOTE_M900:-thomas@192.168.1.187}"
-URL_SANTE="${URL_SANTE:-http://192.168.1.187:8020/api/sante}"
+HOTE_M900="${HOTE_M900:-}"
+URL_SANTE="${URL_SANTE:-}"
+if [ -z "$HOTE_M900" ] || [ -z "$URL_SANTE" ]; then
+  echo "Indique le serveur : HOTE_M900=moi@192.168.1.50 URL_SANTE=http://192.168.1.50:8020/api/sante bash deploiement/deployer.sh" >&2
+  exit 1
+fi
+UID_CADRE="${UID_CADRE:-1000}"
 RACINE="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$RACINE"
 
@@ -38,9 +44,9 @@ npm test --silent > /dev/null || {
 }
 
 echo "2/5 Contrôle de ~/cadre sur $HOTE_M900"
-ssh "$HOTE_M900" '[ "$(id -u)" = 1000 ] && cd ~/cadre && test -r secrets/ha_token && test -r secrets/cle_cadre \
-  && test -r secrets/cle_clevo && test -r data/menus && test -w data/etat' || {
-  echo "M900 injoignable, ou secrets / data absents ou illisibles par l'uid 1000 : voir README, Déploiement." >&2
+ssh "$HOTE_M900" "[ \"\$(id -u)\" = $UID_CADRE ] && cd ~/cadre && test -r secrets/ha_token && test -r secrets/cle_cadre \
+  && test -r secrets/cle_clevo && test -r data/menus && test -w data/etat" || {
+  echo "Serveur injoignable, uid différent de $UID_CADRE (UID_CADRE), ou secrets / data absents ou illisibles : voir README, Déploiement." >&2
   exit 1
 }
 

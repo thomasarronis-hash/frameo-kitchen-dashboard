@@ -1,6 +1,6 @@
 # Fichiers à ne jamais versionner dans cadre-cuisine (conception §3.2).
 
-# Dépendances et constructions (web/dist est produit par Vite à partir de M2)
+# Dépendances et constructions (web/dist : réservé à un éventuel bundler, la page est servie telle quelle)
 node_modules/
 web/dist/
 kiosque/build/

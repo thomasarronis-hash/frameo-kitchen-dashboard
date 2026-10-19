@@ -9,16 +9,19 @@
 #           garde-fous ACTIONS_*, flux de la sonnette ; voir .env.example).
 # Sorties : http://<serveur>:8020 sur le réseau local (page sans secret, /api protégé par les clés d'appareil).
 # Pièges  :
-#   - Home Assistant, go2rtc et Immich tournent en réseau hôte : on les joint par host.docker.internal (host-gateway).
-#     Le bridge Docker est une adresse privée, donc « local » pour un utilisateur HA en local_only.
+#   - Par défaut, Home Assistant, go2rtc et Immich tournent sur le même hôte, en réseau hôte : on les joint par
+#     host.docker.internal (host-gateway). Le bridge Docker est une adresse privée, donc « local » pour un
+#     utilisateur HA en local_only. Sur une autre machine (HA OS sur un Pi, HA Green...) : HA_URL, IMMICH_URL et
+#     GO2RTC_URL dans ~/cadre/.env (http://ip:port, sans chemin).
 #   - Les quatre garde-fous ACTIONS_REELLES, ACTIONS_MAISON, ACTIONS_VOITURE et ACTIONS_CLIM sont vides par défaut :
-#     tout est SIMULÉ (bandeau « Mode essai »). Les passer à 1 un par un dans ~/cadre/.env, puis redémarrer.
+#     tout est SIMULÉ (bandeau « Mode essai »). Les passer à 1 un par un dans ~/cadre/.env, puis docker compose up -d (ou redéployer).
 #     Aucune action d'alarme n'existe, quelle que soit leur valeur.
 #   - GO2RTC_FLUX_SONNETTE : à laisser vide tant que go2rtc écoute le réseau local sans authentification (README,
 #     « Sonnette ») ; la clé du cadre ne protégerait rien.
 #   - VOITURES : les entity_id de l'intégration Renault contiennent souvent la plaque : ~/cadre/.env, jamais le dépôt.
 #   - Tempo et Open-Meteo : le conteneur doit sortir sur Internet en HTTPS (sans compte ni clé).
-#   - user 1000:1000 = l'utilisateur propriétaire de ~/cadre sur le serveur : le conteneur lit les secrets en 600.
+#   - user = l'utilisateur propriétaire de ~/cadre sur le serveur (1000:1000 par défaut, sinon UID_CADRE et GID_CADRE
+#     dans ~/cadre/.env, et UID_CADRE au lancement de deployer.sh) : le conteneur lit les secrets en 600.
 #   - Journaux limités à 3 x 10 Mo : le disque est partagé avec Immich et HA.
 
 services:
@@ -33,7 +36,7 @@ services:
       - "host.docker.internal:host-gateway"
     environment:
       TZ: Europe/Paris
-      HA_URL: http://host.docker.internal:8123
+      HA_URL: ${HA_URL:-http://host.docker.internal:8123}
       HA_JETON_FICHIER: /run/cadre/ha_token
       CLE_CADRE_FICHIER: /run/cadre/cle_cadre
       CLE_CLEVO_FICHIER: /run/cadre/cle_clevo
@@ -49,9 +52,9 @@ services:
       LIEU_LATITUDE: ${LIEU_LATITUDE:-}
       LIEU_LONGITUDE: ${LIEU_LONGITUDE:-}
       WIFI_INVITES_FICHIER: /run/cadre/wifi_invites.json
-      GO2RTC_URL: http://host.docker.internal:1984
+      GO2RTC_URL: ${GO2RTC_URL:-http://host.docker.internal:1984}
       GO2RTC_FLUX_SONNETTE: ${GO2RTC_FLUX_SONNETTE:-}
-      IMMICH_URL: http://host.docker.internal:2283
+      IMMICH_URL: ${IMMICH_URL:-http://host.docker.internal:2283}
       IMMICH_CLE_FICHIER: /run/cadre/immich_cle
       IMMICH_SOURCE: ${IMMICH_SOURCE:-tout}
       IMMICH_ALBUM_ID: ${IMMICH_ALBUM_ID:-}
@@ -63,7 +66,7 @@ services:
       - ./secrets:/run/cadre:ro
       - ./data/menus:/data/menus:ro
       - ./data/etat:/data/etat
-    user: "1000:1000"
+    user: "${UID_CADRE:-1000}:${GID_CADRE:-1000}"
     read_only: true
     tmpfs:
       - /tmp

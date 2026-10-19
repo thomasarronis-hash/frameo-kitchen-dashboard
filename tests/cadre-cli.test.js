@@ -143,8 +143,8 @@ test('publier vers le M900 sans la clé ~/.ssh/cadre_menus : refus clair (code 2
   const { code, sortie, erreurs } = await lancer(maison, ['publier', FIXTURE]);
   assert.equal(code, 2);
   assert.equal(sortie, '');
-  assert.match(erreurs, new RegExp(`^publication vers le M900 impossible : la clé ${maison}/\\.ssh/cadre_menus n'existe pas encore\\. Rien n'a été lancé\\.`));
-  assert.match(erreurs, /accord de Thomas/);
+  assert.match(erreurs, new RegExp(`^publication vers le serveur impossible : la clé ${maison}/\\.ssh/cadre_menus n'existe pas encore\\. Rien n'a été lancé\\.`));
+  assert.match(erreurs, /README, « Le menu de la semaine »/);
   assert.ok(erreurs.includes(`Commande qui serait lancée : rsync -e '${SSH_ATTENDU(maison)}' --chmod=F644 -- ${maison}/tmp/cadre-publier-XXXXXX/2026-10-10.json thomas@192.168.1.187:2026-10-10.json`), erreurs);
   assert.deepEqual(readdirSync(join(maison, 'tmp')), [], 'aucun dossier privé créé');
 });
@@ -156,7 +156,7 @@ test('publier vers le M900 : la copie VALIDÉE part après « -- », jamais le n
   copyFileSync(FIXTURE, join(maison, piege));
   const { code, sortie, erreurs } = await lancer(maison, ['publier', piege], { env });
   assert.equal(code, 0, erreurs);
-  assert.match(sortie, /^publié sur le M900 : 2026-10-10\.json \(menu du 2026-10-10 au 2026-10-16/);
+  assert.match(sortie, /^publié sur le serveur : 2026-10-10\.json \(menu du 2026-10-10 au 2026-10-16/);
   const { args, lue } = JSON.parse(readFileSync(join(maison, 'rsync.json'), 'utf8'));
   assert.deepEqual(args.slice(0, 4), ['-e', SSH_ATTENDU(maison), '--chmod=F644', '--']);
   assert.match(args[4], new RegExp(`^${maison}/tmp/cadre-publier-[^/]+/2026-10-10\\.json$`), 'source = copie dans le dossier privé');
@@ -187,7 +187,7 @@ test('liste sans CADRE_DEST_LOCAL : refus clair sans la clé (code 2) ; avec ell
   const sansCle = maisonTemporaire(t);
   const refus = await lancer(sansCle, ['liste']);
   assert.equal(refus.code, 2);
-  assert.match(refus.erreurs, /^liste du M900 impossible : la clé .*cadre_menus n'existe pas encore/);
+  assert.match(refus.erreurs, /^liste du serveur impossible : la clé .*cadre_menus n'existe pas encore/);
 
   const maison = maisonTemporaire(t);
   const { code, erreurs } = await lancer(maison, ['liste'], { env: preparerFauxRsync(maison) });

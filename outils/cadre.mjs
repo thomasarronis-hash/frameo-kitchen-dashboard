@@ -11,15 +11,17 @@
 //             etat                      GET /api/etat et GET /api/courses, en JSON sur la sortie standard ;
 //             cocher <uid>...           pour chaque article, demande « o » sur l'entrée standard, puis POST
 //                                       /api/action/courses_cocher.
-//           Variables : CADRE_DEST_LOCAL (dossier où publier et lister à la place du M900 : tests, développement),
+//           Variables : CADRE_DEST (destination rsync des menus sur le serveur, défaut thomas@192.168.1.187: de la
+//           maison d'origine, par exemple moi@192.168.1.50:), CADRE_DEST_LOCAL (dossier où publier et lister à la
+//           place du serveur : tests, développement),
 //           CADRE_URL (défaut http://192.168.1.187:8020), CADRE_CLE_FICHIER (défaut ~/.config/cadre/cle, sinon la
 //           clé de développement ~/.config/cadre/cle_clevo_dev).
 // Sorties : texte en français (etat : JSON). Codes de sortie : 0 réussi, 1 menu invalide ou erreur, 2 impossible
 //           en l'état (clé SSH absente, clé du Clevo introuvable, usage).
 // Pièges  :
 //   - publier et liste passent par rsync et la clé dédiée ~/.ssh/cadre_menus, bridée côté M900 par rrsync
-//     (-no-del, dossier cadre/data/menus). Tant que cette clé n'existe pas (création avec l'accord de Thomas,
-//     conception §6.3), la commande affiche ce qu'elle lancerait et s'arrête (code 2) sans rien envoyer.
+//     (-no-del, dossier cadre/data/menus). Tant que cette clé n'existe pas (création : README, « Le menu de la
+//     semaine »), la commande affiche ce qu'elle lancerait et s'arrête (code 2) sans rien envoyer.
 //   - rsync ne reçoit JAMAIS le nom de fichier donné en argument : publier écrit le texte DÉJÀ VALIDÉ dans un
 //     fichier ordinaire d'un dossier privé (mkdtemp, 700) et passe son chemin absolu après « -- ». Un nom qui
 //     commence par « - » (« --rsh=... ») ne devient donc pas une option, le fichier ne peut pas changer entre la
@@ -52,12 +54,12 @@ import { rendreVisible } from '../partage/caracteres-invisibles.js';
 import { validerMenu } from '../partage/valider-menu.js';
 
 const URL_PAR_DEFAUT = 'http://192.168.1.187:8020';
-const DESTINATION_M900 = 'thomas@192.168.1.187:';
+const DESTINATION = process.env.CADRE_DEST || 'thomas@192.168.1.187:';
 const DELAI_REQUETE_MS = 10_000;
 const USAGE = `usage : node outils/cadre.mjs <commande>
   verifier <fichier.json>   valide le menu de la semaine
-  publier <fichier.json>    valide puis publie (M900, ou CADRE_DEST_LOCAL=<dossier>)
-  liste                     menus publiés (M900, ou CADRE_DEST_LOCAL=<dossier>)
+  publier <fichier.json>    valide puis publie (serveur CADRE_DEST, ou CADRE_DEST_LOCAL=<dossier>)
+  liste                     menus publiés (serveur CADRE_DEST, ou CADRE_DEST_LOCAL=<dossier>)
   etat                      drapeau « Prêt pour le drive » et liste de courses (JSON)
   cocher <uid>...           coche des articles, avec confirmation pour chacun`;
 
@@ -115,7 +117,7 @@ function exigerCleSsh(cle, quoi, commande) {
   if (existsSync(cle)) return;
   throw new ErreurOutil([
     `${quoi} impossible : la clé ${cle} n'existe pas encore. Rien n'a été lancé.`,
-    'Elle se crée avec l\'accord de Thomas, avec la ligne rrsync dans ~/.ssh/authorized_keys du M900 (conception §6.3).',
+    'Elle se crée avec la ligne rrsync dans ~/.ssh/authorized_keys du serveur : README, « Le menu de la semaine ».',
     `Commande qui serait lancée : ${commande.map(citer).join(' ')}`,
   ].join('\n'), 2);
 }
@@ -139,8 +141,8 @@ async function publier([fichier]) {
     return;
   }
   const cle = cleSsh();
-  const argsRsync = (source) => ['--chmod=F644', '--', source, `${DESTINATION_M900}${nom}`];
-  exigerCleSsh(cle, 'publication vers le M900', commandeRsync(cle, argsRsync(join(tmpdir(), 'cadre-publier-XXXXXX', nom))));
+  const argsRsync = (source) => ['--chmod=F644', '--', source, `${DESTINATION}${nom}`];
+  exigerCleSsh(cle, 'publication vers le serveur', commandeRsync(cle, argsRsync(join(tmpdir(), 'cadre-publier-XXXXXX', nom))));
   const dossierPrive = mkdtempSync(join(tmpdir(), 'cadre-publier-'));
   try {
     const copieValidee = join(dossierPrive, nom);
@@ -150,17 +152,17 @@ async function publier([fichier]) {
   } finally {
     rmSync(dossierPrive, { recursive: true, force: true });
   }
-  console.log(`publié sur le M900 : ${nom} (${resume(menu)})`);
+  console.log(`publié sur le serveur : ${nom} (${resume(menu)})`);
 }
 
 async function liste() {
   const dossierLocal = process.env.CADRE_DEST_LOCAL;
   if (!dossierLocal) {
     const cle = cleSsh();
-    const commande = commandeRsync(cle, ['--list-only', '--', DESTINATION_M900]);
-    exigerCleSsh(cle, 'liste du M900', commande);
+    const commande = commandeRsync(cle, ['--list-only', '--', DESTINATION]);
+    exigerCleSsh(cle, 'liste du serveur', commande);
     const code = await executer(commande);
-    if (code !== 0) throw new ErreurOutil(`rsync a échoué (code ${code}) : liste du M900 non lue`);
+    if (code !== 0) throw new ErreurOutil(`rsync a échoué (code ${code}) : liste du serveur non lue`);
     return;
   }
   const noms = existsSync(dossierLocal)

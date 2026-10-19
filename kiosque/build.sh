@@ -3,8 +3,8 @@
 #
 # Rôle    : vérifier les classes pures du chien de garde Wi-Fi (RegleWifi, RemiseWifi, avec le JDK
 #           seul), puis produire kiosque/build/cuisine-debug.apk, signé avec la clé de débogage Android.
-# Entrées : ORIGINE en argument obligatoire, sans chemin ni barre finale (jour J :
-#           http://127.0.0.1:8020 ; M2 : http://192.168.1.187:8020), injectée dans la classe
+# Entrées : ORIGINE en argument obligatoire, sans chemin ni barre finale (pour
+#           identifier le cadre : http://127.0.0.1:8020 ; en service : http://<ip du serveur>:8020), injectée dans la classe
 #           générée Config.java. Avec une origine en boucle locale (127.x.x.x, localhost), le chien
 #           Wi-Fi ne démarre pas : sa sonde passerait par adb reverse sur le câble, pas par le Wi-Fi.
 #           ANDROID_HOME (défaut $HOME/Android/Sdk) avec build-tools 34.0.0
@@ -56,7 +56,7 @@ if (( ${#manque[@]} > 0 )); then
   printf '  - %s\n' "${manque[@]}" >&2
   cat >&2 <<EOF
 
-Pour les installer (téléchargements à faire soi-même, avec l'accord de Thomas) :
+Pour les installer (téléchargements à faire soi-même) :
   - build-tools 34.0.0 et platform android-34 : décompresser les « command-line tools »
     Android (https://developer.android.com/studio#command-line-tools-only) dans
     $ANDROID_HOME/cmdline-tools/latest, puis lancer :
@@ -129,6 +129,6 @@ fi
 
 echo
 echo "APK prêt : kiosque/build/cuisine-debug.apk (origine $origine)"
-echo "Contrôles de fin de M0 :"
+echo "Contrôles conseillés :"
 echo "  $OUTILS/aapt2 dump badging $APK | head -1"
 echo "  $OUTILS/aapt2 dump xmltree --file AndroidManifest.xml $APK | grep -A1 category"

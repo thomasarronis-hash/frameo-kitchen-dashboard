@@ -1,21 +1,24 @@
-# Jour J : réception du cadre (mardi 13/10/2026)
+# Jour J : identifier son cadre avant de le garder
 
-Checklist pas à pas, tirée de la conception (§0.2, §5 « M0 » et « Jour J »). Ne pas fixer le
-cadre au mur et garder l'emballage complet tant que la décision n'est pas prise.
+La checklist suivie à la réception du cadre d'origine (le 13/10/2026), gardée parce qu'elle vaut pour la plupart des
+cadres Frameo sous Android : elle dit, avant de fixer quoi que ce soit au mur, si ton cadre accepte l'ADB, l'appli
+kiosque comme écran d'accueil, le son et la page du tableau de bord. Ne pas fixer le cadre et garder l'emballage
+complet tant que la décision n'est pas prise (droit de retour).
 
-- Les étapes qui modifient le cadre portent **(accord de Thomas)** : chacune attend un oui
-  explicite, une par une. Un accord ne vaut pas pour l'étape suivante.
+- Les étapes qui modifient le cadre portent **(modifie le cadre)** : lis-les avant de les lancer, une par une.
 - Les lectures (`adb devices`, `identifier-cadre.sh`, `dumpsys`, `logcat`) ne modifient rien.
-- Toutes les commandes se lancent depuis `~/Projets/cadre-cuisine` sur le Clevo.
+- Toutes les commandes se lancent depuis le dossier du projet, sur ton PC relié au cadre par un câble USB.
+- « M0 » à « M7 » sont les étapes du plan de conception (`docs/conception.md`, §5) : M0 = identifier le cadre,
+  M2 = tableau de bord installé, M3 = menus et courses. « Conception §… » renvoie au même document.
 - Les relevés bruts vont dans `docs/releves/` ; la synthèse et la décision dans `docs/cadre-ave948.md`.
 
-## 0. La veille (lundi 12/10)
+## 0. La veille
 
 - [ ] APK construit (SDK présent dans `~/Android/Sdk`) :
   ```
   kiosque/build.sh http://127.0.0.1:8020
   ```
-  Contrôles de fin de M0 :
+  Contrôles conseillés :
   ```
   ~/Android/Sdk/build-tools/34.0.0/apksigner verify kiosque/build/cuisine-debug.apk
   ~/Android/Sdk/build-tools/34.0.0/aapt2 dump badging kiosque/build/cuisine-debug.apk | head -1
@@ -24,7 +27,7 @@ cadre au mur et garder l'emballage complet tant que la décision n'est pas prise
   Attendu : signature valide, `package: name='fr.arronis.cuisine'`, catégories HOME, LAUNCHER, DEFAULT.
 - [ ] Sauvegarde de la clé de débogage créée par `build.sh` : copier `~/.android/debug.keystore`
   sur un support de sauvegarde.
-- [ ] compat.html essayé dans Chrome sur le Clevo :
+- [ ] compat.html essayé dans Chrome sur ton PC :
   ```
   python3 outils/serveur-compat.py
   ```
@@ -64,28 +67,23 @@ cadre au mur et garder l'emballage complet tant que la décision n'est pas prise
   ```
   Toute nouvelle lecture ajoutée au script doit être ajoutée ici, après relecture.
 
-  **Écart à trancher par Thomas.** Le critère de la conception (§5, M0, « Terminé quand »),
-  `grep -nE 'put|disable|enable|setprop|install|tcpip|reboot|rm ' outils/identifier-cadre.sh`,
-  ne peut pas « ne rien renvoyer » : il sort `ro.board.platform \` (« platform » suivi d'une
-  espace contient « rm ») et `settings get secure default_input_method` (« input » contient
-  « put »), deux lectures que la conception exige. Une liste noire laisse en outre passer des
-  écritures comme `wm density 240` ou `am force-stop`. Proposition : remplacer ce critère par les
-  deux commandes ci-dessus.
-- [ ] Câble USB-A (Clevo) vers USB-C (cadre) à portée de main.
-- [ ] Réponses aux questions bloquantes (conception §7.1).
+  Pourquoi une liste de ce qui est permis plutôt qu'une liste de mots interdits : un `grep` de mots
+  comme « put » ou « rm » trouve aussi des lectures innocentes (`default_input_method`, `platform`), et
+  laisse passer des écritures comme `wm density 240` ou `am force-stop`.
+- [ ] Câble USB (ton PC) vers USB-C (cadre) à portée de main.
 
 ## 1. Déballage
 
-- [ ] Date limite de retour relevée sur la commande : **__/__/2026** (14 jours légaux, et Amazon.fr accepte
-  les retours jusqu'au 30e jour d'après la fiche, soit environ le 12/11 ; à confirmer sur la commande, vendeur tiers). La reporter dans `docs/cadre-ave948.md`.
+- [ ] Date limite de retour relevée sur la commande : **__/__/2026** (14 jours légaux, parfois 30 selon le
+  vendeur : à vérifier sur ta commande). La reporter dans `docs/cadre-ave948.md`.
 
 ## 2. Premier allumage, sans Internet
 
 - [ ] Allumer sur secteur.
 - [ ] **Relever la version de Frameo** (Paramètres, À propos) avant toute connexion à Internet :
   **__________**. Si elle vaut 1.29 ou plus, lire la section 8 avant l'étape 6.
-- [ ] Si l'assistant de démarrage exige un Wi-Fi : point d'accès 2,4 GHz du Clevo sans sortie
-  Internet. Thomas le lance, Ethernet débranché (sinon le partage donne Internet au cadre) :
+- [ ] Si l'assistant de démarrage exige un Wi-Fi : point d'accès 2,4 GHz de ton PC sans sortie
+  Internet. Lance-le, Ethernet débranché (sinon le partage donne Internet au cadre) :
   ```
   nmcli device status
   nmcli device wifi hotspot ifname <carte Wi-Fi> band bg ssid cadre-test password '<mot de passe>'
@@ -97,11 +95,11 @@ cadre au mur et garder l'emballage complet tant que la décision n'est pas prise
 ## 3. Activer l'ADB
 
 - [ ] Brancher le câble, choisir « Transfert de fichiers » (depuis l'ordinateur) sur le cadre.
-- [ ] **(accord de Thomas)** Frameo : Paramètres, À propos, Bêta (rejoindre), puis ADB (activer).
+- [ ] **(modifie le cadre)** Frameo : Paramètres, À propos, Bêta (rejoindre), puis ADB (activer).
   Le cadre passe sur le canal bêta.
-- [ ] Sur le Clevo : `adb devices` (lecture).
-- [ ] **(accord de Thomas)** Accepter la clé RSA du Clevo affichée sur le cadre.
-  - Reste « unauthorized » : **(accord de Thomas)** couper puis remettre la bêta, rebrancher.
+- [ ] Sur ton PC : `adb devices` (lecture).
+- [ ] **(modifie le cadre)** Accepter la clé RSA de ton PC affichée sur le cadre.
+  - Reste « unauthorized » : **(modifie le cadre)** couper puis remettre la bêta, rebrancher.
   - Aucun appareil malgré tout (autre câble, autre port) : grille, ligne 1, RETOUR.
 
 ## 4. Relevé en lecture seule
@@ -123,25 +121,25 @@ cadre au mur et garder l'emballage complet tant que la décision n'est pas prise
   - `ro.build.version.sdk` à 35 ou plus (Android 15 et plus refuse un targetSdk inférieur à 24,
     erreur `INSTALL_FAILED_DEPRECATED_SDK_VERSION`) : avant l'étape 5, passer
     `android:targetSdkVersion` à `"24"` dans `kiosque/AndroidManifest.xml`, puis reconstruire
-    (sur le Clevo, ne touche pas au cadre) : `kiosque/build.sh http://127.0.0.1:8020`.
+    (sur ton PC, ne touche pas au cadre) : `kiosque/build.sh http://127.0.0.1:8020`.
 
 ## 5. Test d'installation et compat.html
 
-Terminal 1 (sur le Clevo, ne touche pas au cadre) :
+Terminal 1 (sur ton PC, ne touche pas au cadre) :
 ```
 python3 outils/serveur-compat.py
 ```
 
 Terminal 2 :
-1. **(accord de Thomas)** `adb install kiosque/build/cuisine-debug.apk` (attendu : `Success`).
+1. **(modifie le cadre)** `adb install kiosque/build/cuisine-debug.apk` (attendu : `Success`).
    - `INSTALL_FAILED_DEPRECATED_SDK_VERSION` : targetSdk 24 oublié, voir la lecture immédiate de
      l'étape 4, reconstruire, puis recommencer ce point.
    - Refus du type `INSTALL_FAILED_INVALID_APK` sans root : grille, RETOUR.
-2. **(accord de Thomas)** `adb reverse tcp:8020 tcp:8020` (temporaire : le cadre voit le serveur
-   du Clevo sur son propre 127.0.0.1:8020 ; disparaît au débranchement ou au redémarrage).
-3. **(accord de Thomas)** Lancer le kiosque avec la console visible depuis le Clevo :
+2. **(modifie le cadre)** `adb reverse tcp:8020 tcp:8020` (temporaire : le cadre voit le serveur
+   de ton PC sur son propre 127.0.0.1:8020 ; disparaît au débranchement ou au redémarrage).
+3. **(modifie le cadre)** Lancer le kiosque avec la console visible depuis ton PC :
    `adb shell am start -n fr.arronis.cuisine/.ReglageAdb --ez debug true`
-   Console : `chrome://inspect` dans Chrome sur le Clevo. Si Android demande quelle appli
+   Console : `chrome://inspect` dans Chrome sur ton PC. Si Android demande quelle appli
    d'accueil utiliser, répondre « Une seule fois ».
    `.ReglageAdb` est l'alias réservé au shell ADB (permission DUMP) : c'est aussi le test de ce
    verrou. Si `am start` répond `Permission Denial`, ou si `chrome://inspect` ne voit pas la
@@ -159,7 +157,7 @@ Terminal 2 :
       plein écran, la page ne peut pas le mesurer).
    6. Pont (section 6) : « Volume 80 % » de nouveau, pour que `setVolume` et `getVolume`
       figurent au rapport, puis « Luminosité 0 → 0,05 → 1 » (l'écran reste-t-il lisible à 0,05 ?).
-   7. Diaporama (section 8) : « Lancer le diaporama » (10 min). Pendant ce temps, sur le Clevo,
+   7. Diaporama (section 8) : « Lancer le diaporama » (10 min). Pendant ce temps, sur ton PC,
       deux terminaux de plus (lectures) :
       ```
       for i in $(seq 1 10); do date +%T; adb shell dumpsys meminfo fr.arronis.cuisine | grep -E 'TOTAL'; adb shell dumpsys meminfo | grep -iE 'sandboxed|webview'; sleep 60; done
@@ -173,64 +171,64 @@ Terminal 2 :
       revient seule (compat.html est alors rechargée sans message, diaporama arrêté).
       RAM réelle inférieure à 1,5 Go (grille) : relancer le diaporama 6 fois de suite (1 h), avec
       `seq 1 60` dans la boucle.
-   8. « Envoyer le rapport au Clevo » : le fichier arrive dans `docs/releves/rapport-compat-*.txt`.
+   8. « Envoyer le rapport au PC » : le fichier arrive dans `docs/releves/rapport-compat-*.txt`.
       En cas d'échec (« Copier le rapport » sur le cadre ne remplit que le presse-papiers du
       cadre, inutile ici) :
-      - rebrancher le câble si besoin, **(accord de Thomas)** `adb reverse tcp:8020 tcp:8020`,
+      - rebrancher le câble si besoin, **(modifie le cadre)** `adb reverse tcp:8020 tcp:8020`,
         puis renvoyer ;
       - sinon, kiosque lancé en débogage (point 3) : « Copier le rapport » sur le cadre (remplit
-        la zone de texte), puis dans la console `chrome://inspect` du Clevo :
+        la zone de texte), puis dans la console `chrome://inspect` de ton PC :
         `copy(document.getElementById('zone-rapport').value)`, et coller dans un fichier de
         `docs/releves/` ;
       - à défaut, photographier la zone de texte affichée.
 5. Décider le réglage `verre` : ligne « Réglage verre proposé » du rapport, et la grille (WebView 64 à 75 : `teinte`).
 6. Lire l'essai « fvs » (`font-variation-settings`) du rapport. Négatif = pas de polices variables (WebView
    avant 62, déjà « RETOUR conseillé ») : un GO malgré tout impose de remplacer les deux polices variables de
-   `web/public/polices/` par des instances statiques (Nunito Sans 400 et 700, Fraunces aux réglages retenus
-   en Q33), sinon toute l'interface s'affiche en ExtraLight et les chiffres en Black (`web/styles/base.css`).
+   `web/public/polices/` par des instances statiques (Nunito Sans 400 et 700, Fraunces 400 en
+   tailles optiques 40 et 144, voir `web/styles/base.css`), sinon toute l'interface s'affiche en ExtraLight et les chiffres en Black (`web/styles/base.css`).
 
 ## 6. Test du lanceur (obligatoire, réversible)
 
 Android 7 ou plus :
-1. **(accord de Thomas)** `adb shell cmd package set-home-activity fr.arronis.cuisine/.MainActivity`
-2. **(accord de Thomas)** `adb reboot`. Attendu : le kiosque démarre seul. Il affiche la page de
+1. **(modifie le cadre)** `adb shell cmd package set-home-activity fr.arronis.cuisine/.MainActivity`
+2. **(modifie le cadre)** `adb reboot`. Attendu : le kiosque démarre seul. Il affiche la page de
    secours (heure, « Serveur injoignable ») parce que `adb reverse` est perdu au redémarrage :
    c'est normal, et cela teste la page de secours.
-3. **(accord de Thomas)** `adb reverse tcp:8020 tcp:8020` (serveur toujours lancé). Attendu :
+3. **(modifie le cadre)** `adb reverse tcp:8020 tcp:8020` (serveur toujours lancé). Attendu :
    compat.html revient seul en 15 s au plus (test du nouvel essai).
 4. Coupure réelle : débrancher le secteur 10 s, rebrancher. Attendu : retour seul au kiosque.
 5. Sortie : deux doigts immobiles 1,5 s, les Réglages s'ouvrent ; bouton Accueil, retour au kiosque.
 6. Retour à Frameo :
-   - **(accord de Thomas)** `adb shell cmd package set-home-activity <activité Frameo de l'étape 4>`
-   - **(accord de Thomas)** `adb reboot`. Attendu : Frameo démarre.
+   - **(modifie le cadre)** `adb shell cmd package set-home-activity <activité Frameo de l'étape 4>`
+   - **(modifie le cadre)** `adb reboot`. Attendu : Frameo démarre.
 
 Variante Android 6 (pas de `cmd`) [à vérifier sur le cadre] :
-1. **(accord de Thomas)** Bouton Accueil (ou `adb shell input keyevent KEYCODE_HOME`) : Android
+1. **(modifie le cadre)** Bouton Accueil (ou `adb shell input keyevent KEYCODE_HOME`) : Android
    propose de choisir l'appli d'accueil, choisir « Cuisine », « Toujours ».
-2. **(accord de Thomas)** `adb reboot`, puis les points 3 à 5 ci-dessus.
-3. Retour, **(accord de Thomas)** : Réglages, Applis, Cuisine, « Effacer les valeurs par défaut »,
+2. **(modifie le cadre)** `adb reboot`, puis les points 3 à 5 ci-dessus.
+3. Retour, **(modifie le cadre)** : Réglages, Applis, Cuisine, « Effacer les valeurs par défaut »,
    puis Accueil et choisir Frameo « Toujours ».
 4. Si aucun choix ne s'affiche : lanceur non remplaçable, grille.
 
 Version de Frameo après Internet (demandée par la conception, « Terminé quand ») : en dernier,
-lanceur rendu à Frameo, et **seulement si Thomas le décide**. Une mise à jour de Frameo vers
+lanceur rendu à Frameo, et **seulement si tu le décides**. Une mise à jour de Frameo vers
 1.29 ou plus pourrait rendre le lanceur non remplaçable pour M2 (section 8). Sans ce test,
 noter « non testé » dans `docs/cadre-ave948.md`.
-1. **(accord de Thomas)** Donner Internet au cadre : rebrancher l'Ethernet du Clevo (le point
+1. **(modifie le cadre)** Donner Internet au cadre : rebrancher l'Ethernet de ton PC (le point
    d'accès de la section 2 partage alors sa connexion), ou connecter le cadre au Wi-Fi de la maison.
 2. Attendre une dizaine de minutes, relire la version dans Frameo (À propos), puis relancer
    `outils/identifier-cadre.sh` (lecture). Noter la version.
-3. **(accord de Thomas)** Couper de nouveau Internet (Ethernet débranché, ou Wi-Fi de la maison
+3. **(modifie le cadre)** Couper de nouveau Internet (Ethernet débranché, ou Wi-Fi de la maison
    oublié sur le cadre).
 
 ## 7. Si la décision est RETOUR
 
-1. **(accord de Thomas)** Si le lanceur a été changé :
+1. **(modifie le cadre)** Si le lanceur a été changé :
    `adb shell cmd package set-home-activity <activité Frameo>`
-2. **(accord de Thomas)** `adb uninstall fr.arronis.cuisine`
-3. **(accord de Thomas)** `adb reboot`, puis vérifier que Frameo démarre seul.
-4. **(accord de Thomas)** Quitter la bêta Frameo (coupe l'ADB).
-5. Remballer, et demander le retour avant la date limite de l'étape 1 (Thomas).
+2. **(modifie le cadre)** `adb uninstall fr.arronis.cuisine`
+3. **(modifie le cadre)** `adb reboot`, puis vérifier que Frameo démarre seul.
+4. **(modifie le cadre)** Quitter la bêta Frameo (coupe l'ADB).
+5. Remballer, et demander le retour avant la date limite de l'étape 1.
 
 ## 8. Cas Frameo 1.29 ou plus
 
@@ -244,9 +242,9 @@ Si l'étape 6 échoue :
    - section « Paquets Frameo » : un chemin `/system/...` signale une appli système, donc une
      version d'usine vers laquelle revenir. Un chemin `/data/app/...` seul : pas de retour possible.
 2. Si la version d'usine est inférieure à 1.29 (par exemple 1.24) :
-   - **(accord de Thomas)** ouvrir la fiche de l'appli :
+   - **(modifie le cadre)** ouvrir la fiche de l'appli :
      `adb shell am start -a android.settings.APPLICATION_DETAILS_SETTINGS -d package:net.frameo.frame`
-   - **(accord de Thomas)** sur le cadre : menu, « Désinstaller les mises à jour », OK ;
+   - **(modifie le cadre)** sur le cadre : menu, « Désinstaller les mises à jour », OK ;
    - relancer `outils/identifier-cadre.sh` et noter la nouvelle version ;
    - ne plus donner Internet au cadre, sinon Frameo se remet à jour ;
    - refaire l'étape 6.
@@ -268,7 +266,7 @@ seul [à vérifier].
 | ADB invisible malgré le câble, le réglage « transfert » et la bêta coupée puis remise | RETOUR | [ ] |
 | `adb install` refusé (`INSTALL_FAILED_INVALID_APK`), sans root | RETOUR (le plan B ImmichFrame a aussi besoin d'un APK) | [ ] |
 | Lanceur non remplaçable | Plan B avant la date limite de retour : récepteur BOOT_COMPLETED dans le kiosque (Android 10 et plus : `adb shell appops set fr.arronis.cuisine SYSTEM_ALERT_WINDOW allow`, à vérifier). S'il échoue : RETOUR | [ ] |
-| Aucun son, même au toucher | RETOUR conseillé (minuteurs inaudibles), à Thomas de trancher | [ ] |
+| Aucun son, même au toucher | RETOUR conseillé (minuteurs inaudibles), à toi de trancher | [ ] |
 | Son au toucher seulement, pas sans geste après un rechargement | GO : le minuteur s'arme au toucher qui le lance, pas de rechargement pendant qu'il tourne | [ ] |
 | WebView inférieure à 64, ou Android inférieur à 7 sans root | RETOUR conseillé | [ ] |
 | WebView de 64 à 75 | GO, `verre: teinte` | [ ] |

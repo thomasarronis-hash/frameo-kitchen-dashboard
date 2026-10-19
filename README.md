@@ -37,7 +37,7 @@
 > **Merci à Wes Bos.** Tout est parti de sa vidéo sur le détournement d'un cadre photo à 50 $ et de son dépôt
 > [**wesbos/photo-frame-dashboard**](https://github.com/wesbos/photo-frame-dashboard) : l'idée, la méthode (ADB, appli
 > kiosque en WebView) et la prudence (sauvegarde vérifiée avant toute écriture). Le code ici a été écrit de zéro pour un
-> autre cadre et une autre maison, mais sans son travail ce projet n'existerait pas. Allez voir le sien !
+> autre cadre et une autre maison, mais sans son travail ce projet n'existerait pas. Va voir le sien !
 
 > [!WARNING]
 > **Projet perso, partagé tel quel, sans aucune garantie.** Il est fait pour MA maison : chez toi, il faudra l'adapter.
@@ -55,12 +55,25 @@
 
 ## 💡 L'idée
 
-Un cadre photo Frameo à 15,6" (puce Rockchip RK3326, Android 9) recyclé en écran de cuisine. Une petite appli **kiosque**
-affiche en plein écran une page web servie par un **serveur intermédiaire** sur le serveur maison (Lenovo M900). Ce
+Un cadre photo Frameo de 15,6" (puce Rockchip RK3326, Android 9) recyclé en écran de cuisine. Une petite appli **kiosque**
+affiche en plein écran une page web servie par un **serveur intermédiaire** sur le serveur maison. Ce
 serveur est le seul à parler à **Home Assistant** et à **Immich** : le cadre ne connaît ni jeton, ni mot de passe, ni
 adresse interne.
 
 Tout est pensé pour être lu à 2 mètres, touché avec les doigts mouillés, et compris par un enfant de 3 ans.
+
+> [!IMPORTANT]
+> **Trois noms reviennent partout, dans la doc comme dans le code**, parce que le projet a été écrit pour une maison
+> précise :
+> - **M900** : le **serveur maison**, un Lenovo ThinkCentre M900 Tiny d'occasion (mini-PC de bureau) recyclé en
+>   serveur sous Debian. Il fait tourner Home Assistant, Immich et ce projet dans Docker. Chez toi, ce sera n'importe
+>   quelle machine Linux allumée en permanence ([Le matériel](#materiel)).
+> - **Clevo** : le **PC d'administration**, un portable sous Linux, d'où l'on développe, relie le cadre en USB et
+>   lance les outils. Sa clé d'appareil ouvre quelques routes réservées (`/api/etat`).
+> - **Mur** : l'**utilisateur Home Assistant** du cadre, sans droits d'administration.
+>
+> L'interface du cadre est **en français**, à l'**heure de Paris**. Les dates des commentaires (« choix du 14/10 »)
+> renvoient au journal de conception [docs/conception.md](docs/conception.md).
 
 ## 🖼️ Les écrans
 
@@ -114,7 +127,7 @@ flowchart LR
   B -- "direct sonnette" --> G
   B --> OM
   B --> RTE
-  HA --- C["Clims Bosch · Mégane · Eufy · Apple TV"]
+  HA --- C["Clims Bosch · Renault Mégane · Eufy · Apple TV"]
 ```
 
 | Brique | Rôle |
@@ -122,7 +135,7 @@ flowchart LR
 | `kiosque/` | appli Android maison : WebView plein écran, lanceur, luminosité, chien de garde Wi-Fi |
 | `serveur/` | le serveur intermédiaire : liste blanche des entités, flux SSE vers la page, actions sous garde-fous |
 | `web/` | la page : modules ES natifs sans bundler (ES2019 par prudence), grilles CSS, sprite d'icônes |
-| `deploiement/` | `deployer.sh` (tests, envoi, build Docker sur le M900, contrôle de santé) et `docker-compose.yml` |
+| `deploiement/` | `deployer.sh` (tests, envoi, build Docker sur le serveur, contrôle de santé) et `docker-compose.yml` |
 | `tests/` | 64 fichiers `node --test`, faux DOM maison, contraste WCAG calculé sur les feuilles |
 
 ## 🔒 Sécurité d'abord
@@ -150,51 +163,83 @@ Puis ouvrir dans Chrome l'adresse `http://127.0.0.1:8020/dev/appairer?code=...` 
 d'exemple recalées sur la semaine en cours ; la météo est celle de Paris (Open-Meteo, si Internet répond). Tout est en
 « Mode essai » : la démo ne peut rien écrire. Les captures de ce README viennent de là.
 
-## 🛠️ Démarrer en développement
+<a name="materiel"></a>
 
-```bash
-npm ci
-npm test
-PORT=8027 npm run dev
-```
+## 🧰 Le matériel
 
-Puis ouvrir dans Chrome l'adresse d'appairage écrite dans le journal au démarrage. Tout le détail est dans la documentation technique ci-dessous.
+| Quoi | Ce qui convient | Celui d'origine |
+|---|---|---|
+| **Le cadre** | Un cadre photo **Android** où l'**ADB** s'active (beaucoup de Frameo : Paramètres, À propos, programme bêta). Android 7 ou plus, WebView 64 ou plus, un écran tactile. Même nom commercial ne veut pas dire même carte : **vérifie le tien avant de le fixer**, avec [docs/jour-j.md](docs/jour-j.md). | Frameo 15,6" « AVE-V5 Max » (Rockchip RK3326, Android 9, 2 Go), environ 130 € : [fiche](docs/cadre-ave948.md) |
+| **Le serveur maison** | N'importe quelle machine Linux allumée en permanence avec **Docker** : mini-PC d'occasion (Lenovo Tiny, Dell Micro, HP Mini, NUC), vieux portable, Raspberry Pi 4 ou 5. Le serveur du cadre lui-même est léger (256 Mo de mémoire au plus). | Lenovo ThinkCentre M900 Tiny d'occasion, sous Debian |
+| **Home Assistant** | Une installation qui marche, sur le même serveur ou ailleurs (HA OS sur un Pi, HA Green...). | En Docker sur le M900 |
+| **Un PC** | Linux ou macOS avec Node 22, pour développer, construire l'appli et relier le cadre en USB. | Portable Clevo sous Kubuntu |
+| **Facultatif** | Immich (photos), go2rtc (direct de la sonnette), intégrations Renault et Bosch HomeCom (voiture, clims) : chaque écran dit « pas encore relié » tant que sa variable est vide. | Tout ça |
 
 <a name="installer"></a>
 
 ## 🏠 Installer chez soi
 
-Il faut :
+> [!NOTE]
+> Compte une soirée pour le serveur et une autre pour le cadre. Envie de regarder avant ? `npm run demo` suffit
+> ([Démo](#demo)).
 
-- **un cadre photo Android** où l'ADB s'active (beaucoup de Frameo le permettent : À propos, programme bêta). Même nom
-  commercial ne veut pas dire même carte : identifier le sien d'abord avec `outils/identifier-cadre.sh` (lecture seule)
-  et `web/compat/compat.html`, en suivant [docs/jour-j.md](docs/jour-j.md). La fiche du cadre utilisé ici est
-  [docs/cadre-ave948.md](docs/cadre-ave948.md) ;
-- **un petit serveur maison** avec Docker et **Home Assistant** (Immich, go2rtc et les intégrations voiture ou clims sont
-  facultatifs : chaque écran dit « pas encore relié » tant que sa variable est vide) ;
-- Node 22 et, pour l'appli kiosque, un JDK 17 et le SDK Android (sans Gradle).
+**Sur ton PC, il faut** : `git`, Node 22, `adb` (paquet `adb` ou Android platform-tools), `ssh`, `rsync`, `curl`,
+Python 3 et Chrome ; pour l'appli kiosque, un JDK 17, `zip` et le SDK Android (build-tools 34.0.0 et platform
+android-34, sans Gradle). **Sur le serveur** : Docker avec Compose v2 utilisable sans `sudo` (groupe `docker`), `rsync`
+et un accès SSH par clé.
 
-Les étapes :
+1. **Récupérer le projet** (un vrai clone git : le script de déploiement refuse une archive ZIP).
 
-1. Dans Home Assistant, créer un **utilisateur non administrateur** dédié (ici « Mur ») et un jeton longue durée à son
-   nom. `npm run verif-ha` refuse un jeton admin et liste ce qui manque.
-2. Copier `.env.example` en `.env` et remplir ce qui change : `HA_URL`, le lieu de la météo (`LIEU_*`), les calendriers,
-   et seulement si besoin les voitures, clims, photos. Le nom des entités de l'alarme, des ouvertures et des
-   télécommandes est dans la liste blanche `serveur/ha/entites.js` : l'adapter à sa maison.
-3. Adapter `config/enfants.json` (prénoms d'exemple Timo et Pablo, étapes, barème) ou ignorer l'écran Enfants.
-4. Lancer en développement (`npm run dev`) et regarder la page dans Chrome à 1920 x 1080.
-5. Préparer le serveur et déployer : section [Déploiement](#déploiement-sur-le-serveur-maison).
-   **Le serveur reste sur le réseau local** : ne jamais ouvrir son port sur Internet ni sur un réseau partagé.
-6. Construire l'appli kiosque avec l'adresse du serveur, l'installer par ADB, lui envoyer la clé du cadre :
-   section [Le cadre et le kiosque](#le-cadre-et-le-kiosque) et [docs/recuperation.md](docs/recuperation.md).
+   ```bash
+   git clone https://github.com/thomasarronis-hash/frameo-kitchen-dashboard.git
+   cd frameo-kitchen-dashboard
+   npm ci
+   npm test
+   ```
 
-Tous les garde-fous d'écriture sont **désactivés par défaut** : tant qu'on ne pose pas `ACTIONS_*=1`, rien n'est envoyé
-à la maison, l'écran le dit (« Mode essai »).
+2. **Vérifier son cadre** avant de le garder : [docs/jour-j.md](docs/jour-j.md), avec `outils/identifier-cadre.sh`
+   (lecture seule) et `web/compat/compat.html`. Si le cadre ne convient pas, il est encore temps de le renvoyer.
 
-**Vocabulaire du code.** Le projet a été écrit pour une maison précise, et les commentaires en gardent les noms :
-le **M900** est le serveur maison (un Lenovo M900 Tiny), le **Clevo** le PC d'administration (sa clé d'appareil ouvre
-les routes réservées, comme `/api/etat`), **Mur** l'utilisateur Home Assistant du cadre, **Thomas** l'auteur. Les dates
-(« choix du 14/10 ») renvoient au journal [docs/conception.md](docs/conception.md).
+3. **Créer l'utilisateur Home Assistant du cadre.** Dans HA : Paramètres, Personnes, Ajouter une personne (ici
+   « Mur »), autoriser la connexion, **ne pas** en faire un administrateur, et activer l'option qui limite la
+   connexion au réseau local. Puis se connecter à HA avec ce compte, ouvrir son profil, onglet Sécurité, et créer
+   un **jeton d'accès longue durée**.
+
+4. **Lancer en développement sur ton PC.** La clé d'appareil et le jeton sont des fichiers, jamais des valeurs dans
+   le code :
+
+   ```bash
+   mkdir -p ~/.config/cadre
+   (umask 077 && node -e "process.stdout.write(require('node:crypto').randomBytes(32).toString('hex'))" > ~/.config/cadre/cle_dev)
+   (umask 077 && read -rsp "Jeton HA : " T && printf %s "$T" > ~/.config/cadre/ha_token_dev)
+   cp .env.example .env
+   ```
+
+   Dans `.env`, remplis au moins `HA_URL` (par exemple `http://192.168.1.50:8123`) et le lieu de la météo
+   (`LIEU_NOM`, `LIEU_LATITUDE`, `LIEU_LONGITUDE`). Puis :
+
+   ```bash
+   npm run verif-ha
+   PORT=8027 npm run dev
+   ```
+
+   `verif-ha` (lecture seule) refuse un jeton administrateur et liste les entités attendues qui manquent chez toi.
+   Ouvre dans Chrome l'adresse d'appairage écrite dans le journal (`/dev/appairer?code=...`), fenêtre en 1920 x 1080.
+   Le port 8027 n'est qu'un exemple : n'importe quel port libre, 8020 étant celui de la production.
+
+5. **Adapter à ta maison** : les noms d'entités (alarme, ouvertures, télécommandes, sonnette...), les écrans à
+   masquer, les enfants. C'est l'étape la plus longue : [Adapter à sa maison](#adapter).
+
+6. **Préparer le serveur et déployer** : [Déploiement](#deploiement). **Le serveur reste sur le réseau local** :
+   ne jamais ouvrir son port sur Internet ni sur un réseau partagé.
+
+7. **Installer l'appli sur le cadre** : [Installer le kiosque](#kiosque).
+
+8. **Le menu de la semaine** : un fichier JSON à écrire ou à faire générer, puis à publier sur le serveur
+   ([Le menu de la semaine](#menu)).
+
+Tous les garde-fous d'écriture sont **désactivés par défaut** : tant qu'on ne pose pas `ACTIONS_*=1`, rien n'est
+envoyé à la maison, l'écran le dit (« Mode essai »).
 
 ---
 
@@ -211,17 +256,20 @@ les routes réservées, comme `/api/etat`), **Mur** l'utilisateur Home Assistant
 4. [Écritures et garde-fous](#écritures-et-garde-fous)
 5. [Routes de l'API](#routes-de-lapi)
 6. [Les écrans](#les-écrans) · [Accueil et Aujourd'hui](#accueil-et-aujourdhui) · [Météo](#météo) · [Repas](#repas) · [Courses](#courses) · [Agenda](#agenda) · [Maison](#maison) · [Photos](#photos) · [EDF Tempo](#edf-tempo) · [Voitures](#voitures) · [Clims](#clims) · [Tableau des enfants](#tableau-des-enfants)
-7. [Développement](#développement)
-8. [Déploiement sur le serveur maison](#déploiement-sur-le-serveur-maison)
-9. [Le cadre et le kiosque](#le-cadre-et-le-kiosque)
-10. [Règles du dépôt](#règles-du-dépôt)
-11. [Avertissement et responsabilité](#avertissement)
-12. [Licence et crédits](#licence)
+7. [Adapter à sa maison](#adapter)
+8. [Le menu de la semaine](#menu)
+9. [Développement](#développement)
+10. [Déploiement sur le serveur maison](#deploiement)
+11. [Le cadre et le kiosque](#kiosque)
+12. [Règles du dépôt](#règles-du-dépôt)
+13. [Avertissement et responsabilité](#avertissement)
+14. [Licence et crédits](#licence)
 
 </details>
 
-Conception d'origine : [docs/conception.md](docs/conception.md). Fiche du cadre : [docs/cadre-ave948.md](docs/cadre-ave948.md).
-Récupération en cas de pépin : [docs/recuperation.md](docs/recuperation.md).
+Identifier son cadre : [docs/jour-j.md](docs/jour-j.md). Récupération en cas de pépin :
+[docs/recuperation.md](docs/recuperation.md). Fiche du cadre d'origine : [docs/cadre-ave948.md](docs/cadre-ave948.md).
+Journal de conception : [docs/conception.md](docs/conception.md).
 
 ---
 
@@ -229,8 +277,8 @@ Récupération en cas de pépin : [docs/recuperation.md](docs/recuperation.md).
 
 ## 📍 Ce qui tourne chez nous
 
-Le serveur tourne dans un conteneur `cadre-bff` sur le M900 et le cadre est fixé au mur de la cuisine depuis le
-14/10/2026. Courses, voiture et clims y sont en réel ; télécommandes et direct de la sonnette restent en mode essai
+Le serveur tourne dans un conteneur `cadre-bff` sur le M900 (le serveur maison) et le cadre est fixé au mur de la
+cuisine depuis le 14/10/2026. Courses, voiture et clims y sont en réel ; télécommandes et direct de la sonnette restent en mode essai
 (go2rtc écoute sans mot de passe sur le réseau local, voir « Sonnette »).
 
 ---
@@ -238,7 +286,7 @@ Le serveur tourne dans un conteneur `cadre-bff` sur le M900 et le cadre est fix�
 ## Architecture
 
 Trois morceaux : l'appli **kiosque** du cadre (Android, WebView plein écran), la **page** (HTML, CSS et modules ES
-natifs, sans bundler) et le **serveur intermédiaire** `cadre-bff` (Node 22, Fastify 5) sur le M900, seul à parler à
+natifs, sans bundler) et le **serveur intermédiaire** `cadre-bff` (Node 22, Fastify 5) sur le serveur maison, seul à parler à
 Home Assistant (WebSocket, utilisateur « Mur » non administrateur), à Immich (clé en lecture seule), à go2rtc, à
 Open-Meteo et à RTE. Le serveur pousse tout l'état à la page par un flux SSE et n'accepte que des actions d'une liste
 blanche.
@@ -262,6 +310,7 @@ blanche.
 | `sources/open-meteo.js`, `sources/tempo.js` | air, pollens, pluie au quart d'heure, 7 jours ; EDF Tempo (RTE, repli, filet local) |
 | `sources/menus.js`, `sources/draps.js`, `sources/enfants.js`, `enfants/` | menu publié ; dates des draps ; tableau des enfants (barème, journées, points, mode parent) |
 | `sources/immich.js`, `sources/wifi-invites.js`, `sources/direct-sonnette.js` | photos Immich ; fichier du Wi-Fi invités ; relais du direct go2rtc |
+| `sources/ha-demo.js` | le faux Home Assistant de `npm run demo` |
 | `routes/` | une route par fichier (voir « Routes de l'API ») |
 
 ### La page (`web/`)
@@ -293,35 +342,35 @@ CSS, le `gap` des flex, `inset`, `aspect-ratio`, `:is`, `:has`, `color-mix`, l'i
 | `kiosque/` | appli Android `fr.arronis.cuisine` (voir « Le cadre et le kiosque ») |
 | `partage/` | schéma et validateur du menu, liste des caractères invisibles refusés ; partagés par le serveur et `outils/cadre.mjs` |
 | `config/enfants.json` | barème du tableau des enfants, versionné |
-| `outils/` | `cadre.mjs` (menus et courses), `verif-ha.mjs`, `verif-immich.mjs`, `apercu.mjs`, outils du jour J |
+| `outils/` | `cadre.mjs` (menus et courses), `verif-ha.mjs`, `verif-immich.mjs`, `apercu.mjs`, `demo.mjs`, outils du jour J |
 | `deploiement/` | `deployer.sh` et `docker-compose.yml` |
 | `tests/` | 64 fichiers `node --test`, faux DOM maison, fixtures anonymisées |
-| `docs/` | conception, fiche du cadre, récupération, choix du 14/10, captures du README |
+| `docs/` | conception, jour J (identifier son cadre), fiche du cadre, récupération, captures du README |
 
 ---
 
 ## Configuration
 
 Tout passe par des variables d'environnement (`.env.example` les décrit une par une). En développement, les valeurs
-par défaut sont celles de la maison d'origine (à adapter) ; en production, le compose fixe les siennes et lit `~/cadre/.env` pour ce qui ne
-doit pas aller dans le dépôt.
+par défaut sont celles de la maison d'origine (à adapter dans `.env`) ; en production, le compose fixe les siennes et
+lit `~/cadre/.env` sur le serveur pour tout ce qui est propre à la maison.
 
 | Variable | Défaut | Production | Rôle |
 |---|---|---|---|
-| `HA_URL`, `HA_JETON_FICHIER` | M900, `~/.config/cadre/ha_token_dev` | `host.docker.internal:8123`, `/run/cadre/ha_token` | Home Assistant et le jeton de l'utilisateur **Mur** (jamais un jeton admin : `verif-ha` le refuse) |
+| `HA_URL`, `HA_JETON_FICHIER` | `http://192.168.1.187:8123` (maison d'origine, à changer), `~/.config/cadre/ha_token_dev` | `host.docker.internal:8123` (ou `~/cadre/.env`), `/run/cadre/ha_token` | Home Assistant et le jeton de l'utilisateur **Mur** (jamais un jeton admin : `verif-ha` le refuse) |
 | `CLE_CADRE_FICHIER`, `CLE_CLEVO_FICHIER` | `~/.config/cadre/cle_dev`, `cle_clevo_dev` | `/run/cadre/cle_cadre`, `cle_clevo` | les deux clés d'appareil, différentes, révocables séparément |
 | `PORT`, `HOTE` | 8020, 127.0.0.1 | 8020, 0.0.0.0 | écoute |
-| `DOSSIER_WEB`, `DOSSIER_MENUS`, `DOSSIER_ETAT` | `web/`, `data/menus`, `data/etat` | `web`, `/data/menus`, `/data/etat` | page servie, menus publiés, état local |
+| `DOSSIER_WEB`, `DOSSIER_MENUS`, `DOSSIER_ETAT` | `web`, `data/menus`, `data/etat` | `web`, `/data/menus`, `/data/etat` | page servie, menus publiés, état local |
 | `ACTIONS_REELLES`, `ACTIONS_MAISON`, `ACTIONS_VOITURE`, `ACTIONS_CLIM` | vides | dans `~/cadre/.env` | les quatre garde-fous d'écriture, à passer à `1` un par un |
 | `AGENDA_CALENDRIERS` | vide | dans `~/cadre/.env` | voir « Agenda » |
 | `LIEU_NOM`, `LIEU_LATITUDE`, `LIEU_LONGITUDE` | Paris | dans `~/cadre/.env` | lieu des prévisions Open-Meteo et nom écrit après la date ; les trois ensemble |
 | `VOITURES`, `CLIMS` | vides | dans `~/cadre/.env` | voir « Voitures » et « Clims » |
 | `WIFI_INVITES_FICHIER` | vide | `/run/cadre/wifi_invites.json` | voir « Wi-Fi invités » |
-| `GO2RTC_URL`, `GO2RTC_FLUX_SONNETTE` | M900, vide | vide | voir « Sonnette » |
-| `IMMICH_URL`, `IMMICH_CLE_FICHIER`, `IMMICH_SOURCE`, `IMMICH_ALBUM_ID` | M900, vide, `tout` | `/run/cadre/immich_cle`, `tout` ou `~/cadre/.env` | voir « Photos » |
+| `GO2RTC_URL`, `GO2RTC_FLUX_SONNETTE` | `http://192.168.1.187:1984` (à changer), vide | `host.docker.internal:1984` (ou `~/cadre/.env`), vide | voir « Sonnette » |
+| `IMMICH_URL`, `IMMICH_CLE_FICHIER`, `IMMICH_SOURCE`, `IMMICH_ALBUM_ID` | `http://192.168.1.187:2283` (à changer), vide, `tout` | `host.docker.internal:2283` (ou `~/cadre/.env`), `/run/cadre/immich_cle`, `tout` ou `~/cadre/.env` | voir « Photos » |
 | `IMMICH_DEMO`, `HA_DEMO`, `NODE_ENV` | vides | vides | faux Immich, faux Home Assistant (`npm run demo`) et routes `/dev`, développement seulement (refusés ailleurs) |
 
-Les secrets sont des fichiers en 600, jamais des valeurs dans l'environnement : `~/cadre/secrets/` (700) sur le M900,
+Les secrets sont des fichiers en 600, jamais des valeurs dans l'environnement : `~/cadre/secrets/` (700) sur le serveur,
 monté en lecture seule sous `/run/cadre`.
 
 ---
@@ -347,7 +396,7 @@ exactement `1` ; sans lui, l'action répond comme en réel (`{ ok: true, simulat
   désarme), `select.alarm_center_guard_mode`, `switch.freebox_*`, `button.freebox_*`, `notify.*`, `shell_command.*`,
   `remote.turn_off`, tout script autre que `script.sonnette_direct` ; `button` et `number` réservés à la voiture,
   `climate` et `switch` aux clims.
-- **Pas de protection contre les enfants** sur les voitures et les clims (choix de Thomas) ; seulement un anti-rafale
+- **Pas de protection contre les enfants** sur les voitures et les clims (choix de l'auteur) ; seulement un anti-rafale
   pour les quotas des clouds Renault et Bosch.
 - Passer une famille en réel : poser le drapeau (compose ou `~/cadre/.env`), redéployer.
 
@@ -414,9 +463,8 @@ met.no, Open-Meteo.com (CC BY 4.0), CAMS/Copernicus.
 
 ### Repas
 
-Le menu de la semaine (du samedi au vendredi) est préparé par le skill `/menu`, validé contre
-`partage/schema-menu-v1.json` puis publié sur le M900 par `outils/cadre.mjs publier` ; il arrive par le flux, sans
-rechargement.
+Le menu de la semaine (du samedi au vendredi) est un fichier JSON validé contre `partage/schema-menu-v1.json` et
+déposé sur le serveur ([Le menu de la semaine](#menu)) ; il arrive par le flux, sans rechargement.
 
 - **Écran Repas** : 7 lignes, midi et soir ; les midis de semaine sont les gamelles du plat de la veille. Étiquettes,
   temps, accompagnement ; toucher une carte ouvre la recette.
@@ -433,7 +481,7 @@ rechargement.
 
 ### Courses
 
-La liste `todo.shopping_list` de Home Assistant, partagée avec les iPhones. Toucher un article coche ou décoche (il
+La liste `todo.shopping_list` de Home Assistant, partagée avec les téléphones de la famille. Toucher un article coche ou décoche (il
 garde sa place 4 s, puis la liste se trie) ; appui long d'une seconde puis confirmation pour supprimer ; champ d'ajout
 (60 caractères, sans caractère invisible : un caractère bidi maquillerait l'article, une demi-paire couperait la
 connexion de HA) ; « Vider les cochés » avec confirmation qui nomme les articles ; « Prêt pour le drive ». Mise à jour
@@ -483,18 +531,18 @@ Six onglets. **Le cadre n'arme ni ne désarme l'alarme** (il est loin de l'entr�
 - **Direct vidéo** : prévu (`GET /api/sonnette.mjpeg` relaie go2rtc après `script.sonnette_direct`, 3 min 30 s, deux
   directs au plus) mais **laissé désactivé** : le go2rtc de HA écoute le réseau local **sans authentification** (1984,
   8554, 8555), n'importe quel appareil du réseau pourrait regarder la sonnette sans passer par le cadre. Avant de
-  remplir `GO2RTC_FLUX_SONNETTE` (numéro de série, hors dépôt) : limiter ces ports au M900 ou activer
+  remplir `GO2RTC_FLUX_SONNETTE` (numéro de série, hors dépôt) : limiter ces ports au serveur ou activer
   l'authentification de go2rtc (le serveur du cadre devra alors envoyer un en-tête Basic).
 
 #### Wi-Fi invités
 
 - Fichier secret `wifi_invites.json` (600) : `{ "ssid": "…", "mot_de_passe": "…", "securite": "WPA2" }` (`WPA`, `WPA2`,
   `WPA3` ou `nopass`), relu à chaque demande. Le déposer sans passer par une conversation :
-  `ssh -t thomas@192.168.1.187 'umask 077 && nano ~/cadre/secrets/wifi_invites.json'`.
+  `ssh -t moi@192.168.1.50 'umask 077 && nano ~/cadre/secrets/wifi_invites.json'`.
 - Rien de secret à l'écran avant un toucher sur « Afficher » : QR, nom et mot de passe en gros (chasse fixe, chiffres
   d'une autre couleur), masqués après 2 min. Le mot de passe ne passe jamais par le flux.
 - QR écrit sans bibliothèque (`web/src/qr.js`, mode octet, correction M, versions 1 à 10), vérifié contre OpenCV.
-- Côté Freebox : clé invité « Internet seulement », sans expiration, sans `I`, `l`, `O` ni `0`.
+- Côté box : clé invité « Internet seulement », sans expiration, sans `I`, `l`, `O` ni `0`.
 
 #### Draps
 
@@ -527,8 +575,8 @@ alerte, le bandeau sonnette, la nuit, un direct, le minuteur d'écran de Timo ni
 Pour les abonnés au tarif Tempo. Lecture seule, sans compte ni clé, rien dans HA.
 
 - **Sources** : le JSON public de RTE (`tempoLight` et la saison), repli `api-couleur-tempo.fr` si RTE échoue, filet
-  `data/etat/tempo.json`. Règles fixes qui rejettent une couleur absurde (dimanche bleu, pas de rouge le week-end, les
-  fériés de l'hiver ni d'avril à octobre). Lu à 6 h 05, toutes les 30 min tant que demain manque, à 10 h 45, 11 h 15 et
+  `data/etat/tempo.json`. Règles fixes qui rejettent une couleur absurde (dimanche toujours bleu ; pas de rouge le
+  week-end, ni les jours fériés d'hiver, ni d'avril à octobre). Lu à 6 h 05, toutes les 30 min tant que demain manque, à 10 h 45, 11 h 15 et
   12 h 30. Jour Tempo de 6 h à 6 h ; une couleur lue la veille avant 10 h 40 est une pré-annonce.
 - **Sur l'Accueil, du 1er novembre au 31 mars seulement** : pastilles de « La semaine » (pointillés si pré-annoncée),
   la case « Demain rouge » (ou blanc) à la place de Wi-Fi invités dès la pré-annonce, puis « Heures creuses, les
@@ -540,7 +588,7 @@ Pour les abonnés au tarif Tempo. Lecture seule, sans compte ni clé, rien dans 
 ### Voitures
 
 Une Renault Mégane électrique, par l'intégration Renault de HA. **Toutes ses commandes** sont sur le cadre, d'un simple
-appui, **sans protection contre les enfants** (choix de Thomas). Le cadre ne lit jamais la position ni le kilométrage.
+appui, **sans protection contre les enfants** (choix de l'auteur). Le cadre ne lit jamais la position ni le kilométrage.
 
 - **Écran** : le nom, l'état (Débranchée, Branchée, En charge avec « prête vers 6 h 40 », Charge programmée, Erreur), le
   pourcentage en 240 px, l'autonomie, une jauge en forme de batterie (rouge à 25 % ou moins) ; carte grisée et « vu il
@@ -626,7 +674,7 @@ pas modifiable maintenant), `503 bornes_inconnues`, `429 trop_tot` (même comman
 Les routines de deux enfants, un grand qui gagne des minutes d'écran et un petit qui gagne des étoiles (Timo et Pablo
 sont des prénoms d'exemple : ils se changent dans `config/enfants.json`, les lits des draps dans
 `web/src/ecrans/draps-donnees.js`). Visuel, peu de texte, **rien de punitif** (ni croix, ni rouge,
-on ne retire jamais de minutes ni de points par punition), jamais les deux frères côte à côte. Rien dans Home
+on ne retire jamais de minutes ni de points par punition), jamais les deux enfants côte à côte. Rien dans Home
 Assistant : tout reste dans `data/etat/enfants`, et le cadre ne pilote pas la tablette.
 
 #### Écrans
@@ -682,19 +730,93 @@ une sécurité**, rien de dangereux n'en dépend.
 
 ---
 
+<a name="adapter"></a>
+
+## Adapter à sa maison
+
+Le projet lit une **liste blanche** d'entités Home Assistant aux noms de la maison d'origine. Une entité absente chez
+toi n'est pas une erreur : elle est ignorée et la case correspondante reste vide ; `npm run verif-ha` liste celles qui
+manquent.
+
+**Le plus simple : renommer tes entités dans Home Assistant** pour qu'elles portent les noms attendus (Paramètres,
+Appareils et services, Entités, une entité, roue dentée, « ID d'entité »). Rien à toucher dans le code, et les tests
+restent valables. Exemple : une installation de HA en anglais crée `weather.forecast_home`, le projet attend
+`weather.forecast_maison`.
+
+| Entités attendues | Pour | Chez nous |
+|---|---|---|
+| `weather.forecast_maison`, `sun.sun` | météo actuelle et horaire ; thèmes jour et soir | met.no (intégration par défaut), Soleil |
+| `alarm_control_panel.alarme_maison` | alarme, en lecture seule | alarme Eufy (intégration eufy-security) |
+| `binary_sensor.<ouverture>_sensor_open` (9) et `binary_sensor.<appareil>_battery_low` | ouvertures, piles faibles | capteurs Eufy |
+| `todo.shopping_list` | courses | liste de courses intégrée à HA |
+| `binary_sensor.doorbell_ringing`, `camera.sonnette_derniere_photo`, `script.sonnette_direct` | bandeau et photo de la sonnette, direct | sonnette Eufy ; la caméra et le script sont créés à la main dans HA |
+| `sensor.hp_deskjet_2800_series_*` | encres | imprimante (intégration IPP) |
+| `media_player.sejour_sejour`, `remote.sejour_sejour` | télécommande Apple TV | intégration Apple TV |
+| `media_player.smart_tv_pro_2_2`, `remote.smart_tv_pro_2` | télécommande de la télé | Android TV Remote (télé TCL) |
+| `calendar.*` | agenda | ceux de `AGENDA_CALENDRIERS` |
+
+**Si tu changes les noms dans le code** plutôt que dans HA, ils sont dans : `serveur/ha/entites.js` (liste blanche,
+dont les listes `OUVERTURES` et `PILES`), `serveur/ha/actions-maison.js` et `serveur/ha/connexion.js` (écritures de la
+maison), `web/src/ecrans/maison-donnees.js` (noms affichés des ouvertures et des piles),
+`web/src/ecrans/maison-telecommandes.js`, `web/src/ecrans/accueil.js`, `web/src/ciel.js`, `web/src/sonnette.js` et
+`web/src/ecrans/courses.js`. Les tests figent ces noms (`tests/entites.test.js`, `tests/actions-maison.test.js`,
+`tests/fixtures/ha_states.json`) : mets-les à jour, car le script de déploiement refuse de partir si `npm test`
+échoue.
+
+**Les autres réglages :**
+
+- **Masquer un écran** : retirer sa ligne de `ENTREES` dans `web/src/composants/menu.js`, et l'ajuster dans
+  `tests/voitures-page.test.js`, qui vérifie la liste.
+- **Les enfants** : dans `config/enfants.json`, change `prenom`, les `libelle` des étapes (« N'excite pas Pablo »
+  contient un prénom), les valeurs et la boutique. Garde les `id` `timo` et `pablo` : ils servent aussi aux couleurs
+  (`enfant-timo`...) et aux lits des draps (`serveur/sources/draps.js`, `web/src/ecrans/draps-donnees.js`). Le tableau
+  est pensé pour deux enfants : un grand à minutes d'écran, un petit à étoiles. Les tests du barème vérifient les
+  valeurs d'origine (`tests/enfants-bareme.test.js`) : à mettre à jour aussi.
+- **Voiture et clims** : les rôles suivent l'intégration Renault et l'intégration HACS Bosch HomeCom. Une autre marque
+  demande d'adapter `ROLES` dans `serveur/ha/voitures.js` ou `serveur/ha/clims.js`.
+
+<a name="menu"></a>
+
+## Le menu de la semaine
+
+Les écrans Repas, Recette, « Ce soir » et Aujourd'hui lisent un **menu au format JSON**, un fichier par semaine, du
+samedi au vendredi : 9 repas (samedi et dimanche midi et soir, soirs du lundi au vendredi ; les midis de semaine sont
+les gamelles de la veille), avec pour chacun recette, ingrédients, étapes et minuteurs.
+
+- **Le format** : `partage/schema-menu-v1.json`, et un exemple complet dans `tests/fixtures/menu-2026-10-10.json`. Tu
+  peux l'écrire à la main ou le faire générer par l'assistant de ton choix en lui donnant le schéma et l'exemple.
+  Chez nous, c'est un skill Claude Code personnel (`/menu`), qui n'est pas dans ce dépôt.
+- **Le vérifier** : `node outils/cadre.mjs verifier mon-menu.json` (le même validateur que le serveur).
+- **Le publier, simplement** : le copier dans `~/cadre/data/menus/` du serveur, sous le nom de son premier jour. Le
+  serveur le voit en moins d'une minute, sans redémarrage.
+
+  ```bash
+  scp mon-menu.json moi@192.168.1.50:cadre/data/menus/2026-10-17.json
+  ```
+
+- **Le publier avec l'outil** (clé SSH dédiée qui ne peut qu'écrire dans ce dossier, sans rien effacer) :
+
+  ```bash
+  ssh-keygen -t ed25519 -N '' -f ~/.ssh/cadre_menus
+  ```
+
+  puis, dans `~/.ssh/authorized_keys` du serveur, une ligne `restrict,command="/usr/bin/rrsync -no-del /home/moi/cadre/data/menus" `
+  suivie du contenu de `~/.ssh/cadre_menus.pub` (chemin absolu du dossier ; `rrsync` est livré avec le paquet `rsync`). Ensuite :
+
+  ```bash
+  CADRE_DEST=moi@192.168.1.50: node outils/cadre.mjs publier mon-menu.json
+  ```
+
+---
+
 ## Développement
 
 ### Installer
 
-```bash
-npm ci
-mkdir -p ~/.config/cadre data/menus
-[ -e ~/.config/cadre/cle_dev ] || (umask 077 && node -e "process.stdout.write(require('node:crypto').randomBytes(32).toString('hex'))" > ~/.config/cadre/cle_dev)
-```
-
-Le jeton HA de développement (utilisateur Mur) va dans `~/.config/cadre/ha_token_dev` (600) ; ne jamais utiliser
-`~/homeassistant/ha_token` du M900 (admin). La clé du Clevo de développement est créée au premier lancement. Pour
-changer une valeur, copier `.env.example` en `.env` (non versionné).
+Les commandes sont à l'étape 4 d'[Installer chez soi](#installer) : clé `~/.config/cadre/cle_dev`, jeton HA de
+l'utilisateur Mur dans `~/.config/cadre/ha_token_dev` (fichiers en 600 ; **jamais un jeton administrateur**), `.env`
+copié de `.env.example`. La clé du PC d'administration de développement (`cle_clevo_dev`) est créée au premier
+lancement.
 
 ### Lancer et regarder la page
 
@@ -716,7 +838,7 @@ démarrage. Ajouter `&theme=soir` (ou `jour`, `nuit`) pour forcer un thème. Var
 ### Tests et vérifications
 
 ```bash
-npm test               # 727 tests, sans réseau ni HA ni Immich ni RTE
+npm test               # 727 tests au vert (1 sauté), sans réseau ni HA ni Immich ni RTE
 npm run verif-ha       # lecture seule : entités de la liste blanche, cibles des actions, VOITURES et CLIMS
 npm run verif-immich   # lecture seule : version d'Immich, un lot et une photo
 ```
@@ -730,18 +852,61 @@ manque une entité ou si le jeton est admin : à relancer après chaque mise à 
 | Commande | Rôle |
 |---|---|
 | `node outils/cadre.mjs verifier <menu.json>` | valide un menu (code 1 et motifs sinon) |
-| `node outils/cadre.mjs publier <menu.json>` | publie sur le M900 par rsync (clé `~/.ssh/cadre_menus`, sans phrase de passe, bornée par rrsync) |
-| `node outils/cadre.mjs liste` | menus publiés sur le M900 |
+| `node outils/cadre.mjs publier <menu.json>` | publie sur le serveur `CADRE_DEST` par rsync (clé `~/.ssh/cadre_menus`, sans phrase de passe, bornée par rrsync : voir « Le menu de la semaine ») |
+| `node outils/cadre.mjs liste` | menus publiés sur le serveur |
+| `CADRE_URL` | adresse du serveur pour `etat`, `cocher` et `apercu.mjs` (par exemple `http://192.168.1.50:8020` ; défaut : la maison d'origine) |
 | `node outils/cadre.mjs etat`, `cocher <uid>…` | date du drive et liste de courses ; cocher avec confirmation (caractères invisibles écrits en clair) |
 | `npm run demo` (`outils/demo.mjs`) | le tableau de bord sur un faux Home Assistant, sans maison ; voir « Essayer sans maison » |
 | `node outils/apercu.mjs` | relais sur `http://127.0.0.1:8021` vers le vrai tableau de bord, avec la clé du Clevo (`~/.config/cadre/cle`, copie de `secrets/cle_clevo`). **Les actions y sont réelles.** |
 
 ---
 
+<a name="deploiement"></a>
+
 ## Déploiement sur le serveur maison
 
-Les commandes ci-dessous visent le serveur d'origine (`thomas@192.168.1.187`) : remplacer par le sien. Le script
-lit `HOTE_M900` et `URL_SANTE` :
+Dans les exemples, `moi@192.168.1.50` est ton compte sur le serveur : remplace-le partout. Le serveur reçoit les
+sources par `rsync`, construit l'image Docker sur place et la lance avec `deploiement/docker-compose.yml`.
+
+### Préparer le serveur (une seule fois)
+
+1. **Les dossiers et les secrets** : deux clés d'appareil tirées au hasard (celle du cadre, celle de ton PC), puis le
+   jeton de l'utilisateur HA **Mur** (étape 3 d'[Installer chez soi](#installer)), collé au clavier sans passer par
+   l'historique du terminal :
+
+   ```bash
+   ssh moi@192.168.1.50 'umask 077 && mkdir -p ~/cadre/secrets ~/cadre/src ~/cadre/data/menus ~/cadre/data/etat \
+     && for c in cle_cadre cle_clevo; do [ -f ~/cadre/secrets/$c ] || head -c 32 /dev/urandom | od -An -tx1 | tr -d " \n" > ~/cadre/secrets/$c; done'
+   read -rsp "Jeton HA : " T && ssh moi@192.168.1.50 'umask 077 && cat > ~/cadre/secrets/ha_token' <<< "$T" && unset T
+   ```
+
+   La clé Immich (facultative) se dépose de la même façon dans `secrets/immich_cle`.
+
+2. **Les réglages de ta maison** dans `~/cadre/.env` (lu par docker compose, jamais écrasé par le déploiement) : le
+   lieu (`LIEU_*`), les calendriers, les voitures et clims, les garde-fous `ACTIONS_*`. Si Home Assistant, Immich ou
+   go2rtc tournent **sur une autre machine** que le serveur, ajoute `HA_URL`, `IMMICH_URL` ou `GO2RTC_URL`
+   (`http://ip:port`) ; sinon le compose les joint sur le serveur lui-même. Le détail de chaque variable est dans
+   [`.env.example`](.env.example).
+
+   ```bash
+   ssh -t moi@192.168.1.50 'umask 077 && nano ~/cadre/.env'
+   ```
+
+3. **L'utilisateur** : le conteneur tourne sous l'uid et le gid de ton compte sur le serveur, pour lire les secrets en
+   600. Par défaut 1000:1000 ; si `ssh moi@192.168.1.50 id` donne autre chose, ajoute `UID_CADRE=...` et
+   `GID_CADRE=...` dans `~/cadre/.env`, et lance le déploiement avec `UID_CADRE=...` devant.
+
+4. **La clé de ton PC** pour les outils (`outils/cadre.mjs etat`, `cocher`, `outils/apercu.mjs`) :
+
+   ```bash
+   ssh moi@192.168.1.50 cat cadre/secrets/cle_clevo > ~/.config/cadre/cle && chmod 600 ~/.config/cadre/cle
+   ```
+
+   Ces outils visent le serveur indiqué par `CADRE_URL` : ajoute `CADRE_URL=http://192.168.1.50:8020` à ton `.env`
+   ou devant la commande.
+
+Contrôle : `ssh moi@192.168.1.50 'stat -c "%u %a %n" ~/cadre/secrets ~/cadre/secrets/*'` doit montrer ton uid avec
+`700` pour le dossier et `600` pour chaque fichier.
 
 ### Déployer
 
@@ -749,16 +914,21 @@ lit `HOTE_M900` et `URL_SANTE` :
 HOTE_M900=moi@192.168.1.50 URL_SANTE=http://192.168.1.50:8020/api/sante bash deploiement/deployer.sh
 ```
 
-Arbre git propre exigé ; tests locaux, contrôle de `~/cadre` (secrets lisibles par l'uid 1000), envoi des sources dans
-`~/cadre/src`, `docker compose build` et `up -d` sur le M900, succès seulement quand `/api/sante` répond `"ha":"ok"`.
-L'image précédente est gardée sous `cadre-bff:precedent`. Retour arrière :
+Le script exige un arbre git propre (committe tes modifications d'abord) et des tests au vert. Il contrôle `~/cadre`,
+envoie les sources dans `~/cadre/src`, lance `docker compose build` et `up -d`, et ne réussit que quand `/api/sante`
+répond `"ha":"ok"`. L'image précédente est gardée sous `cadre-bff:precedent`. Retour arrière :
 
 ```bash
-ssh thomas@192.168.1.187 'cd ~/cadre && docker tag cadre-bff:precedent cadre-bff:local && docker compose up -d'
+ssh moi@192.168.1.50 'cd ~/cadre && docker tag cadre-bff:precedent cadre-bff:local && docker compose up -d'
 ```
 
-Changer une ligne de `~/cadre/.env` (`VOITURES`, `CLIMS`, un drapeau) : la modifier sur le M900 (copie de sauvegarde
-d'abord), puis redéployer ou `docker compose up -d` dans `~/cadre`.
+Changer une ligne de `~/cadre/.env` : la modifier sur le serveur (copie de sauvegarde d'abord), puis redéployer ou
+lancer `docker compose up -d` dans `~/cadre`.
+
+### Sauvegarder
+
+`~/cadre/secrets` et `~/cadre/data/etat` (points des enfants, draps, Tempo) sont à inclure dans la sauvegarde du
+serveur (restic, borg, ou un simple `rsync` vers une autre machine). Le reste se reconstruit en redéployant.
 
 ### La page se recharge d'elle-même
 
@@ -772,43 +942,62 @@ ou le bandeau sonnette, ni avant 60 s sans toucher. Le sprite d'icônes est rede
 fichier abîmé (JSON cassé, champ en trop, trop gros) n'est **jamais écrasé** : il est renommé
 `<nom>.abime-AAAAMMJJ-HHMMSS`, une erreur part au journal et le serveur repart de zéro pour ce fichier. Pour récupérer
 (les points de Timo par exemple) : corriger le fichier mis de côté, arrêter le conteneur, lui rendre son nom,
-redémarrer. Les trouver : `ssh thomas@192.168.1.187 'find ~/cadre/data/etat -name "*.abime-*"'`.
-
-### Préparer un M900 neuf (une seule fois)
-
-```bash
-ssh thomas@192.168.1.187 'umask 077 && mkdir -p ~/cadre/secrets ~/cadre/src ~/cadre/data/menus ~/cadre/data/etat \
-  && for c in cle_cadre cle_clevo; do [ -f ~/cadre/secrets/$c ] || head -c 32 /dev/urandom | od -An -tx1 | tr -d " \n" > ~/cadre/secrets/$c; done'
-read -rs T && ssh thomas@192.168.1.187 'umask 077 && cat > ~/cadre/secrets/ha_token' <<< "$T" && unset T
-```
-
-Le jeton est celui de l'utilisateur HA **Mur** (profil, Sécurité, Jetons d'accès longue durée). La clé Immich se dépose
-de la même façon dans `secrets/immich_cle`. Contrôle : `stat -c "%u %a %n" ~/cadre/secrets ~/cadre/secrets/*` doit
-montrer `1000 700` pour le dossier et `1000 600` pour chaque fichier.
+redémarrer. Les trouver : `ssh moi@192.168.1.50 'find ~/cadre/data/etat -name "*.abime-*"'`.
 
 ---
 
+<a name="kiosque"></a>
+
 ## Le cadre et le kiosque
 
-**Le cadre** : Apveelveer 15,6" Frameo « AVE-V5 Max », Rockchip RK3326, 2 Go, Android 9, WebView Chrome 125, écran
-1920x1080, tactile à deux doigts, sans root, secteur obligatoire. Frameo et son outil de mise à jour sont désactivés ;
-l'appli kiosque est l'écran d'accueil. Fiche complète : [docs/cadre-ave948.md](docs/cadre-ave948.md).
+**L'appli kiosque** (`kiosque/`, `fr.arronis.cuisine`) : WebView plein écran sur ton serveur, page de secours
+embarquée (heure et minuteurs si le serveur ne répond pas), pont vers la page (luminosité, volume), son sans geste,
+sortie par deux doigts tenus 1,5 s (Réglages d'Android), et un **chien de garde Wi-Fi** : la puce RK915 du cadre
+d'origine perd par épisodes les gros paquets ; une sonde de 4 Kio toutes les 30 s, et après deux échecs le Wi-Fi est
+coupé puis rallumé.
 
-**L'appli kiosque** (`kiosque/`, `fr.arronis.cuisine`) : WebView plein écran sur le serveur du M900, page de secours
-embarquée, pont vers la page (luminosité, volume), son sans geste, sortie par deux doigts tenus 1,5 s (Réglages
-d'Android), et un **chien de garde Wi-Fi** : la puce RK915 du cadre perd par épisodes les gros paquets ; une sonde de
-4 Kio toutes les 30 s, et après deux échecs le Wi-Fi est coupé puis rallumé.
+### Installer le kiosque (première fois)
 
-Construire l'APK (JDK 17, `zip`, build-tools 34.0.0 et platform android-34 dans `~/Android/Sdk`) :
+Le serveur doit être déployé et joignable, et le cadre relié à ton PC en USB avec l'ADB autorisé
+([docs/jour-j.md](docs/jour-j.md)). Les étapes 3 à 7 **modifient le cadre** : lis-les avant de les lancer.
 
-```bash
-kiosque/build.sh http://192.168.1.187:8020
-```
+1. Vérifier que le serveur sert la sonde du chien Wi-Fi (attendu : `200 4096`) :
 
-Sortie : `kiosque/build/cuisine-debug.apk`. **Sauvegarder `~/.android/debug.keystore`** : sans lui, une nouvelle version
-ne s'installe plus par-dessus l'ancienne. Installation, sortie du kiosque, Wi-Fi perdu, retour à Frameo :
-[docs/recuperation.md](docs/recuperation.md). Les outils du jour J (`web/compat/compat.html`,
-`outils/serveur-compat.py`, `outils/identifier-cadre.sh`, `docs/jour-j.md`) restent pour un autre cadre.
+   ```bash
+   curl -s -o /dev/null -w '%{http_code} %{size_download}\n' http://192.168.1.50:8020/sonde.bin
+   ```
+
+2. Construire l'APK avec l'adresse du serveur (JDK 17, `zip`, build-tools 34.0.0 et platform android-34 dans
+   `~/Android/Sdk`, ou `ANDROID_HOME`) :
+
+   ```bash
+   bash kiosque/build.sh http://192.168.1.50:8020
+   ```
+
+3. L'installer : `adb install kiosque/build/cuisine-debug.apk`
+4. Lui envoyer la clé du cadre, lue directement sur le serveur :
+
+   ```bash
+   adb shell am start -n fr.arronis.cuisine/.ReglageAdb --es cle "$(ssh moi@192.168.1.50 cat cadre/secrets/cle_cadre)"
+   ```
+
+5. En faire l'écran d'accueil, puis vérifier qu'il redémarre seul :
+
+   ```bash
+   adb shell cmd package set-home-activity fr.arronis.cuisine/.MainActivity
+   adb reboot
+   ```
+
+6. Facultatif : désactiver Frameo pour qu'il ne reprenne pas la main (réversible, [docs/recuperation.md](docs/recuperation.md)
+   §3) : `adb shell pm disable-user --user 0 net.frameo.frame`. Sur un cadre Rockchip, faire de même avec le paquet de
+   mise à jour du fabricant (`android.rockchip.update.service` chez nous).
+7. Relier le cadre au Wi-Fi de la maison (geste à deux doigts, Réglages, Wi-Fi) et le brancher **sur secteur**.
+
+**Sauvegarde `~/.android/debug.keystore`** : sans lui, une nouvelle version ne s'installe plus par-dessus l'ancienne.
+Mise à jour, sortie du kiosque, Wi-Fi perdu, retour à Frameo : [docs/recuperation.md](docs/recuperation.md).
+
+**Le cadre d'origine** : Frameo 15,6" « AVE-V5 Max », Rockchip RK3326, 2 Go, Android 9, WebView Chrome 125, écran
+1920x1080, tactile à deux doigts, sans root, secteur obligatoire : [docs/cadre-ave948.md](docs/cadre-ave948.md).
 
 ---
 
@@ -834,7 +1023,7 @@ ne s'installe plus par-dessus l'ancienne. Installation, sortie du kiosque, Wi-Fi
   intrusion, ni rien d'autre.
 - **Le cadre photo.** Activer l'ADB, désactiver Frameo et remplacer le lanceur sort de l'usage prévu par le fabricant.
   Selon le modèle, ça peut mal se passer et annuler la garantie. Lire [docs/recuperation.md](docs/recuperation.md)
-  avant, tester avant de fixer au mur, et ne rien faire qu'on ne sait pas défaire.
+  avant, tester avant de fixer au mur, et ne rien faire qu'on ne sache pas défaire.
 - **La maison.** Ce n'est **pas** un système de sécurité. L'alarme n'y est qu'en lecture et peut afficher un état faux
   ou périmé : ne jamais s'y fier pour savoir si la maison est protégée.
 - **Les appareils pilotés.** Voiture, clims et télé reçoivent de vraies commandes dès qu'un garde-fou `ACTIONS_*` est à
@@ -863,4 +1052,4 @@ Code sous [licence MIT](LICENSE) : réutilisable, modifiable et partageable libr
 - Polices **Fraunces** et **Nunito Sans**, auto-hébergées, sous SIL Open Font License 1.1 ([`web/public/polices/OFL.txt`](web/public/polices/OFL.txt)).
 - Météo, qualité de l'air et pollens : [Open-Meteo](https://open-meteo.com/) (données sous CC BY 4.0, usage non commercial gratuit).
 - Couleurs Tempo : données publiques de RTE, repli [api-couleur-tempo.fr](https://www.api-couleur-tempo.fr/).
-- Écrit à deux mains avec [Claude Code](https://claude.com/claude-code).
+- Écrit à quatre mains avec [Claude Code](https://claude.com/claude-code).

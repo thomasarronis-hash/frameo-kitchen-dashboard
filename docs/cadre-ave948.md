@@ -1,5 +1,9 @@
 # Le cadre de la cuisine : relevé du jour J et décision
 
+> Le relevé du cadre de la maison d'origine, un Frameo 15,6" vendu sous le nom « AVE-V5 Max ». C'est un compte rendu daté, pas un guide : pour ton cadre, suis [jour-j.md](jour-j.md). Il sert
+> de point de comparaison, et explique les astuces propres à ce modèle (ADB par câble gardé grâce à SELinux
+> permissif, chien de garde Wi-Fi pour la puce RK915), qui ne vaudront pas forcément ailleurs.
+
 Relevé du mardi 13/10/2026, cadre branché en USB-C sur le Clevo, sans Wi-Fi. Sources : `outils/identifier-cadre.sh`
 et `web/compat/compat.html` (relevés bruts dans `docs/releves/`, non versionnés, sans numéro de série ici).
 
@@ -82,7 +86,7 @@ d'ImmichFrame pour les versions 1.29 et plus).
   possibles sur la Freebox.
 - **Coupure d'Internet abandonnée** : l'IP fixe sans passerelle fait perdre la route du réseau local (cette version
   d'Android envoie alors tout vers la passerelle), et l'IPv6 publique donnée par la Freebox passe de toute façon. À
-  la place, avec l'accord de Thomas : `pm disable-user` de `net.frameo.frame` et `android.rockchip.update.service`
+  la place, à la main : `pm disable-user` de `net.frameo.frame` et `android.rockchip.update.service`
   (réversible par `pm enable`). Plus rien sur le cadre ne se sert d'Internet.
 - Reste : fixation au mur (non annoncée, à voir au dos), prise secteur à proximité, port USB-C accessible.
 
@@ -142,8 +146,8 @@ d'ImmichFrame pour les versions 1.29 et plus).
 - Une fois un kiosque installé, ne plus renommer, déplacer ni changer de taille `web/public/sonde.bin` (contenu
   pseudo-aléatoire figé, régénérable à l'identique, commande dans l'en-tête de `ChienWifi.java`). Le serveur relève
   ses fichiers statiques au démarrage : la sonde n'est servie qu'après un redéploiement. Déployer le serveur
-  **avant** d'installer le kiosque, puis vérifier depuis le Clevo :
-  `curl -s -o /dev/null -w '%{http_code} %{size_download}\n' http://192.168.1.187:8020/sonde.bin` doit donner
+  **avant** d'installer le kiosque, puis vérifier depuis le PC :
+  `curl -s -o /dev/null -w '%{http_code} %{size_download}\n' http://<serveur>:8020/sonde.bin` doit donner
   `200 4096`. Un kiosque installé avant ne casse rien (404 : ni échec ni remise), il attend.
 - Dans logcat (lecture seule) : `adb logcat -s Cuisine | grep "chien Wi-Fi"`. Une sonde réussie ne journalise rien ;
   on voit « démarré » au lancement, puis seulement les échecs, « remise différée », « remise à zéro du Wi-Fi »,
@@ -155,5 +159,5 @@ d'ImmichFrame pour les versions 1.29 et plus).
   chien le voit (« coupure sans effet ») et s'arrête jusqu'au prochain démarrage du kiosque. Si une fenêtre du genre
   « Cuisine souhaite désactiver le Wi-Fi » reste à l'écran, la **refuser** : l'accepter couperait le Wi-Fi pour de
   bon (le chien a déjà constaté le Wi-Fi allumé et s'est arrêté, il ne le rallumera pas).
-- Neutraliser le chien sans toucher au cadre : retirer la sonde du serveur et redéployer (accord de Thomas) ; les
+- Neutraliser le chien sans toucher au cadre : retirer la sonde du serveur et redéployer ; les
   sondes reçoivent un 404 et ne déclenchent plus de remise.

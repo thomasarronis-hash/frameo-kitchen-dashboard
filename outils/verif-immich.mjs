@@ -38,7 +38,7 @@ const assezRecent = majeure > 3 || (majeure === 3 && mineure >= 2);
 console.log(`Immich ${version} sur ${reglages.url} : ${assezRecent ? 'ok' : 'TROP ANCIEN (le filtre du lot demande la 3.2)'}`);
 if (!reglages.cle) {
   console.log(reglages.cleAbsente ? `Pas de clé : ${reglages.cheminCle} n'existe pas encore.` : 'Pas de clé : IMMICH_CLE_FICHIER est vide.');
-  console.log('Le cadre masque l\'entrée Photos de son menu et ne demande rien à Immich.');
+  console.log('Le cadre ne passe pas en mode Photos et ne demande rien à Immich.');
   process.exit(assezRecent ? 0 : 1);
 }
 

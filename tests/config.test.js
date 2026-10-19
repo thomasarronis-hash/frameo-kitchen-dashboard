@@ -1,6 +1,6 @@
 // tests/config.test.js
 //
-// Rôle    : prouver serveur/config.js : production par défaut (web/dist, routes /dev fermées), développement
+// Rôle    : prouver serveur/config.js : production par défaut (web, routes /dev fermées), développement
 //           seulement si NODE_ENV vaut exactement « development » (web/), dossiers relatifs à la racine du
 //           projet ou absolus, deux clés d'appareil différentes, clé du Clevo créée en 600 si elle manque (en
 //           développement seulement), ACTIONS_REELLES, ACTIONS_MAISON et ACTIONS_VOITURE vrais seulement pour « 1 » et
@@ -40,10 +40,10 @@ function dossierTemporaire(t) {
   return dossier;
 }
 
-test('production par défaut : web/dist, data/menus, data/etat, dev et actions réelles faux', () => {
+test('production par défaut : web, data/menus, data/etat, dev et actions réelles faux', () => {
   const config = chargerConfig(ENV);
   assert.equal(config.dev, false);
-  assert.equal(config.dossierWeb, join(RACINE, 'web', 'dist'));
+  assert.equal(config.dossierWeb, join(RACINE, 'web'));
   assert.equal(config.dossierMenus, join(RACINE, 'data', 'menus'));
   assert.equal(config.dossierEtat, join(RACINE, 'data', 'etat'));
   assert.equal(config.actionsReelles, false);
@@ -64,7 +64,7 @@ test('NODE_ENV=development : web/ servi tel quel, dev vrai ; toute autre valeur 
 test('DOSSIER_WEB, DOSSIER_MENUS, DOSSIER_ETAT : relatifs à la racine du projet, ou absolus ; vide = valeur par défaut', () => {
   assert.equal(chargerConfig({ ...ENV, DOSSIER_WEB: 'tests/fixtures/web-sources' }).dossierWeb, join(RACINE, 'tests', 'fixtures', 'web-sources'));
   assert.equal(chargerConfig({ ...ENV, DOSSIER_WEB: FIXTURES }).dossierWeb, FIXTURES);
-  assert.equal(chargerConfig({ ...ENV, DOSSIER_WEB: '  ' }).dossierWeb, join(RACINE, 'web', 'dist'));
+  assert.equal(chargerConfig({ ...ENV, DOSSIER_WEB: '  ' }).dossierWeb, join(RACINE, 'web'));
   assert.equal(chargerConfig({ ...ENV, DOSSIER_MENUS: '/srv/menus' }).dossierMenus, '/srv/menus');
   assert.equal(chargerConfig({ ...ENV, DOSSIER_ETAT: 'autre/etat' }).dossierEtat, join(RACINE, 'autre', 'etat'));
 });

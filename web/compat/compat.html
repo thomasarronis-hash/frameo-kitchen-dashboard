@@ -182,7 +182,7 @@
 
   <section class="carte"><div class="corps">
     <h2>8. Diaporama (10 min)</h2>
-    <p class="aide">Une nouvelle image 1920x1080 toutes les 6 s, fondu de 1,5 s. Pendant ce temps, sur le Clevo : surveillance de la mémoire et de logcat (docs/jour-j.md, étape 5).</p>
+    <p class="aide">Une nouvelle image 1920x1080 toutes les 6 s, fondu de 1,5 s. Pendant ce temps, sur le PC : surveillance de la mémoire et de logcat (docs/jour-j.md, étape 5).</p>
     <div class="boutons"><button id="btn-diaporama">Lancer le diaporama</button></div>
     <div id="res-diaporama"></div>
   </div></section>
@@ -190,7 +190,7 @@
   <section class="carte large"><div class="corps">
     <h2>Rapport</h2>
     <div class="boutons">
-      <button id="btn-envoyer">Envoyer le rapport au Clevo</button>
+      <button id="btn-envoyer">Envoyer le rapport au PC</button>
       <button id="btn-copier" class="secondaire">Copier le rapport</button>
     </div>
     <p id="etat-rapport" class="aide"></p>
@@ -829,7 +829,7 @@
   }
 
   // ------------------------------------------------------------------
-  // 8. Diaporama de 10 min (surveillance mémoire depuis le Clevo)
+  // 8. Diaporama de 10 min (surveillance mémoire depuis le PC)
   // ------------------------------------------------------------------
 
   var DUREE_DIAPORAMA_MS = 10 * 60 * 1000;
@@ -931,7 +931,7 @@
       requete.timeout = 10000;
       requete.onload = function () {
         etatRapport.textContent = requete.status === 201 ?
-          'Rapport enregistré sur le Clevo : ' + requete.responseText :
+          'Rapport enregistré sur le PC : ' + requete.responseText :
           'Envoi refusé (HTTP ' + requete.status + ').';
       };
       requete.onerror = echec;
